@@ -1,15 +1,15 @@
 import XCTest
+import Quick
+import Nimble
 @testable import Networker
 
-final class NetworkerTests: XCTestCase {
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(Networker().text, "Hello, World!")
+final class NetworkerTests: QuickSpec {
+    override func spec() {
+        describe("GIVEN") {
+            let toto = "toto"
+            it("equal") {
+                expect(toto).to(equal("toto"))
+            }
+        }
     }
-
-    static var allTests = [
-        ("testExample", testExample),
-    ]
 }
