@@ -65,8 +65,6 @@ final class URLSessionMock: URLSessionProtocol {
         self.getTasksCallCount > 0
     }
 
-
-
     func request(with request: URLRequest,
                  completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
         self.requestCallCount += 1
