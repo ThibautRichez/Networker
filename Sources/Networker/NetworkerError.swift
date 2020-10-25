@@ -30,6 +30,9 @@ enum NetworkerPathError: Error {
 
     /// Indicates that a request with an invalid absolute path occured.
     case invalidAbsolutePath(String)
+
+    /// Indicates that a request with an invalid relative path occured.
+    case invalidRelativePath(String)
 }
 
 

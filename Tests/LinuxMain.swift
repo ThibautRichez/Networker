@@ -1,7 +1,1 @@
-import XCTest
-
-import NetworkerTests
-
-var tests = [XCTestCaseEntry]()
-tests += NetworkerTests.allTests()
-XCTMain(tests)
+fatalError("Use `swift test --enable-test-discovery` to run tests")

@@ -4,7 +4,6 @@
 //
 //  Created by RICHEZ Thibaut on 10/25/20.
 //
-
 import XCTest
 import Quick
 import Nimble

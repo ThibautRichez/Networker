@@ -8,6 +8,10 @@
 import Foundation
 @testable import Networker
 
-struct NetworkerSessionConfigurationReaderMock: NetworkerSessionConfigurationReader {
-    var configuration: NetworkerSessionConfiguration = .init()
+final class NetworkerSessionConfigurationReaderMock: NetworkerSessionConfigurationReader {
+    var configurationResult: (() -> NetworkerSessionConfiguration)?
+
+    var configuration: NetworkerSessionConfiguration {
+        self.configurationResult?() ?? .init()
+    }
 }

@@ -20,10 +20,14 @@ extension Networker {
         }
 
         let baseURL = try self.makeBaseURL()
-        let token = self.configuration.token ?? self.sessionConfiguration?.token ?? ""
-        return baseURL
-            .appendingPathComponent(token)
-            .appendingPathComponent(path)
+        // not using appendingPathComponent because path may contain
+        // non component information that will be formatted (query items
+        // for exemple)
+        guard let url = URL(string: baseURL.absoluteString + path) else {
+            throw NetworkerError.path(.invalidRelativePath(path))
+        }
+
+        return url
     }
 
     func makeURLRequest(for type: URLRequestType,
@@ -85,6 +89,16 @@ extension Networker {
             throw NetworkerError.path(.invalidBaseURL(baseURLRepresentation))
         }
 
-        return baseURL
+        return self.appendingToken(in: baseURL)
+    }
+
+    private func appendingToken(in url: URL) -> URL {
+        let configurationToken = self.configuration.token ?? self.sessionConfiguration?.token
+        guard let token = configurationToken else {
+            return url
+        }
+
+        return url
+            .appendingPathComponent(token, isDirectory: true)
     }
 }
