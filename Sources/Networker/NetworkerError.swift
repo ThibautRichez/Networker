@@ -12,6 +12,7 @@ enum NetworkerError: Error {
     case remote(NetworkerRemoteError)
     case response(NetworkerResponseError)
     case noData
+    case decoder(Error)
     case unknown(Error)
 }
 

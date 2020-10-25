@@ -45,11 +45,25 @@ protocol NetworkRequester: NetworkConfigurable {
                  completion: @escaping (Result<NetworkerResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 }
 
+protocol NetworkDecodableRequester: NetworkConfigurable {
+    @discardableResult
+    func request<T : Decodable>(type: T.Type,
+                                decoder: JSONDecoder,
+                                atPath path: String,
+                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+}
+
 protocol NetworkUploader: NetworkConfigurable {}
+
+protocol NetworkEncodableUploader: NetworkConfigurable {}
 
 protocol NetworkDownloader: NetworkConfigurable {}
 
-typealias NetworkerProtocol = NetworkRequester & NetworkUploader & NetworkDownloader & NetworkCancellable
+protocol NetworkDecodableDownloader: NetworkConfigurable {}
+
+// cannot make typealias beacause they both conform to NetworkCancellable
+protocol NetworkerProtocol: NetworkRequester, NetworkUploader, NetworkDownloader, NetworkCancellable {}
+protocol NetworkerCodableProtocol: NetworkDecodableRequester, NetworkEncodableUploader, NetworkDecodableDownloader, NetworkCancellable {}
 
 private extension OperationQueue {
     static func networker() -> OperationQueue {
@@ -168,6 +182,72 @@ extension Networker: NetworkerProtocol {
     }
 }
 
+// MARK: - NetworkerCodableProtocol
+
+extension Networker: NetworkerCodableProtocol {
+    func request<T: Decodable>(type: T.Type,
+                               decoder: JSONDecoder,
+                               atPath path: String,
+                               completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+        self.request(path: path) { result in
+            let decodableResult = self.convertResult(result, to: type, with: decoder)
+            // already in callbackQueue.
+            completion(decodableResult)
+        }
+    }
+
+    @discardableResult
+    func request<T: Decodable>(type: T.Type,
+                               decoder: JSONDecoder,
+                               url: URL,
+                               completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
+        self.request(url: url) { result in
+            let decodableResult = self.convertResult(result, to: type, with: decoder)
+            // already in callbackQueue.
+            completion(decodableResult)
+        }
+    }
+
+
+    @discardableResult
+    func request<T: Decodable>(type: T.Type,
+                               decoder: JSONDecoder,
+                               urlRequest: URLRequest,
+                               completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
+        self.request(urlRequest: urlRequest) { result in
+            let decodableResult = self.convertResult(result, to: type, with: decoder)
+            // already in callbackQueue.
+            completion(decodableResult)
+        }
+    }
+}
+
+private extension Networker {
+    func decode<T: Decodable>(type: T.Type,
+                              from result: NetworkerResult,
+                              decoder: JSONDecoder) -> Result<T, NetworkerError> {
+        do {
+            let model = try decoder.decode(T.self, from: result.data)
+            return .success(model)
+        } catch {
+            return .failure(.decoder(error))
+        }
+
+    }
+
+    func convertResult<T: Decodable>(_ result: Result<NetworkerResult, NetworkerError>,
+                                     to type: T.Type,
+                                     with decoder: JSONDecoder) -> Result<T, NetworkerError> {
+        switch result {
+        case .success(let networkResult):
+            return self.decode(type: type, from: networkResult, decoder: decoder)
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+}
+
+
 private extension Networker {
     var sessionConfiguration: NetworkerSessionConfiguration? {
         self.sessionReader?.configuration
@@ -202,7 +282,7 @@ private extension Networker {
     }
 
     func makeURLRequest(for type: URLRequestType,
-                                with url: URL) -> URLRequest {
+                        with url: URL) -> URLRequest {
         var urlRequest = URLRequest(url: url, timeoutInterval: self.configuration.timeoutInterval)
         urlRequest.httpMethod = type.rawValue
         return urlRequest
