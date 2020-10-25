@@ -20,7 +20,7 @@ protocol URLSessionProtocol {
 
     @discardableResult
     func download(with request: URLRequest,
-                  completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol
+                  completion: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol
 
     func getTasks(completion: @escaping ([URLSessionTaskProtocol]) -> Void)
 }
@@ -38,8 +38,8 @@ extension URLSession: URLSessionProtocol {
     }
     
     func download(with request: URLRequest,
-                  completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
-        return self.downloadTask(with: request, completionHandler: completionHandler) as URLSessionTaskProtocol
+                  completion: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
+        return self.downloadTask(with: request, completionHandler: completion) as URLSessionTaskProtocol
     }
 
     func getTasks(completion: @escaping ([URLSessionTaskProtocol]) -> Void) {
