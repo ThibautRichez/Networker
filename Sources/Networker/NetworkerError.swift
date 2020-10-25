@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NetworkerError.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/24/20.

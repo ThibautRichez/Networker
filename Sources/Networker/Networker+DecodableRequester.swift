@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Networker+DecodableRequester.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/25/20.
@@ -27,15 +27,9 @@ protocol NetworkDecodableRequester: NetworkConfigurable {
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 }
 
-protocol NetworkEncodableUploader: NetworkConfigurable {}
 
-protocol NetworkDecodableDownloader: NetworkConfigurable {}
 
-protocol NetworkerCodableProtocol: NetworkDecodableRequester, NetworkEncodableUploader, NetworkDecodableDownloader, NetworkCancellable {}
-
-// MARK: - NetworkerCodableProtocol
-
-extension Networker: NetworkerCodableProtocol {
+extension Networker: NetworkDecodableRequester {
     func request<T: Decodable>(type: T.Type,
                                decoder: JSONDecoder,
                                atPath path: String,
@@ -73,20 +67,10 @@ extension Networker: NetworkerCodableProtocol {
     }
 }
 
+// MARK: - Helpers
+
 private extension Networker {
-    func decode<T: Decodable>(type: T.Type,
-                              from result: NetworkerResult,
-                              decoder: JSONDecoder) -> Result<T, NetworkerError> {
-        do {
-            let model = try decoder.decode(T.self, from: result.data)
-            return .success(model)
-        } catch {
-            return .failure(.decoder(error))
-        }
-
-    }
-
-    func convertResult<T: Decodable>(_ result: Result<NetworkerResult, NetworkerError>,
+    func convertResult<T: Decodable>(_ result: Result<NetworkRequesterResult, NetworkerError>,
                                      to type: T.Type,
                                      with decoder: JSONDecoder) -> Result<T, NetworkerError> {
         switch result {
@@ -95,5 +79,17 @@ private extension Networker {
         case .failure(let error):
             return .failure(error)
         }
+    }
+
+    func decode<T: Decodable>(type: T.Type,
+                              from result: NetworkRequesterResult,
+                              decoder: JSONDecoder) -> Result<T, NetworkerError> {
+        do {
+            let model = try decoder.decode(T.self, from: result.data)
+            return .success(model)
+        } catch {
+            return .failure(.decoder(error))
+        }
+
     }
 }

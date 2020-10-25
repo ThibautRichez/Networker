@@ -8,10 +8,12 @@
 import Foundation
 
 protocol URLSessionProtocol {
+    @discardableResult
     func request(with request: URLRequest,
                  completion: @escaping (Data?, URLResponse?, Error?) -> Void
     ) -> URLSessionTaskProtocol
 
+    @discardableResult
     func upload(with request: URLRequest,
                 from bodyData: Data?,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol
