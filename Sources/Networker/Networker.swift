@@ -1,8 +1,5 @@
 import Foundation
 
-protocol NetworkDownloader: NetworkConfigurable {}
-protocol NetworkDecodableDownloader: NetworkConfigurable {}
-
 struct Networker {
     var session: URLSessionProtocol = URLSession.shared
     var configuration: NetworkerConfiguration = .init()

@@ -18,6 +18,10 @@ protocol URLSessionProtocol {
                 from bodyData: Data?,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol
 
+    @discardableResult
+    func download(with request: URLRequest,
+                  completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol
+
     func getTasks(completion: @escaping ([URLSessionTaskProtocol]) -> Void)
 }
 
@@ -31,6 +35,11 @@ extension URLSession: URLSessionProtocol {
                 from bodyData: Data?,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
         return self.uploadTask(with: request, from: bodyData, completionHandler: completion) as URLSessionTaskProtocol
+    }
+    
+    func download(with request: URLRequest,
+                  completionHandler: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
+        return self.downloadTask(with: request, completionHandler: completionHandler) as URLSessionTaskProtocol
     }
 
     func getTasks(completion: @escaping ([URLSessionTaskProtocol]) -> Void) {

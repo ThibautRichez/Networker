@@ -12,6 +12,7 @@ enum NetworkerError: Error {
     case remote(NetworkerRemoteError)
     case response(NetworkerResponseError)
     case noData
+    case download(NetworkerDownloadError)
     case decoder(Error)
     case encoder(Error)
     case unknown(Error)
@@ -64,4 +65,8 @@ enum NetworkerResponseError: Error {
     case invalid(URLResponse)
     case statusCode(HTTPURLResponse)
     case invalidMimeType(got: String?, allowed: [String])
+}
+
+enum NetworkerDownloadError: Error {
+    case fileURLMissing
 }

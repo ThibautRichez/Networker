@@ -36,7 +36,6 @@ extension Networker: NetworkDecodableRequester {
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         self.request(path: path) { result in
             let decodableResult = self.convertResult(result, to: type, with: decoder)
-            // already in callbackQueue.
             completion(decodableResult)
         }
     }
@@ -48,7 +47,6 @@ extension Networker: NetworkDecodableRequester {
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
         self.request(url: url) { result in
             let decodableResult = self.convertResult(result, to: type, with: decoder)
-            // already in callbackQueue.
             completion(decodableResult)
         }
     }
@@ -61,7 +59,6 @@ extension Networker: NetworkDecodableRequester {
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
         self.request(urlRequest: urlRequest) { result in
             let decodableResult = self.convertResult(result, to: type, with: decoder)
-            // already in callbackQueue.
             completion(decodableResult)
         }
     }

@@ -83,7 +83,7 @@ extension Networker: NetworkUploader {
             do {
                 try self.handleRemoteError(error)
                 let httpResponse = try self.getHTTPResponse(from: response)
-                let result = try self.getResult(with: data, response: httpResponse)
+                let result = self.getResult(with: data, response: httpResponse)
                 self.dispatch(completion: completion, with: .success(result))
             } catch let error as NetworkerError {
                 self.dispatch(completion: completion, with: .failure(error))
@@ -101,7 +101,7 @@ extension Networker: NetworkUploader {
 // MARK: - Helpers
 
 extension Networker {
-    private func getResult(with data: Data?, response: HTTPURLResponse) throws -> NetworkUploaderResult {
+    private func getResult(with data: Data?, response: HTTPURLResponse) -> NetworkUploaderResult {
         return .init(
             data: data,
             statusCode: response.statusCode,

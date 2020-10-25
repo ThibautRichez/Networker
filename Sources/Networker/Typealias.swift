@@ -16,6 +16,5 @@ typealias NetworkerProtocol = NetworkRequester & NetworkUploader & NetworkDownlo
 
 typealias NetworkDecodeCancellableRequester = NetworkDecodableRequester & NetworkCancellable
 typealias NetworkDecodeCancellableUploader = NetworkEncodableUploader & NetworkCancellable
-typealias NetworkDecodeCancellableDownloader = NetworkDecodableDownloader & NetworkCancellable
 
-typealias NetworkerCodableProtocol = NetworkDecodableRequester & NetworkEncodableUploader & NetworkDecodableDownloader & NetworkCancellable
+typealias NetworkerCodableProtocol = NetworkDecodableRequester & NetworkEncodableUploader & NetworkCancellable
