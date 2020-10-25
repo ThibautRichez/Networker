@@ -1,7 +1,5 @@
 import Foundation
 
-protocol NetworkEncodableUploader: NetworkConfigurable {}
-
 protocol NetworkDownloader: NetworkConfigurable {}
 protocol NetworkDecodableDownloader: NetworkConfigurable {}
 

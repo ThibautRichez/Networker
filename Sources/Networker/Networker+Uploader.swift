@@ -100,8 +100,8 @@ extension Networker: NetworkUploader {
 
 // MARK: - Helpers
 
-private extension Networker {
-    func getResult(with data: Data?, response: HTTPURLResponse) throws -> NetworkUploaderResult {
+extension Networker {
+    private func getResult(with data: Data?, response: HTTPURLResponse) throws -> NetworkUploaderResult {
         return .init(
             data: data,
             statusCode: response.statusCode,
