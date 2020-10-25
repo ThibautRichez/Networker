@@ -1,28 +1,5 @@
 import Foundation
 
-// 1 - set token -> append token to each non absolute url string passed
-// 2 - set baseURL -> append baseURL to each non absolute url string passed
-
-enum URLRequestType: String {
-    case get = "GET"
-    case post = "POST"
-    case put = "PUT"
-}
-
-enum MimeType: String {
-    case json = "application/json"
-    case text = "text/plain"
-    case html = "text/html"
-    case jpg = "image/jpeg"
-    case png = "image/png"
-}
-
-struct NetworkerResult {
-    var data: Data
-    var statusCode: Int
-    var headerFields: [AnyHashable : Any]
-}
-
 protocol NetworkConfigurable {
     mutating func setBaseURL(to url: String?)
     mutating func setToken(to token: String?)
@@ -45,40 +22,11 @@ protocol NetworkRequester: NetworkConfigurable {
                  completion: @escaping (Result<NetworkerResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 }
 
-protocol NetworkDecodableRequester: NetworkConfigurable {
-    @discardableResult
-    func request<T : Decodable>(type: T.Type,
-                                decoder: JSONDecoder,
-                                atPath path: String,
-                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
-}
-
 protocol NetworkUploader: NetworkConfigurable {}
-
-protocol NetworkEncodableUploader: NetworkConfigurable {}
 
 protocol NetworkDownloader: NetworkConfigurable {}
 
-protocol NetworkDecodableDownloader: NetworkConfigurable {}
-
-// cannot make typealias beacause they both conform to NetworkCancellable
 protocol NetworkerProtocol: NetworkRequester, NetworkUploader, NetworkDownloader, NetworkCancellable {}
-protocol NetworkerCodableProtocol: NetworkDecodableRequester, NetworkEncodableUploader, NetworkDecodableDownloader, NetworkCancellable {}
-
-private extension OperationQueue {
-    static func networker() -> OperationQueue {
-        let queue = OperationQueue()
-        queue.name = "networker.operations.default.queue"
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .userInitiated
-        return queue
-    }
-}
-
-struct NetworkerQueues {
-    var operations: OperationQueue = .networker()
-    var callback: DispatchQueue = .main
-}
 
 struct Networker {
     var session: URLSessionProtocol = URLSession.shared
@@ -182,71 +130,7 @@ extension Networker: NetworkerProtocol {
     }
 }
 
-// MARK: - NetworkerCodableProtocol
-
-extension Networker: NetworkerCodableProtocol {
-    func request<T: Decodable>(type: T.Type,
-                               decoder: JSONDecoder,
-                               atPath path: String,
-                               completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        self.request(path: path) { result in
-            let decodableResult = self.convertResult(result, to: type, with: decoder)
-            // already in callbackQueue.
-            completion(decodableResult)
-        }
-    }
-
-    @discardableResult
-    func request<T: Decodable>(type: T.Type,
-                               decoder: JSONDecoder,
-                               url: URL,
-                               completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        self.request(url: url) { result in
-            let decodableResult = self.convertResult(result, to: type, with: decoder)
-            // already in callbackQueue.
-            completion(decodableResult)
-        }
-    }
-
-
-    @discardableResult
-    func request<T: Decodable>(type: T.Type,
-                               decoder: JSONDecoder,
-                               urlRequest: URLRequest,
-                               completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        self.request(urlRequest: urlRequest) { result in
-            let decodableResult = self.convertResult(result, to: type, with: decoder)
-            // already in callbackQueue.
-            completion(decodableResult)
-        }
-    }
-}
-
-private extension Networker {
-    func decode<T: Decodable>(type: T.Type,
-                              from result: NetworkerResult,
-                              decoder: JSONDecoder) -> Result<T, NetworkerError> {
-        do {
-            let model = try decoder.decode(T.self, from: result.data)
-            return .success(model)
-        } catch {
-            return .failure(.decoder(error))
-        }
-
-    }
-
-    func convertResult<T: Decodable>(_ result: Result<NetworkerResult, NetworkerError>,
-                                     to type: T.Type,
-                                     with decoder: JSONDecoder) -> Result<T, NetworkerError> {
-        switch result {
-        case .success(let networkResult):
-            return self.decode(type: type, from: networkResult, decoder: decoder)
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
-}
-
+// MARK: - Helpers
 
 private extension Networker {
     var sessionConfiguration: NetworkerSessionConfiguration? {
