@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum MimeType: String {
+enum MimeType: String, CaseIterable {
     case json = "application/json"
     case text = "text/plain"
     case html = "text/html"

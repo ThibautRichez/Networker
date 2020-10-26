@@ -16,14 +16,14 @@ protocol NetworkDownloader: NetworkConfigurable {
     @discardableResult
     func download(path: String,
                   requestType: URLRequestType,
-                  cachePolicy: NetworkerCachePolicy,
+                  cachePolicy: NetworkerCachePolicy?,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
     func download(url: URL,
                   requestType: URLRequestType,
-                  cachePolicy: NetworkerCachePolicy,
+                  cachePolicy: NetworkerCachePolicy?,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
@@ -37,7 +37,7 @@ extension Networker: NetworkDownloader {
     @discardableResult
     func download(path: String,
                   requestType: URLRequestType,
-                  cachePolicy: NetworkerCachePolicy = .partial,
+                  cachePolicy: NetworkerCachePolicy? = .partial,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
@@ -61,7 +61,7 @@ extension Networker: NetworkDownloader {
     @discardableResult
     func download(url: URL,
                   requestType: URLRequestType,
-                  cachePolicy: NetworkerCachePolicy = .partial,
+                  cachePolicy: NetworkerCachePolicy? = .partial,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         let urlRequest = self.makeURLRequest(

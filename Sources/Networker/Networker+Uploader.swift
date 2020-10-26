@@ -34,14 +34,14 @@ protocol NetworkUploader: NetworkConfigurable {
     func upload(path: String,
                 type: NetworkUploaderType,
                 data: Data?,
-                cachePolicy: NetworkerCachePolicy,
+                cachePolicy: NetworkerCachePolicy?,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
     func upload(url: URL,
                 type: NetworkUploaderType,
                 data: Data?,
-                cachePolicy: NetworkerCachePolicy,
+                cachePolicy: NetworkerCachePolicy?,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
@@ -55,7 +55,7 @@ extension Networker: NetworkUploader {
     func upload(path: String,
                 type: NetworkUploaderType,
                 data: Data?,
-                cachePolicy: NetworkerCachePolicy = .partial,
+                cachePolicy: NetworkerCachePolicy? = .partial,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
@@ -79,7 +79,7 @@ extension Networker: NetworkUploader {
     func upload(url: URL,
                 type: NetworkUploaderType,
                 data: Data?,
-                cachePolicy: NetworkerCachePolicy = .partial,
+                cachePolicy: NetworkerCachePolicy? = .partial,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         let urlRequest = self.makeURLRequest(
             for: type.requestType,

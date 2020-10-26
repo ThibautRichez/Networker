@@ -13,7 +13,7 @@ protocol NetworkEncodableUploader: NetworkConfigurable {
                               type: NetworkUploaderType,
                               model: T?,
                               encoder: JSONEncoder,
-                              cachePolicy: NetworkerCachePolicy,
+                              cachePolicy: NetworkerCachePolicy?,
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
@@ -21,7 +21,7 @@ protocol NetworkEncodableUploader: NetworkConfigurable {
                               type: NetworkUploaderType,
                               model: T?,
                               encoder: JSONEncoder,
-                              cachePolicy: NetworkerCachePolicy,
+                              cachePolicy: NetworkerCachePolicy?,
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
@@ -36,7 +36,7 @@ extension Networker: NetworkEncodableUploader {
                    type: NetworkUploaderType,
                    model: T?,
                    encoder: JSONEncoder,
-                   cachePolicy: NetworkerCachePolicy = .partial,
+                   cachePolicy: NetworkerCachePolicy? = .partial,
                    completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let data: Data? = try encoder.encode(model)
@@ -57,7 +57,7 @@ extension Networker: NetworkEncodableUploader {
                               type: NetworkUploaderType,
                               model: T?,
                               encoder: JSONEncoder,
-                              cachePolicy: NetworkerCachePolicy = .partial,
+                              cachePolicy: NetworkerCachePolicy? = .partial,
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let data: Data? = try encoder.encode(model)
