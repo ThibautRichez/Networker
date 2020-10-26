@@ -16,12 +16,14 @@ protocol NetworkDownloader: NetworkConfigurable {
     @discardableResult
     func download(path: String,
                   requestType: URLRequestType,
+                  cachePolicy: NetworkerCachePolicy,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
     func download(url: URL,
                   requestType: URLRequestType,
+                  cachePolicy: NetworkerCachePolicy,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
@@ -35,6 +37,7 @@ extension Networker: NetworkDownloader {
     @discardableResult
     func download(path: String,
                   requestType: URLRequestType,
+                  cachePolicy: NetworkerCachePolicy = .partial,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
@@ -42,6 +45,7 @@ extension Networker: NetworkDownloader {
             return self.download(
                 url: uploadURL,
                 requestType: requestType,
+                cachePolicy: cachePolicy,
                 fileHandler: fileHandler,
                 completion: completion
             )
@@ -57,9 +61,14 @@ extension Networker: NetworkDownloader {
     @discardableResult
     func download(url: URL,
                   requestType: URLRequestType,
+                  cachePolicy: NetworkerCachePolicy = .partial,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        let urlRequest = self.makeURLRequest(for: requestType, with: url)
+        let urlRequest = self.makeURLRequest(
+            for: requestType,
+            cachePolicy: cachePolicy,
+            with: url
+        )
         return self.download(
             urlRequest: urlRequest,
             fileHandler: fileHandler,

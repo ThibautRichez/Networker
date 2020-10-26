@@ -12,12 +12,14 @@ protocol NetworkDecodableRequester: NetworkConfigurable {
     func request<T : Decodable>(type: T.Type,
                                 decoder: JSONDecoder,
                                 atPath path: String,
+                                cachePolicy: NetworkerCachePolicy,
                                 completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
     func request<T: Decodable>(type: T.Type,
                                decoder: JSONDecoder,
                                url: URL,
+                               cachePolicy: NetworkerCachePolicy,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 
     @discardableResult
@@ -33,8 +35,9 @@ extension Networker: NetworkDecodableRequester {
     func request<T: Decodable>(type: T.Type,
                                decoder: JSONDecoder,
                                atPath path: String,
+                               cachePolicy: NetworkerCachePolicy = .partial,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        self.request(path: path) { result in
+        self.request(path: path, cachePolicy: cachePolicy) { result in
             let decodableResult = self.convertResult(result, to: type, with: decoder)
             completion(decodableResult)
         }
@@ -44,8 +47,9 @@ extension Networker: NetworkDecodableRequester {
     func request<T: Decodable>(type: T.Type,
                                decoder: JSONDecoder,
                                url: URL,
+                               cachePolicy: NetworkerCachePolicy = .partial,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        self.request(url: url) { result in
+        self.request(url: url, cachePolicy: cachePolicy) { result in
             let decodableResult = self.convertResult(result, to: type, with: decoder)
             completion(decodableResult)
         }

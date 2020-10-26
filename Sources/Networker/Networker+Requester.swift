@@ -16,9 +16,11 @@ struct NetworkRequesterResult {
 protocol NetworkRequester: NetworkConfigurable {
     @discardableResult
     func request(path: String,
+                 cachePolicy: NetworkerCachePolicy,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
     @discardableResult
     func request(url: URL,
+                 cachePolicy: NetworkerCachePolicy,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol
     @discardableResult
     func request(urlRequest: URLRequest,
@@ -28,10 +30,15 @@ protocol NetworkRequester: NetworkConfigurable {
 extension Networker: NetworkRequester {
     @discardableResult
     func request(path: String,
+                 cachePolicy: NetworkerCachePolicy = .partial,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let requestURL = try self.makeURL(from: path)
-            return self.request(url: requestURL, completion: completion)
+            return self.request(
+                url: requestURL,
+                cachePolicy: cachePolicy,
+                completion: completion
+            )
         } catch let error as NetworkerError {
             self.dispatch(completion: completion, with: .failure(error))
             return nil
@@ -43,8 +50,9 @@ extension Networker: NetworkRequester {
 
     @discardableResult
     func request(url: URL,
+                 cachePolicy: NetworkerCachePolicy = .partial,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        let urlRequest = self.makeURLRequest(for: .get, with: url)
+        let urlRequest = self.makeURLRequest(for: .get, cachePolicy: cachePolicy, with: url)
         return self.request(urlRequest: urlRequest, completion: completion)
     }
 

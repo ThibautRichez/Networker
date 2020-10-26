@@ -34,12 +34,14 @@ protocol NetworkUploader: NetworkConfigurable {
     func upload(path: String,
                 type: NetworkUploaderType,
                 data: Data?,
+                cachePolicy: NetworkerCachePolicy,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
     func upload(url: URL,
                 type: NetworkUploaderType,
                 data: Data?,
+                cachePolicy: NetworkerCachePolicy,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
@@ -53,10 +55,17 @@ extension Networker: NetworkUploader {
     func upload(path: String,
                 type: NetworkUploaderType,
                 data: Data?,
+                cachePolicy: NetworkerCachePolicy = .partial,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
-            return self.upload(url: uploadURL, type: type, data: data, completion: completion)
+            return self.upload(
+                url: uploadURL,
+                type: type,
+                data: data,
+                cachePolicy: cachePolicy,
+                completion: completion
+            )
         } catch let error as NetworkerError {
             self.dispatch(completion: completion, with: .failure(error))
             return nil
@@ -70,8 +79,13 @@ extension Networker: NetworkUploader {
     func upload(url: URL,
                 type: NetworkUploaderType,
                 data: Data?,
+                cachePolicy: NetworkerCachePolicy = .partial,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        let urlRequest = self.makeURLRequest(for: type.requestType, with: url)
+        let urlRequest = self.makeURLRequest(
+            for: type.requestType,
+            cachePolicy: cachePolicy,
+            with: url
+        )
         return self.upload(urlRequest: urlRequest, data: data, completion: completion)
     }
 

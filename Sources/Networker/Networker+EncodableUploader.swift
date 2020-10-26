@@ -13,6 +13,7 @@ protocol NetworkEncodableUploader: NetworkConfigurable {
                               type: NetworkUploaderType,
                               model: T?,
                               encoder: JSONEncoder,
+                              cachePolicy: NetworkerCachePolicy,
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
@@ -20,6 +21,7 @@ protocol NetworkEncodableUploader: NetworkConfigurable {
                               type: NetworkUploaderType,
                               model: T?,
                               encoder: JSONEncoder,
+                              cachePolicy: NetworkerCachePolicy,
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
@@ -34,10 +36,17 @@ extension Networker: NetworkEncodableUploader {
                    type: NetworkUploaderType,
                    model: T?,
                    encoder: JSONEncoder,
+                   cachePolicy: NetworkerCachePolicy = .partial,
                    completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let data: Data? = try encoder.encode(model)
-            return self.upload(path: path, type: type, data: data, completion: completion)
+            return self.upload(
+                path: path,
+                type: type,
+                data: data,
+                cachePolicy: cachePolicy,
+                completion: completion
+            )
         } catch {
             self.dispatch(completion: completion, with: .failure(.encoder(error)))
             return nil
@@ -48,10 +57,17 @@ extension Networker: NetworkEncodableUploader {
                               type: NetworkUploaderType,
                               model: T?,
                               encoder: JSONEncoder,
+                              cachePolicy: NetworkerCachePolicy = .partial,
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let data: Data? = try encoder.encode(model)
-            return self.upload(url: url, type: type, data: data, completion: completion)
+            return self.upload(
+                url: url,
+                type: type,
+                data: data,
+                cachePolicy: cachePolicy,
+                completion: completion
+            )
         } catch {
             self.dispatch(completion: completion, with: .failure(.encoder(error)))
             return nil

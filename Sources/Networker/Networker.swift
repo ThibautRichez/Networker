@@ -31,9 +31,11 @@ extension Networker {
     }
 
     func makeURLRequest(for type: URLRequestType,
+                        cachePolicy: NetworkerCachePolicy = .partial,
                         with url: URL) -> URLRequest {
         var urlRequest = URLRequest(url: url, timeoutInterval: self.configuration.timeoutInterval)
         urlRequest.httpMethod = type.rawValue
+        urlRequest.cachePolicy = .init(networkerPolicy: cachePolicy)
         return urlRequest
     }
 
