@@ -34,12 +34,7 @@ protocol NetworkerSessionConfigurationValueReader {
 typealias NetworkerSessionConfigurationRepositoryProtocol = NetworkerSessionConfigurationReader & NetworkerSessionConfigurationValueReader & NetworkerSessionConfigurationWritter
 
 struct NetworkerSessionConfigurationRepository {
-    static let shared: NetworkerSessionConfigurationRepositoryProtocol = {
-        let defaults = UserDefaults(suiteName: "networker.session.configuration") ?? .standard
-        return NetworkerSessionConfigurationRepository(defaults: defaults)
-    }()
-
-    var defaults: UserDefaults = .standard
+    var defaults: UserDefaults = .networker()
 }
 
 // MARK: - NetworkerConfigurationRepository

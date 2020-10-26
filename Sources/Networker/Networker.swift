@@ -4,7 +4,7 @@ struct Networker {
     var session: URLSessionProtocol = URLSession.shared
     var configuration: NetworkerConfiguration = .init()
     var queues: NetworkerQueues = .init()
-    var sessionReader: NetworkerSessionConfigurationReader? = NetworkerSessionConfigurationRepository.shared
+    var sessionReader: NetworkerSessionConfigurationReader? = NetworkerSessionConfigurationRepository()
     var acceptableMimeTypes: Set<MimeType> = [.json]
 }
 
@@ -21,8 +21,11 @@ extension Networker {
 
         let baseURL = try self.makeBaseURL()
         // not using appendingPathComponent because path may contain
-        // non component information that will be formatted (query items
-        // for exemple)
+        // non component information that will be formatted otherwise
+        // (query items for exemple)
+        // TODO:
+        // Should check if it really bother URLSession that the url is
+        // is formatted like '.../getPage%3Fnamed=home' and not '.../getPage?named=home'
         guard let url = URL(string: baseURL.absoluteString + path) else {
             throw NetworkerError.path(.invalidRelativePath(path))
         }
