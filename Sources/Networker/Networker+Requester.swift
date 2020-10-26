@@ -52,8 +52,8 @@ extension Networker: NetworkRequester {
     func request(url: URL,
                  cachePolicy: NetworkerCachePolicy? = .partial,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        let urlRequest = self.makeURLRequest(for: .get, cachePolicy: cachePolicy, with: url)
-        return self.request(urlRequest: urlRequest, completion: completion)
+        let request = self.makeURLRequest(for: .get, cachePolicy: cachePolicy, with: url)
+        return self.request(urlRequest: request, completion: completion)
     }
 
     @discardableResult

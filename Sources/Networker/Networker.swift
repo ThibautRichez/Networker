@@ -26,6 +26,7 @@ extension Networker {
         // TODO:
         // Should check if it really bother URLSession that the url is
         // is formatted like '.../getPage%3Fnamed=home' and not '.../getPage?named=home'
+        // -> Add concat strategy and test if needed
         guard let url = URL(string: baseURL.absoluteString + path) else {
             throw NetworkerError.path(.invalidRelativePath(path))
         }

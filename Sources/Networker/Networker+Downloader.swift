@@ -64,16 +64,8 @@ extension Networker: NetworkDownloader {
                   cachePolicy: NetworkerCachePolicy? = .partial,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        let urlRequest = self.makeURLRequest(
-            for: requestType,
-            cachePolicy: cachePolicy,
-            with: url
-        )
-        return self.download(
-            urlRequest: urlRequest,
-            fileHandler: fileHandler,
-            completion: completion
-        )
+        let request = self.makeURLRequest(for: requestType, cachePolicy: cachePolicy, with: url)
+        return self.download(urlRequest: request, fileHandler: fileHandler, completion: completion)
     }
 
     @discardableResult
