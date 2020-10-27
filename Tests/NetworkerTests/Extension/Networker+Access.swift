@@ -37,7 +37,7 @@ extension Networker {
     func uploadError(path: String,
                      type: NetworkUploaderType = .post,
                      data: Data?,
-                     completion: @escaping (NetworkerError?) -> Void) -> URLSessionTaskProtocol? {
+                     completion: @escaping (NetworkerError?) -> Void) -> URLSessionTaskMock? {
         self.upload(path: path, type: type, data: data) { (result) in
             if case .failure(let sutError) = result {
                 completion(sutError)
@@ -51,7 +51,7 @@ extension Networker {
     func uploadSuccess(path: String,
                        type: NetworkUploaderType = .post,
                        data: Data?,
-                       completion: @escaping (NetworkUploaderResult?) -> Void) -> URLSessionTaskProtocol? {
+                       completion: @escaping (NetworkUploaderResult?) -> Void) -> URLSessionTaskMock? {
         self.upload(path: path, type: type, data: data) { (result) in
             completion(try? result.get())
         } as? URLSessionTaskMock

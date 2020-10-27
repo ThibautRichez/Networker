@@ -1,5 +1,5 @@
 //
-//  RequesterWithValidURLBehavior.swift
+//  UploaderWithValidURLBehavior.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/27/20.
@@ -10,23 +10,29 @@ import Quick
 import Nimble
 @testable import Networker
 
-struct RequesterWithValidURLBehaviorContext {
+struct UploaderWithValidURLBehaviorContext {
     var path: String
+    var type: NetworkUploaderType = .post
+    var data: Data?
     var expectedRequestURL: String
     var session: URLSessionMock
     var sut: Networker
 }
 
-final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehaviorContext> {
-    override class func spec(_ aContext: @escaping () -> RequesterWithValidURLBehaviorContext) {
+final class UploaderWithValidURLBehavior: Behavior<UploaderWithValidURLBehaviorContext> {
+    override class func spec(_ aContext: @escaping () -> UploaderWithValidURLBehaviorContext) {
         describe("GIVEN a valid url with any URLSession and Networker ") {
             var path: String!
+            var type: NetworkUploaderType = .post
+            var data: Data?
             var expectedRequestURL: String!
             var session: URLSessionMock!
             var sessionReturnTask: URLSessionTaskMock!
             var sut: Networker!
             beforeEach {
                 path = aContext().path
+                type = aContext().type
+                data = aContext().data
                 expectedRequestURL = aContext().expectedRequestURL
                 session = aContext().session
                 sessionReturnTask = URLSessionTaskMock()
@@ -36,15 +42,17 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
 
             describe("GIVEN a session with an empty response") {
                 beforeEach {
-                    session.requestCompletion = { completion in
+                    session.uploadCompletion = { completion in
                         completion(nil, nil, nil)
                     }
                 }
 
-                itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
                     .init(
                         expectedError: .response(.empty),
                         path: path,
+                        type: type,
+                        data: data,
                         expectedRequestURL: expectedRequestURL,
                         expectedErrorExecutorReturn: sessionReturnTask,
                         session: session,
@@ -58,15 +66,17 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                 var requestError: Error!
                 beforeEach {
                     requestError = NSError(domain: "error.test", code: 10, userInfo: nil)
-                    session.requestCompletion = { completion in
+                    session.uploadCompletion = { completion in
                         completion(nil, nil, requestError)
                     }
                 }
 
-                itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
                     .init(
                         expectedError: .remote(.unknown(requestError)),
                         path: path,
+                        type: type,
+                        data: data,
                         expectedRequestURL: expectedRequestURL,
                         expectedErrorExecutorReturn: sessionReturnTask,
                         session: session,
@@ -82,15 +92,17 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                     var invalidReponse: URLResponse!
                     beforeEach {
                         invalidReponse = .init()
-                        session.requestCompletion = { completion in
+                        session.uploadCompletion = { completion in
                             completion(nil, invalidReponse, nil)
                         }
                     }
 
-                    itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                    itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
                         .init(
                             expectedError: .response(.invalid(invalidReponse)),
                             path: path,
+                            type: type,
+                            data: data,
                             expectedRequestURL: expectedRequestURL,
                             expectedErrorExecutorReturn: sessionReturnTask,
                             session: session,
@@ -104,17 +116,19 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                     var invalidStatusReponse: HTTPURLResponse!
                     beforeEach {
                         invalidStatusReponse = HTTPURLResponseStub(url: path, statusCode: 400)
-                        session.requestCompletion = { completion in
+                        session.uploadCompletion = { completion in
                             completion(nil, invalidStatusReponse, nil)
                         }
                     }
 
-                    itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                    itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
                         .init(
                             expectedError: .response(
                                 .statusCode(invalidStatusReponse)
                             ),
                             path: path,
+                            type: type,
+                            data: data,
                             expectedRequestURL: expectedRequestURL,
                             expectedErrorExecutorReturn: sessionReturnTask,
                             session: session,
@@ -134,12 +148,12 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                             statusCode: 200,
                             mimeType: invalidMimeType
                         )
-                        session.requestCompletion = { completion in
+                        session.uploadCompletion = { completion in
                             completion(nil, invalidMimeTypeReponse, nil)
                         }
                     }
 
-                    itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                    itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
                         .init(
                             expectedError: .response(
                                 .invalidMimeType(
@@ -148,6 +162,8 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                                 )
                             ),
                             path: path,
+                            type: type,
+                            data: data,
                             expectedRequestURL: expectedRequestURL,
                             expectedErrorExecutorReturn: sessionReturnTask,
                             session: session,
@@ -171,17 +187,23 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
 
                     describe("GIVEN a valid response with no data") {
                         beforeEach {
-                            session.requestCompletion = { completion in
+                            session.uploadCompletion = { completion in
                                 completion(nil, validResponse, nil)
                             }
                         }
 
-                        itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                        itBehavesLike(UploaderWithValidURLSessionSuccessBehavior.self) {
                             .init(
-                                expectedError: .response(.empty),
+                                expectedResult: .init(
+                                    data: nil,
+                                    statusCode: validResponse.statusCode,
+                                    headerFields: validResponse.allHeaderFields
+                                ),
                                 path: path,
+                                type: type,
+                                data: data,
                                 expectedRequestURL: expectedRequestURL,
-                                expectedErrorExecutorReturn: sessionReturnTask,
+                                expectedReturnTask: sessionReturnTask,
                                 session: session,
                                 sut: sut
                             )
@@ -193,12 +215,12 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                         var data: Data!
                         beforeEach {
                             data = Data([1])
-                            session.requestCompletion = { completion in
+                            session.uploadCompletion = { completion in
                                 completion(data, validResponse, nil)
                             }
                         }
 
-                        itBehavesLike(RequesterWithValidURLSessionSuccessBehavior.self) {
+                        itBehavesLike(UploaderWithValidURLSessionSuccessBehavior.self) {
                             .init(
                                 expectedResult: .init(
                                     data: data,
@@ -206,12 +228,15 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                                     headerFields: validResponse.allHeaderFields
                                 ),
                                 path: path,
+                                type: type,
+                                data: data,
                                 expectedRequestURL: expectedRequestURL,
-                                expectedErrorExecutorReturn: sessionReturnTask,
+                                expectedReturnTask: sessionReturnTask,
                                 session: session,
                                 sut: sut
                             )
                         }
+
                     }
                 }
             }

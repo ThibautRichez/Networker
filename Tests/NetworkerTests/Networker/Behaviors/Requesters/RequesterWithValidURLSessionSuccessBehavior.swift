@@ -1,5 +1,5 @@
 //
-//  RequesterWithValidURLSessionError.swift
+//  RequesterWithValidURLSessionSuccessBehavior.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/27/20.
@@ -10,51 +10,51 @@ import Quick
 import Nimble
 @testable import Networker
 
-struct AnyRequesterErrorWithValidURLContext {
-    var expectedError: NetworkerError
+struct RequesterWithValidURLSessionSuccessBehaviorContext {
+    var expectedResult: NetworkRequesterResult
     var path: String
     var expectedRequestURL: String
     var expectedErrorExecutorReturn: URLSessionTaskMock
     var session: URLSessionMock
-    var errorExecutor: ((String, @escaping (NetworkerError?) -> Void) ->URLSessionTaskMock?)
     var sut: Networker
 }
 
-final class RequesterWithValidURLSessionError: Behavior<AnyRequesterErrorWithValidURLContext> {
-    override class func spec(_ aContext: @escaping () -> AnyRequesterErrorWithValidURLContext) {
+final class RequesterWithValidURLSessionSuccessBehavior: Behavior<RequesterWithValidURLSessionSuccessBehaviorContext> {
+    override class func spec(_ aContext: @escaping () -> RequesterWithValidURLSessionSuccessBehaviorContext) {
         describe("GIVEN a valid path and a context that produce an error") {
+            var expectedResult: NetworkRequesterResult!
             var path: String!
             var expectedRequestURL: String!
-            var expectedError: NetworkerError!
             var expectedErrorExecutorReturn: URLSessionTaskMock!
             var session: URLSessionMock!
-            var errorExecutor: ((String, @escaping (NetworkerError?) -> Void) ->URLSessionTaskMock?)!
             var sut: Networker!
             beforeEach {
+                expectedResult = aContext().expectedResult
                 path = aContext().path
                 expectedRequestURL = aContext().expectedRequestURL
-                expectedError = aContext().expectedError
                 expectedErrorExecutorReturn = aContext().expectedErrorExecutorReturn
                 session = aContext().session
-                errorExecutor = aContext().errorExecutor
                 sut = aContext().sut
             }
 
-            context("WHEN we execute the method") {
+            context("WHEN we call request") {
                 var task: URLSessionTaskMock?
-                var error: NetworkerError?
+                var result: NetworkRequesterResult?
 
                 beforeEach {
                     waitUntil { (done) in
-                        task = errorExecutor(path, { executorError in
-                            error = executorError
+                        task = sut.requestSuccess(path: path) { (sutResult) in
+                            result = sutResult
                             done()
-                        })
+                        }
                     }
                 }
 
-                it("THEN the session request should be called and we should have the expected error") {
-                    expect(error).to(matchError(expectedError))
+                it("THEN it should return a valid result") {
+                    expect(result).toNot(beNil())
+                    expect(result?.data).to(equal(expectedResult.data))
+                    expect(result?.statusCode).to(equal(expectedResult.statusCode))
+                    expect(result?.headerFields.keys).to(equal(expectedResult.headerFields.keys))
 
                     expect(task).to(be(expectedErrorExecutorReturn))
                     expect(task?.resumeCallCount).to(equal(1))
