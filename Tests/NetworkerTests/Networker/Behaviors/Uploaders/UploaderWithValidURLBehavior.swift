@@ -42,7 +42,7 @@ final class UploaderWithValidURLBehavior: Behavior<UploaderWithValidURLBehaviorC
 
             describe("GIVEN a session with an empty response") {
                 beforeEach {
-                    session.uploadCompletion = { completion in
+                    session.uploadResultCompletion = { completion in
                         completion(nil, nil, nil)
                     }
                 }
@@ -66,7 +66,7 @@ final class UploaderWithValidURLBehavior: Behavior<UploaderWithValidURLBehaviorC
                 var requestError: Error!
                 beforeEach {
                     requestError = NSError(domain: "error.test", code: 10, userInfo: nil)
-                    session.uploadCompletion = { completion in
+                    session.uploadResultCompletion = { completion in
                         completion(nil, nil, requestError)
                     }
                 }
@@ -92,7 +92,7 @@ final class UploaderWithValidURLBehavior: Behavior<UploaderWithValidURLBehaviorC
                     var invalidReponse: URLResponse!
                     beforeEach {
                         invalidReponse = .init()
-                        session.uploadCompletion = { completion in
+                        session.uploadResultCompletion = { completion in
                             completion(nil, invalidReponse, nil)
                         }
                     }
@@ -116,7 +116,7 @@ final class UploaderWithValidURLBehavior: Behavior<UploaderWithValidURLBehaviorC
                     var invalidStatusReponse: HTTPURLResponse!
                     beforeEach {
                         invalidStatusReponse = HTTPURLResponseStub(url: path, statusCode: 400)
-                        session.uploadCompletion = { completion in
+                        session.uploadResultCompletion = { completion in
                             completion(nil, invalidStatusReponse, nil)
                         }
                     }
@@ -148,7 +148,7 @@ final class UploaderWithValidURLBehavior: Behavior<UploaderWithValidURLBehaviorC
                             statusCode: 200,
                             mimeType: invalidMimeType
                         )
-                        session.uploadCompletion = { completion in
+                        session.uploadResultCompletion = { completion in
                             completion(nil, invalidMimeTypeReponse, nil)
                         }
                     }
@@ -187,7 +187,7 @@ final class UploaderWithValidURLBehavior: Behavior<UploaderWithValidURLBehaviorC
 
                     describe("GIVEN a valid response with no data") {
                         beforeEach {
-                            session.uploadCompletion = { completion in
+                            session.uploadResultCompletion = { completion in
                                 completion(nil, validResponse, nil)
                             }
                         }
@@ -215,7 +215,7 @@ final class UploaderWithValidURLBehavior: Behavior<UploaderWithValidURLBehaviorC
                         var data: Data!
                         beforeEach {
                             data = Data([1])
-                            session.uploadCompletion = { completion in
+                            session.uploadResultCompletion = { completion in
                                 completion(data, validResponse, nil)
                             }
                         }

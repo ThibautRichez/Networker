@@ -36,7 +36,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
 
             describe("GIVEN a session with an empty response") {
                 beforeEach {
-                    session.requestCompletion = { completion in
+                    session.requestResultCompletion = { completion in
                         completion(nil, nil, nil)
                     }
                 }
@@ -58,7 +58,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                 var requestError: Error!
                 beforeEach {
                     requestError = NSError(domain: "error.test", code: 10, userInfo: nil)
-                    session.requestCompletion = { completion in
+                    session.requestResultCompletion = { completion in
                         completion(nil, nil, requestError)
                     }
                 }
@@ -82,7 +82,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                     var invalidReponse: URLResponse!
                     beforeEach {
                         invalidReponse = .init()
-                        session.requestCompletion = { completion in
+                        session.requestResultCompletion = { completion in
                             completion(nil, invalidReponse, nil)
                         }
                     }
@@ -104,7 +104,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                     var invalidStatusReponse: HTTPURLResponse!
                     beforeEach {
                         invalidStatusReponse = HTTPURLResponseStub(url: path, statusCode: 400)
-                        session.requestCompletion = { completion in
+                        session.requestResultCompletion = { completion in
                             completion(nil, invalidStatusReponse, nil)
                         }
                     }
@@ -134,7 +134,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                             statusCode: 200,
                             mimeType: invalidMimeType
                         )
-                        session.requestCompletion = { completion in
+                        session.requestResultCompletion = { completion in
                             completion(nil, invalidMimeTypeReponse, nil)
                         }
                     }
@@ -171,7 +171,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
 
                     describe("GIVEN a valid response with no data") {
                         beforeEach {
-                            session.requestCompletion = { completion in
+                            session.requestResultCompletion = { completion in
                                 completion(nil, validResponse, nil)
                             }
                         }
@@ -193,7 +193,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                         var data: Data!
                         beforeEach {
                             data = Data([1])
-                            session.requestCompletion = { completion in
+                            session.requestResultCompletion = { completion in
                                 completion(data, validResponse, nil)
                             }
                         }

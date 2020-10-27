@@ -90,7 +90,10 @@ extension Networker: NetworkUploader {
     func upload(urlRequest: URLRequest,
                 data: Data?,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        let task = self.session.upload(with: urlRequest, from: data) { (data, response, error) in
+        let operation = NetworkerOperation(
+            request: urlRequest,
+            data: data,
+            executor: self.session.upload(with:from:completion:)) { (data, response, error) in
             do {
                 try self.handleRemoteError(error)
                 let httpResponse = try self.getHTTPResponse(from: response)
@@ -103,9 +106,8 @@ extension Networker: NetworkUploader {
             }
         }
 
-        self.addTask(task)
-
-        return task
+        self.queues.operations.addOperation(operation)
+        return operation.task
     }
 }
 

@@ -74,12 +74,6 @@ extension Networker {
             throw NetworkerError.remote(NetworkerRemoteError(error))
         }
     }
-
-    func addTask(_ task: URLSessionTaskProtocol) {
-        self.queues.operations.addOperation {
-            task.resume()
-        }
-    }
 }
 
 extension Networker {

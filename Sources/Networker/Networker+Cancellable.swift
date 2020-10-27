@@ -10,6 +10,7 @@ import Foundation
 protocol NetworkCancellable {
     func cancelTask(with identifier: Int, completion: (() -> Void)?)
     func cancelTasks(completion: (() -> Void)?)
+    func cancelAllOperations()
 }
 
 extension Networker: NetworkCancellable {
@@ -26,5 +27,9 @@ extension Networker: NetworkCancellable {
             tasks.forEach { $0.cancel() }
             completion?()
         }
+    }
+
+    func cancelAllOperations() {
+        self.queues.operations.cancelAllOperations()
     }
 }

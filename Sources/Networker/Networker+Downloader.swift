@@ -72,7 +72,9 @@ extension Networker: NetworkDownloader {
     func download(urlRequest: URLRequest,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        let task = self.session.download(with: urlRequest) { (fileURL, response, error) in
+        let operation = NetworkerOperation(
+            request: urlRequest,
+            executor: self.session.download(with:completion:)) { (fileURL, response, error) in
             do {
                 try self.handleRemoteError(error)
                 try self.executeFilehandler(fileURL: fileURL, fileHandler: fileHandler)
@@ -87,9 +89,8 @@ extension Networker: NetworkDownloader {
             }
         }
 
-        self.addTask(task)
-
-        return task
+        self.queues.operations.addOperation(operation)
+        return operation.task
     }
 }
 

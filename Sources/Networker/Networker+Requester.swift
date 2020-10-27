@@ -59,7 +59,9 @@ extension Networker: NetworkRequester {
     @discardableResult
     func request(urlRequest: URLRequest,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        let task = self.session.request(with: urlRequest) { (data, response, error) in
+        let operation = NetworkerOperation(
+            request: urlRequest,
+            executor: self.session.request(with:completion:)) { (data, response, error) in
             do {
                 try self.handleRemoteError(error)
                 let httpResponse = try self.getHTTPResponse(from: response)
@@ -72,9 +74,8 @@ extension Networker: NetworkRequester {
             }
         }
 
-        self.addTask(task)
-
-        return task
+        self.queues.operations.addOperation(operation)
+        return operation.task
     }
 }
 
