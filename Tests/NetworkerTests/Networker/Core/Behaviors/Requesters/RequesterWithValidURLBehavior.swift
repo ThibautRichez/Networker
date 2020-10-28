@@ -14,6 +14,7 @@ struct RequesterWithValidURLBehaviorContext {
     var path: String
     var expectedRequestURL: String
     var session: URLSessionMock
+    var queues: NetworkerQueuesMock
     var sut: Networker
 }
 
@@ -23,12 +24,14 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
             var path: String!
             var expectedRequestURL: String!
             var session: URLSessionMock!
+            var queues: NetworkerQueuesMock!
             var sessionReturnTask: URLSessionTaskMock!
             var sut: Networker!
             beforeEach {
                 path = aContext().path
                 expectedRequestURL = aContext().expectedRequestURL
                 session = aContext().session
+                queues = aContext().queues
                 sessionReturnTask = URLSessionTaskMock()
                 session.requestResult = { sessionReturnTask }
                 sut = aContext().sut
@@ -48,6 +51,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                         expectedRequestURL: expectedRequestURL,
                         expectedErrorExecutorReturn: sessionReturnTask,
                         session: session,
+                        queues: queues,
                         sut: sut
                     )
                 }
@@ -70,6 +74,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                         expectedRequestURL: expectedRequestURL,
                         expectedErrorExecutorReturn: sessionReturnTask,
                         session: session,
+                        queues: queues,
                         sut: sut
                     )
                 }
@@ -94,6 +99,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                             expectedRequestURL: expectedRequestURL,
                             expectedErrorExecutorReturn: sessionReturnTask,
                             session: session,
+                            queues: queues,
                             sut: sut
                         )
                     }
@@ -118,6 +124,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                             expectedRequestURL: expectedRequestURL,
                             expectedErrorExecutorReturn: sessionReturnTask,
                             session: session,
+                            queues: queues,
                             sut: sut
                         )
                     }
@@ -151,6 +158,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                             expectedRequestURL: expectedRequestURL,
                             expectedErrorExecutorReturn: sessionReturnTask,
                             session: session,
+                            queues: queues,
                             sut: sut
                         )
                     }
@@ -183,6 +191,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                                 expectedRequestURL: expectedRequestURL,
                                 expectedErrorExecutorReturn: sessionReturnTask,
                                 session: session,
+                                queues: queues,
                                 sut: sut
                             )
                         }
@@ -209,6 +218,7 @@ final class RequesterWithValidURLBehavior: Behavior<RequesterWithValidURLBehavio
                                 expectedRequestURL: expectedRequestURL,
                                 expectedErrorExecutorReturn: sessionReturnTask,
                                 session: session,
+                                queues: queues,
                                 sut: sut
                             )
                         }

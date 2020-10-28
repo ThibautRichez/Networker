@@ -16,6 +16,7 @@ struct RequesterWithValidURLSessionSuccessBehaviorContext {
     var expectedRequestURL: String
     var expectedErrorExecutorReturn: URLSessionTaskMock
     var session: URLSessionMock
+    var queues: NetworkerQueuesMock
     var sut: Networker
 }
 
@@ -27,6 +28,7 @@ final class RequesterWithValidURLSessionSuccessBehavior: Behavior<RequesterWithV
             var expectedRequestURL: String!
             var expectedErrorExecutorReturn: URLSessionTaskMock!
             var session: URLSessionMock!
+            var queues: NetworkerQueuesMock!
             var sut: Networker!
             beforeEach {
                 expectedResult = aContext().expectedResult
@@ -34,6 +36,7 @@ final class RequesterWithValidURLSessionSuccessBehavior: Behavior<RequesterWithV
                 expectedRequestURL = aContext().expectedRequestURL
                 expectedErrorExecutorReturn = aContext().expectedErrorExecutorReturn
                 session = aContext().session
+                queues = aContext().queues
                 sut = aContext().sut
             }
 
@@ -71,6 +74,10 @@ final class RequesterWithValidURLSessionSuccessBehavior: Behavior<RequesterWithV
                     expect(session.didCallUpload).to(beFalse())
                     expect(session.didCallDownload).to(beFalse())
                     expect(session.didCallGetTasks).to(beFalse())
+
+                    expect(queues.asyncCallbackCallCount).to(equal(1))
+                    expect(queues.addOperationCallCount).to(equal(1))
+                    expect(queues.didCallCancelAllOperations).to(beFalse())
                 }
             }
         }

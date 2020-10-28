@@ -5,7 +5,7 @@ import Nimble
 
 final class NetworkerCancellableTests: QuickSpec {
     override func spec() {
-        describe("GIVEN an URLSession with running task and a mock queues") {
+        describe("GIVEN an URLSession with running task and a NetworkerQueues mock") {
             var task: URLSessionTaskMock!
             var sessionTasks: [URLSessionTaskMock]!
 

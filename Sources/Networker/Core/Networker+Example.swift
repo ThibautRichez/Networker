@@ -25,7 +25,7 @@ fileprivate extension Networker {
         )
 
         let operationQueue = OperationQueue()
-        operationQueue.name = "networker.operations.default.queue"
+        operationQueue.name = "networker.operations.utility.queue"
         operationQueue.maxConcurrentOperationCount = 1
         operationQueue.qualityOfService = .utility
         let queues = NetworkerQueues(

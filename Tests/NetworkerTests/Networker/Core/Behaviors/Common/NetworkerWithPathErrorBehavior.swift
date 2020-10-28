@@ -14,6 +14,7 @@ struct NetworkerWithPathErrorBehaviorContext {
     var path: String
     var expectedError: NetworkerError
     var session: URLSessionMock
+    var queues: NetworkerQueuesMock
     var errorExecutor: ((String, @escaping (NetworkerError?) -> Void) ->URLSessionTaskMock?)
 }
 
@@ -23,11 +24,13 @@ final class NetworkerWithPathErrorBehavior: Behavior<NetworkerWithPathErrorBehav
             var path: String!
             var expectedError: NetworkerError!
             var session: URLSessionMock!
+            var queues: NetworkerQueuesMock!
             var errorExecutor: ((String, @escaping (NetworkerError?) -> Void) ->URLSessionTaskMock?)!
             beforeEach {
                 path = aContext().path
                 expectedError = aContext().expectedError
                 session = aContext().session
+                queues = aContext().queues
                 errorExecutor = aContext().errorExecutor
             }
 
@@ -53,6 +56,10 @@ final class NetworkerWithPathErrorBehavior: Behavior<NetworkerWithPathErrorBehav
                     expect(session.didCallRequest).to(beFalse())
                     expect(session.didCallDownload).to(beFalse())
                     expect(session.didCallGetTasks).to(beFalse())
+
+                    expect(queues.asyncCallbackCallCount).to(equal(1))
+                    expect(queues.didCallAddOperation).to(beFalse())
+                    expect(queues.didCallCancelAllOperations).to(beFalse())
                 }
             }
         }

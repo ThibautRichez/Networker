@@ -12,14 +12,20 @@ import Nimble
 
 final class NetworkRequesterTests: QuickSpec {
     override func spec() {
-        describe("GIVEN a URLSession mock and a SessionConfigurationReader") {
+        describe("GIVEN a URLSession mock, a SessionConfigurationReader and a NetworkerQueues mock") {
             var session: URLSessionMock!
+            var queues: NetworkerQueuesMock!
             var sessionReader: NetworkerSessionConfigurationReaderMock!
             var sut: Networker!
             beforeEach {
                 session = .init()
                 sessionReader = .init()
-                sut = .init(session: session, sessionReader: sessionReader)
+                queues = .init()
+                sut = .init(
+                    session: session,
+                    queues: queues,
+                    sessionReader: sessionReader
+                )
             }
 
             describe("GIVEN a absolute path") {
@@ -34,6 +40,7 @@ final class NetworkRequesterTests: QuickSpec {
                                 .invalidAbsolutePath(invalidAbsolutePath)
                             ),
                             session: session,
+                            queues: queues,
                             errorExecutor: sut.requestError(path:completion:)
                         )
                     }
@@ -48,6 +55,7 @@ final class NetworkRequesterTests: QuickSpec {
                             path: validAbsoluteURL,
                             expectedRequestURL: validAbsoluteURL,
                             session: session,
+                            queues: queues,
                             sut: sut
                         )
                     }
@@ -71,6 +79,7 @@ final class NetworkRequesterTests: QuickSpec {
                                 .invalidRelativePath(invalidRelativePath)
                             ),
                             session: session,
+                            queues: queues,
                             errorExecutor: sut.requestError(path:completion:)
                         )
                     }
@@ -95,6 +104,7 @@ final class NetworkRequesterTests: QuickSpec {
                                     path: relativePath,
                                     expectedError: .path(.baseURLMissing),
                                     session: session,
+                                    queues: queues,
                                     errorExecutor: sut.requestError(path:completion:)
                                 )
                             }
@@ -114,6 +124,7 @@ final class NetworkRequesterTests: QuickSpec {
                                         .invalidBaseURL(invalidBaseURL)
                                     ),
                                     session: session,
+                                    queues: queues,
                                     errorExecutor: sut.requestError(path:completion:)
                                 )
                             }
@@ -135,6 +146,7 @@ final class NetworkRequesterTests: QuickSpec {
                                         path: relativePath,
                                         expectedRequestURL: expectResultURL,
                                         session: session,
+                                        queues: queues,
                                         sut: sut
                                     )
                                 }
@@ -155,6 +167,7 @@ final class NetworkRequesterTests: QuickSpec {
                                         path: relativePath,
                                         expectedRequestURL: expectResultURL,
                                         session: session,
+                                        queues: queues,
                                         sut: sut
                                     )
                                 }
