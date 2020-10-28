@@ -1,5 +1,5 @@
 //
-//  NetworkRequesterTests.swift
+//  NetworkerTests.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/25/20.
@@ -10,7 +10,7 @@ import Quick
 import Nimble
 @testable import Networker
 
-final class NetworkRequesterTests: QuickSpec {
+final class NetworkerTests: QuickSpec {
     override func spec() {
         describe("GIVEN a URLSession mock, a SessionConfigurationReader and a NetworkerQueues mock") {
             var session: URLSessionMock!
@@ -41,7 +41,7 @@ final class NetworkRequesterTests: QuickSpec {
                             ),
                             session: session,
                             queues: queues,
-                            errorExecutor: sut.requestError(path:completion:)
+                            networker: sut
                         )
                     }
 
@@ -50,7 +50,7 @@ final class NetworkRequesterTests: QuickSpec {
                 describe("GIVEN a valid absolute path") {
                     let validAbsoluteURL = "https://testing.com/"
 
-                    itBehavesLike(RequesterWithValidURLBehavior.self) {
+                    itBehavesLike(NetworkerWithValidURLBehavior.self) {
                         .init(
                             path: validAbsoluteURL,
                             expectedRequestURL: validAbsoluteURL,
@@ -80,7 +80,7 @@ final class NetworkRequesterTests: QuickSpec {
                             ),
                             session: session,
                             queues: queues,
-                            errorExecutor: sut.requestError(path:completion:)
+                            networker: sut
                         )
                     }
 
@@ -105,7 +105,7 @@ final class NetworkRequesterTests: QuickSpec {
                                     expectedError: .path(.baseURLMissing),
                                     session: session,
                                     queues: queues,
-                                    errorExecutor: sut.requestError(path:completion:)
+                                    networker: sut
                                 )
                             }
 
@@ -125,7 +125,7 @@ final class NetworkRequesterTests: QuickSpec {
                                     ),
                                     session: session,
                                     queues: queues,
-                                    errorExecutor: sut.requestError(path:completion:)
+                                    networker: sut
                                 )
                             }
                         }
@@ -141,7 +141,7 @@ final class NetworkRequesterTests: QuickSpec {
                                     }
                                 }
 
-                                itBehavesLike(RequesterWithValidURLBehavior.self) {
+                                itBehavesLike(NetworkerWithValidURLBehavior.self) {
                                     .init(
                                         path: relativePath,
                                         expectedRequestURL: expectResultURL,
@@ -162,7 +162,7 @@ final class NetworkRequesterTests: QuickSpec {
                                     }
                                 }
 
-                                itBehavesLike(RequesterWithValidURLBehavior.self) {
+                                itBehavesLike(NetworkerWithValidURLBehavior.self) {
                                     .init(
                                         path: relativePath,
                                         expectedRequestURL: expectResultURL,

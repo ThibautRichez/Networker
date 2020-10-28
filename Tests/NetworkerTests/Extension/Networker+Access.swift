@@ -8,6 +8,11 @@
 import Foundation
 @testable import Networker
 
+// todo, remove current implem -> add extension var error: Error {}
+extension Swift.Result {
+    
+}
+
 // MARK: - Request
 
 extension Networker {
@@ -36,7 +41,7 @@ extension Networker {
 extension Networker {
     func uploadError(path: String,
                      type: NetworkUploaderType = .post,
-                     data: Data?,
+                     data: Data? = nil,
                      completion: @escaping (NetworkerError?) -> Void) -> URLSessionTaskMock? {
         self.upload(path: path, type: type, data: data) { (result) in
             if case .failure(let sutError) = result {
@@ -55,5 +60,41 @@ extension Networker {
         self.upload(path: path, type: type, data: data) { (result) in
             completion(try? result.get())
         } as? URLSessionTaskMock
+    }
+}
+
+// MARK: - Download
+
+extension Networker {
+    func downloadError(path: String,
+                       requestType: URLRequestType = .post,
+                       fileHandler: ((URL) -> Void)? = nil,
+                       completion: @escaping (NetworkerError?) -> Void) -> URLSessionTaskMock? {
+        self.download(
+            path: path,
+            requestType: requestType,
+            fileHandler: fileHandler,
+            completion:  { result in
+                if case .failure(let sutError) = result {
+                    completion(sutError)
+                    return
+                }
+
+                completion(nil)
+            }) as? URLSessionTaskMock
+    }
+
+    func downloadSuccess(path: String,
+                         requestType: URLRequestType = .post,
+                         fileHandler: ((URL) -> Void)? = nil,
+                         completion: @escaping (NetworkDownloaderResult?) -> Void) -> URLSessionTaskMock? {
+        self.download(
+            path: path,
+            requestType: requestType,
+            fileHandler: fileHandler,
+            completion: { (result) in
+                completion(try? result.get())
+            }
+        ) as? URLSessionTaskMock
     }
 }

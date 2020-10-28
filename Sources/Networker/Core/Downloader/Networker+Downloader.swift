@@ -77,9 +77,8 @@ extension Networker: NetworkDownloader {
             executor: self.session.download(with:completion:)) { (fileURL, response, error) in
             do {
                 try self.handleRemoteError(error)
-                try self.executeFilehandler(fileURL: fileURL, fileHandler: fileHandler)
-
                 let httpResponse = try self.getHTTPResponse(from: response)
+                try self.executeFilehandler(fileURL: fileURL, fileHandler: fileHandler)
                 let result = self.getResult(response: httpResponse)
                 self.dispatch(completion: completion, with: .success(result))
             } catch let error as NetworkerError {

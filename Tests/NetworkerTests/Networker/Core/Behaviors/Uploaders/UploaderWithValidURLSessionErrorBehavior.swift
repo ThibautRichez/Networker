@@ -16,8 +16,9 @@ struct UploaderWithValidURLSessionErrorBehaviorContext {
     var type: NetworkUploaderType = .post
     var data: Data?
     var expectedRequestURL: String
-    var expectedErrorExecutorReturn: URLSessionTaskMock
+    var expectedReturnTask: URLSessionTaskMock
     var session: URLSessionMock
+    var queues: NetworkerQueuesMock
     var sut: Networker
 }
 
@@ -31,6 +32,7 @@ final class UploaderWithValidURLSessionErrorBehavior: Behavior<UploaderWithValid
             var expectedRequestURL: String!
             var expectedErrorExecutorReturn: URLSessionTaskMock!
             var session: URLSessionMock!
+            var queues: NetworkerQueuesMock!
             var sut: Networker!
             beforeEach {
                 expectedError = aContext().expectedError
@@ -38,8 +40,9 @@ final class UploaderWithValidURLSessionErrorBehavior: Behavior<UploaderWithValid
                 type = aContext().type
                 data = aContext().data
                 expectedRequestURL = aContext().expectedRequestURL
-                expectedErrorExecutorReturn = aContext().expectedErrorExecutorReturn
+                expectedErrorExecutorReturn = aContext().expectedReturnTask
                 session = aContext().session
+                queues = aContext().queues
                 sut = aContext().sut
             }
 
@@ -68,13 +71,17 @@ final class UploaderWithValidURLSessionErrorBehavior: Behavior<UploaderWithValid
                     let requestURL = try! sut.makeURL(from: path)
                     expect(requestURL).to(equal(URL(string: expectedRequestURL)))
                     expect(session.uploadArguments.first?.request).to(
-                        equal(sut.makeURLRequest(for: .get, with: requestURL))
+                        equal(sut.makeURLRequest(for: type.requestType, with: requestURL))
                     )
                     expect(session.uploadArguments.first?.data).to(equal(data))
 
                     expect(session.didCallRequest).to(beFalse())
                     expect(session.didCallDownload).to(beFalse())
                     expect(session.didCallGetTasks).to(beFalse())
+
+                    expect(queues.asyncCallbackCallCount).to(equal(1))
+                    expect(queues.addOperationCallCount).to(equal(1))
+                    expect(queues.didCallCancelAllOperations).to(beFalse())
                 }
             }
         }

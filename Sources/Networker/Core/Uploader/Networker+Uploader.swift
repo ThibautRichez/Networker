@@ -18,7 +18,7 @@ enum NetworkUploaderType {
     case put
 }
 
-private extension NetworkUploaderType {
+extension NetworkUploaderType {
     var requestType: URLRequestType {
         switch self {
         case .post:
