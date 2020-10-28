@@ -89,7 +89,7 @@ extension Networker: NetworkDownloader {
             }
         }
 
-        self.queues.operations.addOperation(operation)
+        self.queues.addOperation(operation)
         return operation.task
     }
 }
@@ -112,7 +112,7 @@ private extension Networker {
 
     func dispatch(completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void,
                   with result: Result<NetworkDownloaderResult, NetworkerError>) {
-        self.queues.callback.async {
+        self.queues.asyncCallback {
             completion(result)
         }
     }

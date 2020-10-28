@@ -30,6 +30,6 @@ extension Networker: NetworkCancellable {
     }
 
     func cancelAllOperations() {
-        self.queues.operations.cancelAllOperations()
+        self.queues.cancelAllOperations()
     }
 }

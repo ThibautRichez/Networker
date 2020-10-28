@@ -1,14 +1,11 @@
+//
+//  File.swift
+//  
+//
+//  Created by RICHEZ Thibaut on 10/28/20.
+//
+
 import Foundation
-
-struct Networker {
-    var session: URLSessionProtocol = URLSession.shared
-    var configuration: NetworkerConfiguration = .init()
-    var queues: NetworkerQueues = .init()
-    var sessionReader: NetworkerSessionConfigurationReader? = NetworkerSessionConfigurationRepository()
-    var acceptableMimeTypes: Set<MimeType> = [.json]
-}
-
-// MARK: - Helpers
 
 extension Networker {
     func makeURL(from path: String) throws -> URL {
