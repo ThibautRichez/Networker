@@ -49,13 +49,16 @@ final class UploaderWithValidURLSessionSuccessBehavior: Behavior<UploaderWithVal
             context("WHEN we execute the method") {
                 var task: URLSessionTaskMock?
                 var result: NetworkUploaderResult?
-
+                
                 beforeEach {
                     waitUntil { (done) in
-                        task = sut.uploadSuccess(path: path, type: type, data: data) { sutResult in
-                            result = sutResult
-                            done()
-                        }
+                        task = sut.upload(
+                            path: path,
+                            type: type,
+                            data: data,
+                            completion: { (sutResult) in
+                                result = try? sutResult.get()
+                            }) as? URLSessionTaskMock
                     }
                 }
 

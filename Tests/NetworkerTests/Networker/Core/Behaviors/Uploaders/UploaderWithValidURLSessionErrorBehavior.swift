@@ -52,10 +52,14 @@ final class UploaderWithValidURLSessionErrorBehavior: Behavior<UploaderWithValid
 
                 beforeEach {
                     waitUntil { (done) in
-                        task = sut.uploadError(path: path, type: type, data: data) { sutError in
-                            error = sutError
-                            done()
-                        }
+                        task = sut.upload(
+                            path: path,
+                            type: type,
+                            data: data,
+                            completion: { (result) in
+                                error = result.error
+                                done()
+                            }) as? URLSessionTaskMock
                     }
                 }
 

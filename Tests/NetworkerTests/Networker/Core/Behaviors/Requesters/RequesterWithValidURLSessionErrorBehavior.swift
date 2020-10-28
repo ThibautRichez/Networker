@@ -46,10 +46,10 @@ final class RequesterWithValidURLSessionErrorBehavior: Behavior<RequesterWithVal
 
                 beforeEach {
                     waitUntil { (done) in
-                        task = sut.requestError(path: path, completion: { sutError in
-                            error = sutError
+                        task = sut.request(path: path) { (result) in
+                            error = result.error
                             done()
-                        })
+                        } as? URLSessionTaskMock
                     }
                 }
 

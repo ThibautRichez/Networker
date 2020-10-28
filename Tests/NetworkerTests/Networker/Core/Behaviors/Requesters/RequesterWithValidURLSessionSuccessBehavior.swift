@@ -46,10 +46,10 @@ final class RequesterWithValidURLSessionSuccessBehavior: Behavior<RequesterWithV
 
                 beforeEach {
                     waitUntil { (done) in
-                        task = sut.requestSuccess(path: path) { (sutResult) in
-                            result = sutResult
+                        task = sut.request(path: path, completion: { (sutResult) in
+                            result = try? sutResult.get()
                             done()
-                        }
+                        }) as? URLSessionTaskMock
                     }
                 }
 
