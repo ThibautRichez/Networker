@@ -8,27 +8,20 @@
 import Foundation
 
 extension Networker {
+    private var sessionConfiguration: NetworkerSessionConfiguration? {
+        self.sessionReader?.configuration
+    }
+
     func makeURL(from path: String) throws -> URL {
-        if path.isAbsoluteURL {
-            guard let absoluteURL = URL(string: path) else {
-                throw NetworkerError.path(.invalidAbsolutePath(path))
-            }
-            return absoluteURL
-        }
+        let baseURL = self.configuration.baseURL ?? self.sessionConfiguration?.baseURL
+        let token = self.configuration.token ?? self.sessionConfiguration?.token
 
-        let baseURL = self.appendingToken(in: try self.makeBaseURL())
-        // not using appendingPathComponent because path may contain
-        // non component information that will be formatted otherwise
-        // (query items for exemple)
-        // TODO:
-        // Should check if it really bother URLSession that the url is
-        // is formatted like '.../getPage%3Fnamed=home' and not '.../getPage?named=home'
-        // -> Add concat strategy and test if needed
-        guard let url = URL(string: baseURL.absoluteString + path) else {
-            throw NetworkerError.path(.invalidRelativePath(path))
-        }
-
-        return url
+        let components = NetworkerURLComponents(
+            baseURL: baseURL,
+            token: token,
+            path: path
+        )
+        return try self.urlConverter.url(from: components)
     }
 
     func makeURLRequest(for type: URLRequestType,
@@ -74,9 +67,7 @@ extension Networker {
 }
 
 extension Networker {
-    private var sessionConfiguration: NetworkerSessionConfiguration? {
-        self.sessionReader?.configuration
-    }
+
 
     private func makeBaseURL() throws -> URL {
         let baseURLConfiguration = self.configuration.baseURL ?? self.sessionConfiguration?.baseURL

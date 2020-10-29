@@ -10,7 +10,6 @@ import Foundation
 extension OperationQueue {
     static func networker() -> OperationQueue {
         let queue = OperationQueue()
-        queue.name = "networker.operations.userInitiated.queue"
         queue.maxConcurrentOperationCount = 1
         queue.qualityOfService = .userInitiated
         return queue

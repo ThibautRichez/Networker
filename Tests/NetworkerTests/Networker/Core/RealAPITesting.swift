@@ -17,7 +17,7 @@ final class RealAPITesting: QuickSpec {
             beforeEach {
                 let configuration = NetworkerConfiguration(
                     baseURL: "https://api.nextradiotv.com/bfmbusiness-applications",
-                    token: "XXX"
+                    token: "e742eb6115fe627384f960c4aa3f9810"
                 )
                 sut = Networker(configuration: configuration)
             }
