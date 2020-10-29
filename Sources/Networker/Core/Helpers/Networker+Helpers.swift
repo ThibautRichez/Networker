@@ -16,7 +16,7 @@ extension Networker {
             return absoluteURL
         }
 
-        let baseURL = try self.makeBaseURL()
+        let baseURL = self.appendingToken(in: try self.makeBaseURL())
         // not using appendingPathComponent because path may contain
         // non component information that will be formatted otherwise
         // (query items for exemple)
@@ -88,7 +88,7 @@ extension Networker {
             throw NetworkerError.path(.invalidBaseURL(baseURLRepresentation))
         }
 
-        return self.appendingToken(in: baseURL)
+        return baseURL
     }
 
     private func appendingToken(in url: URL) -> URL {

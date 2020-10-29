@@ -7,7 +7,6 @@
 
 import Foundation
 
-// TODO: Apply this pattern in tests to have only 1 object for all (request, upload, download)
 final class NetworkerOperation<T>: AsyncOperation {
     private(set) var task: URLSessionTaskProtocol!
 

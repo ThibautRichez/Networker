@@ -58,6 +58,7 @@ final class UploaderWithValidURLSessionSuccessBehavior: Behavior<UploaderWithVal
                             data: data,
                             completion: { (sutResult) in
                                 result = try? sutResult.get()
+                                done()
                             }) as? URLSessionTaskMock
                     }
                 }
