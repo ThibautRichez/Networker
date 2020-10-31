@@ -12,6 +12,8 @@ extension Networker {
         self.sessionReader?.configuration
     }
 
+    // TODO: in Networker test, just test with urlConverter return a an URL or error
+    // only those 2 cases
     func makeURL(from path: String) throws -> URL {
         let baseURL = self.configuration.baseURL ?? self.sessionConfiguration?.baseURL
         let token = self.configuration.token ?? self.sessionConfiguration?.token
