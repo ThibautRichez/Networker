@@ -50,7 +50,7 @@ final class NetworkerOperation<T>: AsyncOperation {
         self.task.resume()
     }
 
-    // todo: check why not triggered in tests
+    // todo: add test (should cancel after adding a task in NetworkerCancellableTests).
     override func cancel() {
         self.task.cancel()
         super.cancel()

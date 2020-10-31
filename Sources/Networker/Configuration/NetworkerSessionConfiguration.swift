@@ -33,6 +33,7 @@ protocol NetworkerSessionConfigurationValueReader {
 
 typealias NetworkerSessionConfigurationRepositoryProtocol = NetworkerSessionConfigurationReader & NetworkerSessionConfigurationValueReader & NetworkerSessionConfigurationWritter
 
+// TODO: add tests
 struct NetworkerSessionConfigurationRepository {
     var defaults: UserDefaults = .networker()
 }

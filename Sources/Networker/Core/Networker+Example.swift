@@ -37,7 +37,7 @@ fileprivate extension Networker {
             session: session,
             configuration: configuration,
             queues: queues,
-            acceptableMimeTypes: Set(MimeType.allCases)
+            acceptableMimeTypes: Set(arrayLiteral: .jpg, .json)
         )
     }
 }
