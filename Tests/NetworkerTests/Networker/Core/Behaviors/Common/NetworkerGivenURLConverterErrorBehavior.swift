@@ -10,7 +10,7 @@ import Quick
 import Nimble
 @testable import Networker
 
-struct NetworkerWithPathErrorBehaviorContext {
+struct NetworkerGivenURLConverterErrorContext {
     var path: String
     var expectedError: NetworkerError
     var session: URLSessionMock
@@ -18,8 +18,8 @@ struct NetworkerWithPathErrorBehaviorContext {
     var networker: Networker
 }
 
-final class NetworkerWithPathErrorBehavior: Behavior<NetworkerWithPathErrorBehaviorContext> {
-    override class func spec(_ aContext: @escaping () -> NetworkerWithPathErrorBehaviorContext) {
+final class NetworkerGivenURLConverterErrorBehavior: Behavior<NetworkerGivenURLConverterErrorContext> {
+    override class func spec(_ aContext: @escaping () -> NetworkerGivenURLConverterErrorContext) {
         describe("GIVEN an invalid path, the error it should produce and the executor") {
             var path: String!
             var expectedError: NetworkerError!

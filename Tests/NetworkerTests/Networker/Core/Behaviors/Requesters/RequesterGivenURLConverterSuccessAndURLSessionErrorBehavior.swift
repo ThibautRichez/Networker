@@ -1,5 +1,5 @@
 //
-//  UploaderWithValidURLSessionErrorBehavior.swift
+//  RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/27/20.
@@ -10,25 +10,22 @@ import Quick
 import Nimble
 @testable import Networker
 
-struct UploaderWithValidURLSessionErrorBehaviorContext {
+struct RequesterGivenURLConverterSuccessAndURLSessionErrorContext {
     var expectedError: NetworkerError
     var path: String
-    var type: NetworkUploaderType = .post
-    var data: Data?
     var expectedRequestURL: String
-    var expectedReturnTask: URLSessionTaskMock
+    var expectedErrorExecutorReturn: URLSessionTaskMock
     var session: URLSessionMock
     var queues: NetworkerQueuesMock
     var sut: Networker
 }
 
-final class UploaderWithValidURLSessionErrorBehavior: Behavior<UploaderWithValidURLSessionErrorBehaviorContext> {
-    override class func spec(_ aContext: @escaping () -> UploaderWithValidURLSessionErrorBehaviorContext) {
+
+final class RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior<RequesterGivenURLConverterSuccessAndURLSessionErrorContext> {
+    override class func spec(_ aContext: @escaping () -> RequesterGivenURLConverterSuccessAndURLSessionErrorContext) {
         describe("GIVEN a valid path and a context that produce an error") {
             var expectedError: NetworkerError!
             var path: String!
-            var type: NetworkUploaderType!
-            var data: Data!
             var expectedRequestURL: String!
             var expectedErrorExecutorReturn: URLSessionTaskMock!
             var session: URLSessionMock!
@@ -37,10 +34,8 @@ final class UploaderWithValidURLSessionErrorBehavior: Behavior<UploaderWithValid
             beforeEach {
                 expectedError = aContext().expectedError
                 path = aContext().path
-                type = aContext().type
-                data = aContext().data
                 expectedRequestURL = aContext().expectedRequestURL
-                expectedErrorExecutorReturn = aContext().expectedReturnTask
+                expectedErrorExecutorReturn = aContext().expectedErrorExecutorReturn
                 session = aContext().session
                 queues = aContext().queues
                 sut = aContext().sut
@@ -52,14 +47,10 @@ final class UploaderWithValidURLSessionErrorBehavior: Behavior<UploaderWithValid
 
                 beforeEach {
                     waitUntil { (done) in
-                        task = sut.upload(
-                            path: path,
-                            type: type,
-                            data: data,
-                            completion: { (result) in
-                                error = result.error
-                                done()
-                            }) as? URLSessionTaskMock
+                        task = sut.request(path: path) { (result) in
+                            error = result.error
+                            done()
+                        } as? URLSessionTaskMock
                     }
                 }
 
@@ -70,16 +61,15 @@ final class UploaderWithValidURLSessionErrorBehavior: Behavior<UploaderWithValid
                     expect(task?.resumeCallCount).to(equal(1))
                     expect(task?.didCallCancel).to(beFalse())
 
-                    expect(session.uploadCallCount).to(equal(1))
-                    expect(session.uploadArguments.count).to(equal(1))
+                    expect(session.requestCallCount).to(equal(1))
+                    expect(session.requestArguments.count).to(equal(1))
                     let requestURL = try! sut.makeURL(from: path)
                     expect(requestURL).to(equal(URL(string: expectedRequestURL)))
-                    expect(session.uploadArguments.first?.request).to(
-                        equal(sut.makeURLRequest(for: type.requestType, with: requestURL))
+                    expect(session.requestArguments.first).to(
+                        equal(sut.makeURLRequest(for: .get, with: requestURL))
                     )
-                    expect(session.uploadArguments.first?.data).to(equal(data))
 
-                    expect(session.didCallRequest).to(beFalse())
+                    expect(session.didCallUpload).to(beFalse())
                     expect(session.didCallDownload).to(beFalse())
                     expect(session.didCallGetTasks).to(beFalse())
 

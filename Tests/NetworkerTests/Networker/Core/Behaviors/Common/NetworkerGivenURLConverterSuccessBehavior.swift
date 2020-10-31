@@ -1,5 +1,5 @@
 //
-//  NetworkerWithValidURLBehavior.swift
+//  NetworkerGivenURLConverterSuccessBehavior.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/27/20.
@@ -10,7 +10,7 @@ import Quick
 import Nimble
 @testable import Networker
 
-struct NetworkerWithValidURLBehaviorContext {
+struct NetworkerGivenURLConverterSuccessContext {
     var path: String
     var expectedRequestURL: String
     var session: URLSessionMock
@@ -18,8 +18,8 @@ struct NetworkerWithValidURLBehaviorContext {
     var sut: Networker
 }
 
-final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehaviorContext> {
-    override class func spec(_ aContext: @escaping () -> NetworkerWithValidURLBehaviorContext) {
+final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenURLConverterSuccessContext> {
+    override class func spec(_ aContext: @escaping () -> NetworkerGivenURLConverterSuccessContext) {
         describe("GIVEN a valid url with any URLSession and Networker ") {
             var path: String!
             var expectedRequestURL: String!
@@ -51,7 +51,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                     }
                 }
 
-                itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                     .init(
                         expectedError: expectedError,
                         path: path,
@@ -63,7 +63,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                     )
                 }
 
-                itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
+                itBehavesLike(UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                     .init(
                         expectedError: expectedError,
                         path: path,
@@ -94,7 +94,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                     }
                 }
 
-                itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                     .init(
                         expectedError: expectedError,
                         path: path,
@@ -106,7 +106,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                     )
                 }
 
-                itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
+                itBehavesLike(UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                     .init(
                         expectedError: expectedError,
                         path: path,
@@ -139,7 +139,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                         }
                     }
 
-                    itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                    itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                         .init(
                             expectedError: expectedError,
                             path: path,
@@ -151,7 +151,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                         )
                     }
 
-                    itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
+                    itBehavesLike(UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                         .init(
                             expectedError: expectedError,
                             path: path,
@@ -170,7 +170,9 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                     var invalidStatusReponse: HTTPURLResponse!
                     var expectedError: NetworkerError!
                     beforeEach {
-                        invalidStatusReponse = HTTPURLResponseStub(url: path, statusCode: 400)
+                        invalidStatusReponse = HTTPURLResponseStub(
+                            url: "https://www.any-url.com", statusCode: 400
+                        )
                         expectedError = .response(
                             .statusCode(invalidStatusReponse)
                         )
@@ -184,7 +186,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                         }
                     }
 
-                    itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                    itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                         .init(
                             expectedError: expectedError,
                             path: path,
@@ -196,7 +198,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                         )
                     }
 
-                    itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
+                    itBehavesLike(UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                         .init(
                             expectedError: expectedError,
                             path: path,
@@ -218,7 +220,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
 
                     beforeEach {
                         invalidMimeTypeReponse = HTTPURLResponseStub(
-                            url: path,
+                            url: "https://www.any-url.com",
                             statusCode: 200,
                             mimeType: invalidMimeType
                         )
@@ -238,7 +240,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                         }
                     }
 
-                    itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                    itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                         .init(
                             expectedError: expectedError,
                             path: path,
@@ -250,7 +252,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                         )
                     }
 
-                    itBehavesLike(UploaderWithValidURLSessionErrorBehavior.self) {
+                    itBehavesLike(UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                         .init(
                             expectedError: expectedError,
                             path: path,
@@ -270,7 +272,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
 
                     beforeEach {
                         validResponse = HTTPURLResponseStub(
-                            url: path,
+                            url: "https://www.any-url.com",
                             statusCode: 200,
                             allHeaderFields: ["Accept-Content":"application/json"],
                             mimeType: sut.acceptableMimeTypes.first?.rawValue
@@ -297,7 +299,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                             }
                         }
 
-                        itBehavesLike(RequesterWithValidURLSessionErrorBehavior.self) {
+                        itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
                             .init(
                                 expectedError: expectedRequestError,
                                 path: path,
@@ -309,7 +311,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                             )
                         }
 
-                        itBehavesLike(UploaderWithValidURLSessionSuccessBehavior.self) {
+                        itBehavesLike(UploaderGivenURLConverterAndURLSessionSuccessBehavior.self) {
                             .init(
                                 expectedResult: expectedUploadResult,
                                 path: path,
@@ -352,7 +354,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                             }
                         }
 
-                        itBehavesLike(RequesterWithValidURLSessionSuccessBehavior.self) {
+                        itBehavesLike(RequesterGivenURLConverterAndURLSessionSuccessBehavior.self) {
                             .init(
                                 expectedResult: expectedRequestResult,
                                 path: path,
@@ -364,7 +366,7 @@ final class NetworkerWithValidURLBehavior: Behavior<NetworkerWithValidURLBehavio
                             )
                         }
 
-                        itBehavesLike(UploaderWithValidURLSessionSuccessBehavior.self) {
+                        itBehavesLike(UploaderGivenURLConverterAndURLSessionSuccessBehavior.self) {
                             .init(
                                 expectedResult: expectedUploadResult,
                                 path: path,

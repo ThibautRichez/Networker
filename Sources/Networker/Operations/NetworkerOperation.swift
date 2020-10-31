@@ -50,6 +50,7 @@ final class NetworkerOperation<T>: AsyncOperation {
         self.task.resume()
     }
 
+    // todo: check why not triggered in tests
     override func cancel() {
         self.task.cancel()
         super.cancel()

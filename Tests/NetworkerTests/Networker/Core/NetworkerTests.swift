@@ -12,168 +12,85 @@ import Nimble
 
 final class NetworkerTests: QuickSpec {
     override func spec() {
-        describe("GIVEN a URLSession mock, a SessionConfigurationReader and a NetworkerQueues mock") {
+        describe("GIVEN any path and dependencies mocks") {
+            let anyPath = "Doesn't impact the core functionnality when mocking URLConverter"
             var session: URLSessionMock!
             var queues: NetworkerQueuesMock!
             var sessionReader: NetworkerSessionConfigurationReaderMock!
+            var urlConverter: URLConverterMock!
             var sut: Networker!
             beforeEach {
                 session = .init()
                 sessionReader = .init()
                 queues = .init()
+                urlConverter = .init()
                 sut = .init(
                     session: session,
                     queues: queues,
-                    sessionReader: sessionReader
+                    sessionReader: sessionReader,
+                    urlConverter: urlConverter
                 )
             }
 
-            describe("GIVEN a absolute path") {
+            itBehavesLike(NetworkerURLComponentsBehavior.self) {
+                .init(
+                    sessionReader: sessionReader,
+                    urlConverter: urlConverter,
+                    sut: sut
+                )
+            }
 
-                describe("GIVEN an invalid absolute path") {
-                    let invalidAbsolutePath = "https://this-is!an$*invalid(formatted,><@&URL"
+            describe("GIVEN a URLConverter that throws an error") {
 
-                    itBehavesLike(NetworkerWithPathErrorBehavior.self) {
+                describe("GIVEN a NetworkerError") {
+                    let converterError: NetworkerError = .path(.baseURLMissing)
+                    beforeEach {
+                        urlConverter.urlResult = { throw converterError }
+                    }
+
+                    itBehavesLike(NetworkerGivenURLConverterErrorBehavior.self) {
                         .init(
-                            path: invalidAbsolutePath,
-                            expectedError: .path(
-                                .invalidAbsolutePath(invalidAbsolutePath)
-                            ),
+                            path: anyPath,
+                            expectedError: converterError,
                             session: session,
                             queues: queues,
                             networker: sut
                         )
                     }
-
                 }
 
-                describe("GIVEN a valid absolute path") {
-                    let validAbsoluteURL = "https://testing.com/"
-
-                    itBehavesLike(NetworkerWithValidURLBehavior.self) {
-                        .init(
-                            path: validAbsoluteURL,
-                            expectedRequestURL: validAbsoluteURL,
-                            session: session,
-                            queues: queues,
-                            sut: sut
-                        )
+                describe("GIVEN any other error than NetworkerError") {
+                    let converterError = NSError(domain: "error.testing", code: 12, userInfo: nil)
+                    beforeEach {
+                        urlConverter.urlResult = { throw converterError }
                     }
 
+                    itBehavesLike(NetworkerGivenURLConverterErrorBehavior.self) {
+                        .init(
+                            path: anyPath,
+                            expectedError: .unknown(converterError),
+                            session: session,
+                            queues: queues,
+                            networker: sut
+                        )
+                    }
                 }
             }
 
-
-            describe("GIVEN a relative path") {
-
-                describe("GIVEN an invalid relative path with valid baseURL") {
-                    let invalidRelativePath = "iamNot-A%pathèto@&é*"
-                    beforeEach {
-                        sut.setBaseURL(to: "https://testing.com/")
-                    }
-
-                    itBehavesLike(NetworkerWithPathErrorBehavior.self) {
-                        .init(
-                            path: invalidRelativePath,
-                            expectedError: .path(
-                                .invalidRelativePath(invalidRelativePath)
-                            ),
-                            session: session,
-                            queues: queues,
-                            networker: sut
-                        )
-                    }
-
+            describe("GIVEN a URLConverter that returns an URL") {
+                let converterURL = "https://testing-url.com"
+                beforeEach {
+                    urlConverter.urlResult = { URL(string: converterURL)! }
                 }
 
-                describe("GIVEN a valid relative path") {
-                    let relativePath = "getPage?pagename=home"
-
-                    describe("GIVEN a nil baseURL in Networker configuration") {
-                        beforeEach {
-                            sut.setBaseURL(to: nil)
-                        }
-
-                        describe("GIVEN a nil baseURL in session configuration") {
-                            beforeEach {
-                                sessionReader.configurationResult = { .init(baseURL: nil) }
-                            }
-
-                            itBehavesLike(NetworkerWithPathErrorBehavior.self) {
-                                .init(
-                                    path: relativePath,
-                                    expectedError: .path(.baseURLMissing),
-                                    session: session,
-                                    queues: queues,
-                                    networker: sut
-                                )
-                            }
-
-                        }
-
-                        describe("GIVEN a invalid baseURL in session configuration") {
-                            let invalidBaseURL = "hjkiuhsj$^ù£"
-                            beforeEach {
-                                sessionReader.configurationResult = { .init(baseURL: invalidBaseURL) }
-                            }
-
-                            itBehavesLike(NetworkerWithPathErrorBehavior.self) {
-                                .init(
-                                    path: relativePath,
-                                    expectedError: .path(
-                                        .invalidBaseURL(invalidBaseURL)
-                                    ),
-                                    session: session,
-                                    queues: queues,
-                                    networker: sut
-                                )
-                            }
-                        }
-
-                        describe("GIVEN a valid baseURL in session configuration") {
-                            let validBaseURL = "https://testing.com/"
-
-                            describe("GIVEN nil token") {
-                                let expectResultURL = "\(validBaseURL)\(relativePath)"
-                                beforeEach {
-                                    sessionReader.configurationResult = {
-                                        .init(token: nil, baseURL: validBaseURL)
-                                    }
-                                }
-
-                                itBehavesLike(NetworkerWithValidURLBehavior.self) {
-                                    .init(
-                                        path: relativePath,
-                                        expectedRequestURL: expectResultURL,
-                                        session: session,
-                                        queues: queues,
-                                        sut: sut
-                                    )
-                                }
-                            }
-                            // TODO: test with different path ending
-                            // (with/without opening/closing slash)
-                            describe("GIVEN token") {
-                                let token = "1234AZERTGVC"
-                                let expectResultURL = "\(validBaseURL)\(token)/\(relativePath)"
-                                beforeEach {
-                                    sessionReader.configurationResult = {
-                                        .init(token: token, baseURL: validBaseURL)
-                                    }
-                                }
-
-                                itBehavesLike(NetworkerWithValidURLBehavior.self) {
-                                    .init(
-                                        path: relativePath,
-                                        expectedRequestURL: expectResultURL,
-                                        session: session,
-                                        queues: queues,
-                                        sut: sut
-                                    )
-                                }
-                            }
-                        }
-                    }
+                itBehavesLike(NetworkerGivenURLConverterSuccessBehavior.self) {
+                    .init(
+                        path: anyPath,
+                        expectedRequestURL: converterURL,
+                        session: session,
+                        queues: queues,
+                        sut: sut
+                    )
                 }
             }
         }

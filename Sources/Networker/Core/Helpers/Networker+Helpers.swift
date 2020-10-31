@@ -12,8 +12,6 @@ extension Networker {
         self.sessionReader?.configuration
     }
 
-    // TODO: in Networker test, just test with urlConverter return a an URL or error
-    // only those 2 cases
     func makeURL(from path: String) throws -> URL {
         let baseURL = self.configuration.baseURL ?? self.sessionConfiguration?.baseURL
         let token = self.configuration.token ?? self.sessionConfiguration?.token
@@ -65,32 +63,5 @@ extension Networker {
         if let error = error {
             throw NetworkerError.remote(NetworkerRemoteError(error))
         }
-    }
-}
-
-extension Networker {
-
-
-    private func makeBaseURL() throws -> URL {
-        let baseURLConfiguration = self.configuration.baseURL ?? self.sessionConfiguration?.baseURL
-        guard let baseURLRepresentation = baseURLConfiguration else {
-            throw NetworkerError.path(.baseURLMissing)
-        }
-
-        guard let baseURL = URL(string: baseURLRepresentation) else {
-            throw NetworkerError.path(.invalidBaseURL(baseURLRepresentation))
-        }
-
-        return baseURL
-    }
-
-    private func appendingToken(in url: URL) -> URL {
-        let configurationToken = self.configuration.token ?? self.sessionConfiguration?.token
-        guard let token = configurationToken else {
-            return url
-        }
-
-        return url
-            .appendingPathComponent(token, isDirectory: true)
     }
 }

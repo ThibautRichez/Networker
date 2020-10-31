@@ -1,5 +1,5 @@
 //
-//  RequesterWithValidURLSessionSuccessBehavior.swift
+//  RequesterGivenURLConverterAndURLSessionSuccessBehavior.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/27/20.
@@ -10,7 +10,7 @@ import Quick
 import Nimble
 @testable import Networker
 
-struct RequesterWithValidURLSessionSuccessBehaviorContext {
+struct RequesterGivenURLConverterAndURLSessionSuccessContext {
     var expectedResult: NetworkRequesterResult
     var path: String
     var expectedRequestURL: String
@@ -20,8 +20,8 @@ struct RequesterWithValidURLSessionSuccessBehaviorContext {
     var sut: Networker
 }
 
-final class RequesterWithValidURLSessionSuccessBehavior: Behavior<RequesterWithValidURLSessionSuccessBehaviorContext> {
-    override class func spec(_ aContext: @escaping () -> RequesterWithValidURLSessionSuccessBehaviorContext) {
+final class RequesterGivenURLConverterAndURLSessionSuccessBehavior: Behavior<RequesterGivenURLConverterAndURLSessionSuccessContext> {
+    override class func spec(_ aContext: @escaping () -> RequesterGivenURLConverterAndURLSessionSuccessContext) {
         describe("GIVEN a valid path and a context that produce an error") {
             var expectedResult: NetworkRequesterResult!
             var path: String!

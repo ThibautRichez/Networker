@@ -1,5 +1,5 @@
 //
-//  UploaderWithValidURLSessionSuccessBehavior.swift
+//  UploaderGivenURLConverterAndURLSessionSuccessBehavior.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/27/20.
@@ -10,7 +10,7 @@ import Quick
 import Nimble
 @testable import Networker
 
-struct UploaderWithValidURLSessionSuccessBehaviorContext {
+struct UploaderGivenURLConverterAndURLSessionSuccessContext {
     var expectedResult: NetworkUploaderResult
     var path: String
     var type: NetworkUploaderType = .post
@@ -22,8 +22,8 @@ struct UploaderWithValidURLSessionSuccessBehaviorContext {
     var sut: Networker
 }
 
-final class UploaderWithValidURLSessionSuccessBehavior: Behavior<UploaderWithValidURLSessionSuccessBehaviorContext> {
-    override class func spec(_ aContext: @escaping () -> UploaderWithValidURLSessionSuccessBehaviorContext) {
+final class UploaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<UploaderGivenURLConverterAndURLSessionSuccessContext> {
+    override class func spec(_ aContext: @escaping () -> UploaderGivenURLConverterAndURLSessionSuccessContext) {
         describe("GIVEN a valid path and a context that produce an error") {
             var expectedResult: NetworkUploaderResult!
             var path: String!
