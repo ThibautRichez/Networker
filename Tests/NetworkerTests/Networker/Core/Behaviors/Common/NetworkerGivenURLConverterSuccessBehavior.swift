@@ -35,6 +35,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                 sessionReturnTask = .init()
                 session.requestResult = { sessionReturnTask }
                 session.uploadResult = { sessionReturnTask }
+                session.downloadResult = { sessionReturnTask }
                 sut = aContext().sut
             }
 
@@ -47,6 +48,10 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                     }
 
                     session.uploadResultCompletion = { completion in
+                        completion(nil, nil, nil)
+                    }
+
+                    session.downloadResultCompletion = { completion in
                         completion(nil, nil, nil)
                     }
                 }
@@ -76,6 +81,17 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                     )
                 }
 
+                itBehavesLike(DownloaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
+                    .init(
+                        expectedError: expectedError,
+                        path: path,
+                        expectedRequestURL: expectedRequestURL,
+                        expectedErrorExecutorReturn: sessionReturnTask,
+                        session: session,
+                        queues: queues,
+                        sut: sut
+                    )
+                }
             }
 
             describe("GIVEN a session that returns an error") {
@@ -92,6 +108,10 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                     session.uploadResultCompletion = { completion in
                         completion(nil, nil, requestError)
                     }
+
+                    session.downloadResultCompletion = { completion in
+                        completion(nil, nil, requestError)
+                    }
                 }
 
                 itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
@@ -119,6 +139,17 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                     )
                 }
 
+                itBehavesLike(DownloaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
+                    .init(
+                        expectedError: expectedError,
+                        path: path,
+                        expectedRequestURL: expectedRequestURL,
+                        expectedErrorExecutorReturn: sessionReturnTask,
+                        session: session,
+                        queues: queues,
+                        sut: sut
+                    )
+                }
             }
 
             describe("GIVEN a session that returns a reponse") {
@@ -135,6 +166,10 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         }
 
                         session.uploadResultCompletion = { completion in
+                            completion(nil, invalidReponse, nil)
+                        }
+
+                        session.downloadResultCompletion = { completion in
                             completion(nil, invalidReponse, nil)
                         }
                     }
@@ -158,6 +193,18 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             data: Data(),
                             expectedRequestURL: expectedRequestURL,
                             expectedReturnTask: sessionReturnTask,
+                            session: session,
+                            queues: queues,
+                            sut: sut
+                        )
+                    }
+
+                    itBehavesLike(DownloaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
+                        .init(
+                            expectedError: expectedError,
+                            path: path,
+                            expectedRequestURL: expectedRequestURL,
+                            expectedErrorExecutorReturn: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -184,6 +231,10 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         session.uploadResultCompletion = { completion in
                             completion(nil, invalidStatusReponse, nil)
                         }
+
+                        session.downloadResultCompletion = { completion in
+                            completion(nil, invalidStatusReponse, nil)
+                        }
                     }
 
                     itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
@@ -205,6 +256,18 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             data: Data(),
                             expectedRequestURL: expectedRequestURL,
                             expectedReturnTask: sessionReturnTask,
+                            session: session,
+                            queues: queues,
+                            sut: sut
+                        )
+                    }
+
+                    itBehavesLike(DownloaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
+                        .init(
+                            expectedError: expectedError,
+                            path: path,
+                            expectedRequestURL: expectedRequestURL,
+                            expectedErrorExecutorReturn: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -238,6 +301,10 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         session.uploadResultCompletion = { completion in
                             completion(nil, invalidMimeTypeReponse, nil)
                         }
+
+                        session.downloadResultCompletion = { completion in
+                            completion(nil, invalidMimeTypeReponse, nil)
+                        }
                     }
 
                     itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
@@ -265,6 +332,18 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         )
                     }
 
+                    itBehavesLike(DownloaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
+                        .init(
+                            expectedError: expectedError,
+                            path: path,
+                            expectedRequestURL: expectedRequestURL,
+                            expectedErrorExecutorReturn: sessionReturnTask,
+                            session: session,
+                            queues: queues,
+                            sut: sut
+                        )
+                    }
+
                 }
 
                 describe("GIVEN a valid response") {
@@ -279,22 +358,27 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         )
                     }
 
-                    describe("GIVEN a valid response with no data") {
+                    describe("GIVEN a valid response with no data / fileURL") {
                         var expectedRequestError: NetworkerError!
                         var expectedUploadResult: NetworkUploaderResult!
+                        var expectedDownloadError: NetworkerError!
                         beforeEach {
                             expectedRequestError = .response(.empty)
+                            session.requestResultCompletion = { completion in
+                                completion(nil, validResponse, nil)
+                            }
+
                             expectedUploadResult = .init(
                                 data: nil,
                                 statusCode: validResponse.statusCode,
                                 headerFields: validResponse.allHeaderFields
                             )
-
-                            session.requestResultCompletion = { completion in
+                            session.uploadResultCompletion = { completion in
                                 completion(nil, validResponse, nil)
                             }
 
-                            session.uploadResultCompletion = { completion in
+                            expectedDownloadError = .download(.fileURLMissing)
+                            session.downloadResultCompletion = { completion in
                                 completion(nil, validResponse, nil)
                             }
                         }
@@ -324,33 +408,53 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             )
                         }
 
+                        itBehavesLike(DownloaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
+                            .init(
+                                expectedError: expectedDownloadError,
+                                path: path,
+                                expectedRequestURL: expectedRequestURL,
+                                expectedErrorExecutorReturn: sessionReturnTask,
+                                session: session,
+                                queues: queues,
+                                sut: sut
+                            )
+                        }
+
                     }
 
-                    describe("GIVEN a valid response with data") {
+                    describe("GIVEN a valid response with data / fileURl") {
                         var data: Data!
+                        var fileURL: URL!
                         var expectedRequestResult: NetworkRequesterResult!
                         var expectedUploadResult: NetworkUploaderResult!
+                        var expectedDownloadResult: NetworkDownloaderResult!
                         beforeEach {
                             data = Data([1])
-
                             expectedRequestResult = .init(
                                 data: data,
                                 statusCode: validResponse.statusCode,
                                 headerFields: validResponse.allHeaderFields
                             )
+                            session.requestResultCompletion = { completion in
+                                completion(data, validResponse, nil)
+                            }
 
                             expectedUploadResult = .init(
                                 data: data,
                                 statusCode: validResponse.statusCode,
                                 headerFields: validResponse.allHeaderFields
                             )
-
-                            session.requestResultCompletion = { completion in
+                            session.uploadResultCompletion = { completion in
                                 completion(data, validResponse, nil)
                             }
 
-                            session.uploadResultCompletion = { completion in
-                                completion(data, validResponse, nil)
+                            fileURL = URL(string: "https://testing.com/")!
+                            expectedDownloadResult = .init(
+                                statusCode: validResponse.statusCode,
+                                headerFields: validResponse.allHeaderFields
+                            )
+                            session.downloadResultCompletion = { completion in
+                                completion(fileURL, validResponse, nil)
                             }
                         }
 
@@ -373,6 +477,19 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                                 data: data,
                                 expectedRequestURL: expectedRequestURL,
                                 expectedReturnTask: sessionReturnTask,
+                                session: session,
+                                queues: queues,
+                                sut: sut
+                            )
+                        }
+
+                        itBehavesLike(DownloaderGivenURLConverterAndURLSessionSuccessBehavior.self) {
+                            .init(
+                                expectedResult: expectedDownloadResult,
+                                path: path,
+                                expectedFileHandlerURL: fileURL,
+                                expectedRequestURL: expectedRequestURL,
+                                expectedErrorExecutorReturn: sessionReturnTask,
                                 session: session,
                                 queues: queues,
                                 sut: sut

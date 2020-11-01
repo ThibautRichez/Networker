@@ -20,7 +20,6 @@ struct RequesterGivenURLConverterSuccessAndURLSessionErrorContext {
     var sut: Networker
 }
 
-
 final class RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior<RequesterGivenURLConverterSuccessAndURLSessionErrorContext> {
     override class func spec(_ aContext: @escaping () -> RequesterGivenURLConverterSuccessAndURLSessionErrorContext) {
         describe("GIVEN a valid path and a context that produce an error") {
