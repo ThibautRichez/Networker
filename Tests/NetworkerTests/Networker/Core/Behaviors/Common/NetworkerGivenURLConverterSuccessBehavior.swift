@@ -61,7 +61,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         expectedError: expectedError,
                         path: path,
                         expectedRequestURL: expectedRequestURL,
-                        expectedErrorExecutorReturn: sessionReturnTask,
+                        expectedTaskResult: sessionReturnTask,
                         session: session,
                         queues: queues,
                         sut: sut
@@ -74,7 +74,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         path: path,
                         data: Data(),
                         expectedRequestURL: expectedRequestURL,
-                        expectedReturnTask: sessionReturnTask,
+                        expectedTaskResult: sessionReturnTask,
                         session: session,
                         queues: queues,
                         sut: sut
@@ -86,7 +86,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         expectedError: expectedError,
                         path: path,
                         expectedRequestURL: expectedRequestURL,
-                        expectedErrorExecutorReturn: sessionReturnTask,
+                        expectedTaskResult: sessionReturnTask,
                         session: session,
                         queues: queues,
                         sut: sut
@@ -119,7 +119,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         expectedError: expectedError,
                         path: path,
                         expectedRequestURL: expectedRequestURL,
-                        expectedErrorExecutorReturn: sessionReturnTask,
+                        expectedTaskResult: sessionReturnTask,
                         session: session,
                         queues: queues,
                         sut: sut
@@ -132,7 +132,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         path: path,
                         data: Data(),
                         expectedRequestURL: expectedRequestURL,
-                        expectedReturnTask: sessionReturnTask,
+                        expectedTaskResult: sessionReturnTask,
                         session: session,
                         queues: queues,
                         sut: sut
@@ -144,7 +144,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         expectedError: expectedError,
                         path: path,
                         expectedRequestURL: expectedRequestURL,
-                        expectedErrorExecutorReturn: sessionReturnTask,
+                        expectedTaskResult: sessionReturnTask,
                         session: session,
                         queues: queues,
                         sut: sut
@@ -179,7 +179,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             expectedError: expectedError,
                             path: path,
                             expectedRequestURL: expectedRequestURL,
-                            expectedErrorExecutorReturn: sessionReturnTask,
+                            expectedTaskResult: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -192,7 +192,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             path: path,
                             data: Data(),
                             expectedRequestURL: expectedRequestURL,
-                            expectedReturnTask: sessionReturnTask,
+                            expectedTaskResult: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -204,7 +204,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             expectedError: expectedError,
                             path: path,
                             expectedRequestURL: expectedRequestURL,
-                            expectedErrorExecutorReturn: sessionReturnTask,
+                            expectedTaskResult: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -242,7 +242,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             expectedError: expectedError,
                             path: path,
                             expectedRequestURL: expectedRequestURL,
-                            expectedErrorExecutorReturn: sessionReturnTask,
+                            expectedTaskResult: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -255,7 +255,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             path: path,
                             data: Data(),
                             expectedRequestURL: expectedRequestURL,
-                            expectedReturnTask: sessionReturnTask,
+                            expectedTaskResult: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -267,7 +267,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             expectedError: expectedError,
                             path: path,
                             expectedRequestURL: expectedRequestURL,
-                            expectedErrorExecutorReturn: sessionReturnTask,
+                            expectedTaskResult: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -312,7 +312,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             expectedError: expectedError,
                             path: path,
                             expectedRequestURL: expectedRequestURL,
-                            expectedErrorExecutorReturn: sessionReturnTask,
+                            expectedTaskResult: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -325,7 +325,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             path: path,
                             data: Data(),
                             expectedRequestURL: expectedRequestURL,
-                            expectedReturnTask: sessionReturnTask,
+                            expectedTaskResult: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -337,7 +337,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             expectedError: expectedError,
                             path: path,
                             expectedRequestURL: expectedRequestURL,
-                            expectedErrorExecutorReturn: sessionReturnTask,
+                            expectedTaskResult: sessionReturnTask,
                             session: session,
                             queues: queues,
                             sut: sut
@@ -388,7 +388,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                                 expectedError: expectedRequestError,
                                 path: path,
                                 expectedRequestURL: expectedRequestURL,
-                                expectedErrorExecutorReturn: sessionReturnTask,
+                                expectedTaskResult: sessionReturnTask,
                                 session: session,
                                 queues: queues,
                                 sut: sut
@@ -401,7 +401,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                                 path: path,
                                 data: Data(),
                                 expectedRequestURL: expectedRequestURL,
-                                expectedReturnTask: sessionReturnTask,
+                                expectedTaskResult: sessionReturnTask,
                                 session: session,
                                 queues: queues,
                                 sut: sut
@@ -413,7 +413,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                                 expectedError: expectedDownloadError,
                                 path: path,
                                 expectedRequestURL: expectedRequestURL,
-                                expectedErrorExecutorReturn: sessionReturnTask,
+                                expectedTaskResult: sessionReturnTask,
                                 session: session,
                                 queues: queues,
                                 sut: sut
@@ -463,7 +463,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                                 expectedResult: expectedRequestResult,
                                 path: path,
                                 expectedRequestURL: expectedRequestURL,
-                                expectedErrorExecutorReturn: sessionReturnTask,
+                                expectedTaskResult: sessionReturnTask,
                                 session: session,
                                 queues: queues,
                                 sut: sut
@@ -476,7 +476,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                                 path: path,
                                 data: data,
                                 expectedRequestURL: expectedRequestURL,
-                                expectedReturnTask: sessionReturnTask,
+                                expectedTaskResult: sessionReturnTask,
                                 session: session,
                                 queues: queues,
                                 sut: sut
@@ -489,7 +489,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                                 path: path,
                                 expectedFileHandlerURL: fileURL,
                                 expectedRequestURL: expectedRequestURL,
-                                expectedErrorExecutorReturn: sessionReturnTask,
+                                expectedTaskResult: sessionReturnTask,
                                 session: session,
                                 queues: queues,
                                 sut: sut

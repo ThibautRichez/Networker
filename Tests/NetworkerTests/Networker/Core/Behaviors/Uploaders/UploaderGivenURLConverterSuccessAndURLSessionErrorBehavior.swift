@@ -16,7 +16,7 @@ struct UploaderGivenURLConverterSuccessAndURLSessionErrorContext {
     var type: NetworkUploaderType = .post
     var data: Data?
     var expectedRequestURL: String
-    var expectedReturnTask: URLSessionTaskMock
+    var expectedTaskResult: URLSessionTaskMock
     var session: URLSessionMock
     var queues: NetworkerQueuesMock
     var sut: Networker
@@ -40,7 +40,7 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                 type = aContext().type
                 data = aContext().data
                 expectedRequestURL = aContext().expectedRequestURL
-                expectedErrorExecutorReturn = aContext().expectedReturnTask
+                expectedErrorExecutorReturn = aContext().expectedTaskResult
                 session = aContext().session
                 queues = aContext().queues
                 sut = aContext().sut

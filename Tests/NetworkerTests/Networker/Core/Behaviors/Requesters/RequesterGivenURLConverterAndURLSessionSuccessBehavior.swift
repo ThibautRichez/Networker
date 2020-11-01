@@ -14,7 +14,7 @@ struct RequesterGivenURLConverterAndURLSessionSuccessContext {
     var expectedResult: NetworkRequesterResult
     var path: String
     var expectedRequestURL: String
-    var expectedErrorExecutorReturn: URLSessionTaskMock
+    var expectedTaskResult: URLSessionTaskMock
     var session: URLSessionMock
     var queues: NetworkerQueuesMock
     var sut: Networker
@@ -34,7 +34,7 @@ final class RequesterGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Req
                 expectedResult = aContext().expectedResult
                 path = aContext().path
                 expectedRequestURL = aContext().expectedRequestURL
-                expectedErrorExecutorReturn = aContext().expectedErrorExecutorReturn
+                expectedErrorExecutorReturn = aContext().expectedTaskResult
                 session = aContext().session
                 queues = aContext().queues
                 sut = aContext().sut

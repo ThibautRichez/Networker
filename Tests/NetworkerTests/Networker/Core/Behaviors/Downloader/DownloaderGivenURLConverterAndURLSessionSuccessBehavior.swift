@@ -17,7 +17,7 @@ struct DownloaderGivenURLConverterAndURLSessionSuccessContext {
     var expectedFileHandlerURL: URL
     var requestType: URLRequestType = .get
     var expectedRequestURL: String
-    var expectedErrorExecutorReturn: URLSessionTaskMock
+    var expectedTaskResult: URLSessionTaskMock
     var session: URLSessionMock
     var queues: NetworkerQueuesMock
     var sut: Networker
@@ -44,7 +44,7 @@ final class DownloaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Do
                 requestType = context.requestType
                 fileHandler = .init()
                 expectedRequestURL = context.expectedRequestURL
-                expectedErrorExecutorReturn = context.expectedErrorExecutorReturn
+                expectedErrorExecutorReturn = context.expectedTaskResult
                 session = context.session
                 queues = context.queues
                 sut = context.sut
