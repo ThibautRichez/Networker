@@ -41,7 +41,7 @@ enum NetworkerRemoteError: Error {
     case connectionLost
     case notConnectedToInternet
     case appTransportSecurity
-    case unknown(Error)
+    case other(Error)
 
     init(_ error: Error) {
         let nsError = error as NSError
@@ -58,7 +58,7 @@ enum NetworkerRemoteError: Error {
         case NSURLErrorAppTransportSecurityRequiresSecureConnection:
             self = .appTransportSecurity
         default:
-            self = .unknown(error)
+            self = .other(error)
         }
     }
 }

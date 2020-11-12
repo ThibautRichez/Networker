@@ -18,7 +18,7 @@ enum MimeType {
 
 extension MimeType: RawRepresentable {
     init?(rawValue: String) {
-        if let value = Value(rawValue: rawValue) {
+        if let value = RawRepresentableCase(rawValue: rawValue) {
             self = value.type
         } else {
             self = .other(rawValue)
@@ -28,15 +28,15 @@ extension MimeType: RawRepresentable {
     var rawValue: String {
         switch self {
         case .json:
-            return Value.json.rawValue
+            return RawRepresentableCase.json.rawValue
         case .text:
-            return Value.text.rawValue
+            return RawRepresentableCase.text.rawValue
         case .html:
-            return Value.html.rawValue
+            return RawRepresentableCase.html.rawValue
         case .jpg:
-            return Value.jpg.rawValue
+            return RawRepresentableCase.jpg.rawValue
         case .png:
-            return Value.png.rawValue
+            return RawRepresentableCase.png.rawValue
         case .other(let value):
             return value
         }
@@ -46,7 +46,7 @@ extension MimeType: RawRepresentable {
 extension MimeType: Hashable {}
 
 private extension MimeType {
-    enum Value: String {
+    enum RawRepresentableCase: String {
         case json = "application/json"
         case text = "text/plain"
         case html = "text/html"

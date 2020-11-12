@@ -99,7 +99,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                 var expectedError: NetworkerError!
                 beforeEach {
                     requestError = NSError(domain: "error.test", code: 10, userInfo: nil)
-                    expectedError = .remote(.unknown(requestError))
+                    expectedError = .remote(.other(requestError))
 
                     session.requestResultCompletion = { completion in
                         completion(nil, nil, requestError)

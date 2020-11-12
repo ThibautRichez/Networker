@@ -91,6 +91,5 @@ private extension Networker {
         } catch {
             return .failure(.decoder(error))
         }
-
     }
 }

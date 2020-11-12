@@ -79,13 +79,11 @@ final class NetworkerURLConverterRelativePathBehavior: Behavior<NetworkerURLConv
 
             describe("GIVEN a valid baseURL") {
                 let validBaseURL = "https://www.ecosia.com"
-                beforeEach {
-                    components = .init(baseURL: validBaseURL, path: path)
-                }
 
                 describe("GIVEN an URLStringConcatener that returns a valid string representation") {
                     let validConcatURL = "https://valid-result-url.com"
                     beforeEach {
+                        components = .init(baseURL: validBaseURL, path: path)
                         urlConcatener.concatResult = { validConcatURL }
                     }
 
@@ -108,6 +106,9 @@ final class NetworkerURLConverterRelativePathBehavior: Behavior<NetworkerURLConv
                 describe("GIVEN an URLStringConcatener that returns an invalid string representation") {
                     let invalidConcatURL = "If only i was part of the valid ones"
                     beforeEach {
+                        components = .init(
+                            baseURL: validBaseURL, token: "12RGDTYTR", path: path
+                        )
                         urlConcatener.concatResult = { invalidConcatURL }
                     }
 
