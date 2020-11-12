@@ -108,11 +108,4 @@ private extension Networker {
 
         fileHandler?(url)
     }
-
-    func dispatch(completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void,
-                  with result: Result<NetworkDownloaderResult, NetworkerError>) {
-        self.queues.asyncCallback {
-            completion(result)
-        }
-    }
 }

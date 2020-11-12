@@ -91,11 +91,4 @@ private extension Networker {
             headerFields: response.allHeaderFields
         )
     }
-
-    func dispatch(completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void,
-                  with result: Result<NetworkRequesterResult, NetworkerError>) {
-        self.queues.asyncCallback {
-            completion(result)
-        }
-    }
 }

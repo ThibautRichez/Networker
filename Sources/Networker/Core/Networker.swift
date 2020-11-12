@@ -8,3 +8,12 @@ struct Networker {
     var urlConverter: URLConverter = NetworkerURLConverter()
     var acceptableMimeTypes: Set<MimeType> = [.json]
 }
+
+extension Networker {
+    func dispatch<T>(completion: @escaping (Result<T, NetworkerError>) -> Void,
+                     with result: Result<T, NetworkerError>) {
+        self.queues.asyncCallback {
+            completion(result)
+        }
+    }
+}
