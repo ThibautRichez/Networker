@@ -84,10 +84,10 @@ class AsyncOperation: Operation {
         self.main()
     }
 
-    /// Subclasses must implement `main`, perform asynchronous task, then
-    /// call the `finish()` method.
+    /// Subclasses must implement `main` (without calling `super`),
+    /// perform asynchronous task, then call the `finish()` method.
     override func main() {
-        fatalError("Subclasses must implement `main` without overriding super.")
+        fatalError("Subclasses must implement `main` without calling super.")
     }
 
     func finish() {
