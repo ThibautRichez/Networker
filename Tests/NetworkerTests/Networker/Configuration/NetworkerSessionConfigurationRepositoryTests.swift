@@ -54,9 +54,9 @@ final class NetworkerSessionConfigurationRepositoryTests: QuickSpec {
 
                     context("WHEN we specify a default value") {
                         var baseURL: String?
-                        var baseURLDefault = "https://testing.com/"
+                        let baseURLDefault = "https://testing.com/"
                         var token: String?
-                        var tokenDefault = "AZERT5434567"
+                        let tokenDefault = "AZERT5434567"
                         beforeEach {
                             baseURL = sut.value(forKey: .baseURL, default: baseURLDefault)
                             token = sut.value(forKey: .token, default: tokenDefault)
@@ -72,8 +72,8 @@ final class NetworkerSessionConfigurationRepositoryTests: QuickSpec {
             }
 
             describe("GIVEN a UserDefaults with values") {
-                var sutBaseURL = "https://testing.com"
-                var sutToken = "DRFTGYUHIJO9876543"
+                let sutBaseURL = "https://testing.com"
+                let sutToken = "DRFTGYUHIJO9876543"
                 beforeEach {
                     sut.setValue(value: sutBaseURL, forKey: .baseURL)
                     sut.setValue(value: sutToken, forKey: .token)
@@ -128,9 +128,9 @@ final class NetworkerSessionConfigurationRepositoryTests: QuickSpec {
 
                         context("WHEN we use an unexpected type") {
                             var baseURL: Int?
-                            var baseURLDefault = 12
+                            let baseURLDefault = 12
                             var token: Int?
-                            var tokenDefault = 22
+                            let tokenDefault = 22
                             beforeEach {
                                 baseURL = sut.value(forKey: .baseURL, default: baseURLDefault)
                                 token = sut.value(forKey: .token, default: tokenDefault)
@@ -144,9 +144,9 @@ final class NetworkerSessionConfigurationRepositoryTests: QuickSpec {
 
                         context("WHEN we use the expected type") {
                             var baseURL: String?
-                            var baseURLDefault = "https://testing.com/"
+                            let baseURLDefault = "https://testing.com/"
                             var token: String?
-                            var tokenDefault = "AZERT5434567"
+                            let tokenDefault = "AZERT5434567"
                             beforeEach {
                                 baseURL = sut.value(forKey: .baseURL, default: baseURLDefault)
                                 token = sut.value(forKey: .token, default: tokenDefault)
