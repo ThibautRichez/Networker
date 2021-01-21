@@ -49,7 +49,7 @@ extension Networker: NetworkEncodableUploader {
                 completion: completion
             )
         } catch {
-            self.dispatch(completion: completion, with: .failure(.encoder(error)))
+            self.dispatch(NetworkerError.encoder(error), completion: completion)
             return nil
         }
     }
@@ -71,7 +71,7 @@ extension Networker: NetworkEncodableUploader {
                 completion: completion
             )
         } catch {
-            self.dispatch(completion: completion, with: .failure(.encoder(error)))
+            self.dispatch(NetworkerError.encoder(error), completion: completion)
             return nil
         }
     }
@@ -85,7 +85,7 @@ extension Networker: NetworkEncodableUploader {
             let data = try encoder.encode(model)
             return self.upload(urlRequest: urlRequest, data: data, completion: completion)
         } catch {
-            self.dispatch(completion: completion, with: .failure(.encoder(error)))
+            self.dispatch(NetworkerError.encoder(error), completion: completion)
             return nil
         }
     }

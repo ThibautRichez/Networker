@@ -120,6 +120,10 @@ final class NetworkerCancellableTests: QuickSpec {
                     expect(queues.didCallAddOperation).to(beFalse())
                 }
             }
+
+            context("WHEN we call cancelAllOperations") {
+
+            }
         }
     }
 }

@@ -39,11 +39,8 @@ extension Networker: NetworkRequester {
                 cachePolicy: cachePolicy,
                 completion: completion
             )
-        } catch let error as NetworkerError {
-            self.dispatch(completion: completion, with: .failure(error))
-            return nil
         } catch {
-            self.dispatch(completion: completion, with: .failure(.unknown(error)))
+            self.dispatch(error, completion: completion)
             return nil
         }
     }
@@ -66,11 +63,9 @@ extension Networker: NetworkRequester {
                 try self.handleRemoteError(error)
                 let httpResponse = try self.getHTTPResponse(from: response)
                 let result = try self.getResult(with: data, response: httpResponse)
-                self.dispatch(completion: completion, with: .success(result))
-            } catch let error as NetworkerError {
-                self.dispatch(completion: completion, with: .failure(error))
-            } catch {
-                self.dispatch(completion: completion, with: .failure(.unknown(error)))
+                self.dispatch(result, completion: completion)
+            } catch  {
+                self.dispatch(error, completion: completion)
             }
         }
 

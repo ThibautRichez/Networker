@@ -49,11 +49,8 @@ extension Networker: NetworkDownloader {
                 fileHandler: fileHandler,
                 completion: completion
             )
-        } catch let error as NetworkerError {
-            self.dispatch(completion: completion, with: .failure(error))
-            return nil
         } catch {
-            self.dispatch(completion: completion, with: .failure(.unknown(error)))
+            self.dispatch(error, completion: completion)
             return nil
         }
     }
@@ -80,11 +77,9 @@ extension Networker: NetworkDownloader {
                 let httpResponse = try self.getHTTPResponse(from: response)
                 try self.executeFilehandler(fileURL: fileURL, fileHandler: fileHandler)
                 let result = self.getResult(response: httpResponse)
-                self.dispatch(completion: completion, with: .success(result))
-            } catch let error as NetworkerError {
-                self.dispatch(completion: completion, with: .failure(error))
+                self.dispatch(result, completion: completion)
             } catch {
-                self.dispatch(completion: completion, with: .failure(.unknown(error)))
+                self.dispatch(error, completion: completion)
             }
         }
 
