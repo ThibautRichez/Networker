@@ -8,16 +8,16 @@
 import Foundation
 
 protocol NetworkConfigurable {
-    mutating func setBaseURL(to url: String?)
-    mutating func setToken(to token: String?)
+    mutating func set(baseURL: String?)
+    mutating func set(token: String?)
 }
 
 extension Networker: NetworkConfigurable {
-    mutating func setBaseURL(to url: String?) {
-        self.configuration.baseURL = url
+    mutating func set(baseURL: String?) {
+        self.configuration.baseURL = baseURL
     }
 
-    mutating func setToken(to token: String?) {
+    mutating func set(token: String?) {
         self.configuration.token = token
     }
 }

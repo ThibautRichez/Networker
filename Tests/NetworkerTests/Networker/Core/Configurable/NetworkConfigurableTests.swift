@@ -32,7 +32,7 @@ final class NetworkConfigurableTests: QuickSpec {
                 let newBaseURL = "https://release.com/"
                 assert(newBaseURL != networkBaseURL)
                 beforeEach {
-                    sut.setBaseURL(to: newBaseURL)
+                    sut.set(baseURL: newBaseURL)
                 }
 
                 it("THEN it should change the value of the session configuration") {
@@ -50,7 +50,7 @@ final class NetworkConfigurableTests: QuickSpec {
                 let newToken = "1234TFDHGFCVBJHG"
                 assert(newToken != networkToken)
                 beforeEach {
-                    sut.setToken(to: newToken)
+                    sut.set(token: newToken)
                 }
 
                 it("THEN it should change the value of the session configuration") {

@@ -32,8 +32,8 @@ final class NetworkerURLComponentsBehavior: Behavior<NetworkerURLComponentsConte
 
         describe("GIVEN a sut configuration without a baseURL and token") {
             beforeEach {
-                sut.setBaseURL(to: nil)
-                sut.setToken(to: nil)
+                sut.set(baseURL: nil)
+                sut.set(token: nil)
             }
 
             describe("GIVEN a session configuration without a baseURL and token") {
@@ -98,8 +98,8 @@ final class NetworkerURLComponentsBehavior: Behavior<NetworkerURLComponentsConte
             let baseURL = "baseURL"
             let token = "token"
             beforeEach {
-                sut.setBaseURL(to: baseURL)
-                sut.setToken(to: token)
+                sut.set(baseURL: baseURL)
+                sut.set(token: token)
             }
 
             describe("GIVEN a session configuration without a baseURL and token") {
