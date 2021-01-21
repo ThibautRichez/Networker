@@ -61,8 +61,14 @@ extension Networker: NetworkDownloader {
                   cachePolicy: NetworkerCachePolicy? = .partial,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        let request = self.makeURLRequest(for: requestType, cachePolicy: cachePolicy, with: url)
-        return self.download(urlRequest: request, fileHandler: fileHandler, completion: completion)
+        let request = self.makeURLRequest(
+            for: requestType, cachePolicy: cachePolicy, with: url
+        )
+        return self.download(
+            urlRequest: request,
+            fileHandler: fileHandler,
+            completion: completion
+        )
     }
 
     @discardableResult
@@ -75,7 +81,9 @@ extension Networker: NetworkDownloader {
             do {
                 try self.handleRemoteError(error)
                 let httpResponse = try self.getHTTPResponse(from: response)
-                try self.executeFilehandler(fileURL: fileURL, fileHandler: fileHandler)
+                try self.executeFilehandler(
+                    fileURL: fileURL, fileHandler: fileHandler
+                )
                 let result = self.getResult(response: httpResponse)
                 self.dispatch(result, completion: completion)
             } catch {

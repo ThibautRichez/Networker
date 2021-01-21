@@ -53,7 +53,6 @@ private extension NetworkerURLConverter {
         return baseURL
     }
 
-    // todo: add test
     func append(token: String?, in value: inout URL) {
         guard let token = token else { return }
 

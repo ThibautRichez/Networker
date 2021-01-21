@@ -79,8 +79,12 @@ extension Networker: NetworkUploader {
                 cachePolicy: NetworkerCachePolicy? = .partial,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         let requestType = type.requestType
-        let request = self.makeURLRequest(for: requestType, cachePolicy: cachePolicy, with: url)
-        return self.upload(urlRequest: request, data: data, completion: completion)
+        let request = self.makeURLRequest(
+            for: requestType, cachePolicy: cachePolicy, with: url
+        )
+        return self.upload(
+            urlRequest: request, data: data, completion: completion
+        )
     }
 
     @discardableResult

@@ -49,7 +49,9 @@ extension Networker: NetworkRequester {
     func request(url: URL,
                  cachePolicy: NetworkerCachePolicy? = .partial,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        let request = self.makeURLRequest(for: .get, cachePolicy: cachePolicy, with: url)
+        let request = self.makeURLRequest(
+            for: .get, cachePolicy: cachePolicy, with: url
+        )
         return self.request(urlRequest: request, completion: completion)
     }
 
@@ -62,7 +64,9 @@ extension Networker: NetworkRequester {
             do {
                 try self.handleRemoteError(error)
                 let httpResponse = try self.getHTTPResponse(from: response)
-                let result = try self.getResult(with: data, response: httpResponse)
+                let result = try self.getResult(
+                    with: data, response: httpResponse
+                )
                 self.dispatch(result, completion: completion)
             } catch  {
                 self.dispatch(error, completion: completion)
@@ -77,7 +81,8 @@ extension Networker: NetworkRequester {
 // MARK: - Helpers
 
 private extension Networker {
-    func getResult(with data: Data?, response: HTTPURLResponse) throws -> NetworkRequesterResult {
+    func getResult(with data: Data?,
+                   response: HTTPURLResponse) throws -> NetworkRequesterResult {
         guard let data = data else { throw NetworkerError.response(.empty) }
 
         return .init(
