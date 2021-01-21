@@ -32,14 +32,14 @@ protocol NetworkDecodableRequester: NetworkConfigurable {
 
 
 extension Networker: NetworkDecodableRequester {
+    @discardableResult
     func request<T: Decodable>(type: T.Type,
                                decoder: JSONDecoder,
                                atPath path: String,
                                cachePolicy: NetworkerCachePolicy? = .partial,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         self.request(path: path, cachePolicy: cachePolicy) { result in
-            let decodableResult = self.convertResult(result, to: type, with: decoder)
-            completion(decodableResult)
+            completion(self.map(result, using: decoder))
         }
     }
 
@@ -50,8 +50,7 @@ extension Networker: NetworkDecodableRequester {
                                cachePolicy: NetworkerCachePolicy? = .partial,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
         self.request(url: url, cachePolicy: cachePolicy) { result in
-            let decodableResult = self.convertResult(result, to: type, with: decoder)
-            completion(decodableResult)
+            completion(self.map(result, using: decoder))
         }
     }
 
@@ -62,8 +61,7 @@ extension Networker: NetworkDecodableRequester {
                                urlRequest: URLRequest,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
         self.request(urlRequest: urlRequest) { result in
-            let decodableResult = self.convertResult(result, to: type, with: decoder)
-            completion(decodableResult)
+            completion(self.map(result, using: decoder))
         }
     }
 }
@@ -71,25 +69,16 @@ extension Networker: NetworkDecodableRequester {
 // MARK: - Helpers
 
 private extension Networker {
-    func convertResult<T: Decodable>(_ result: Result<NetworkRequesterResult, NetworkerError>,
-                                     to type: T.Type,
-                                     with decoder: JSONDecoder) -> Result<T, NetworkerError> {
-        switch result {
-        case .success(let networkResult):
-            return self.decode(type: type, from: networkResult, decoder: decoder)
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
-
-    func decode<T: Decodable>(type: T.Type,
-                              from result: NetworkRequesterResult,
-                              decoder: JSONDecoder) -> Result<T, NetworkerError> {
-        do {
-            let model = try decoder.decode(T.self, from: result.data)
-            return .success(model)
-        } catch {
-            return .failure(.decoder(error))
+    func map<T: Decodable>(
+        _ result: Result<NetworkRequesterResult, NetworkerError>,
+        using decoder: JSONDecoder) -> Result<T, NetworkerError> {
+        result.flatMap { requesterResult in
+            do {
+                let model = try decoder.decode(T.self, from: requesterResult.data)
+                return .success(model)
+            } catch {
+                return .failure(.decoder(error))
+            }
         }
     }
 }

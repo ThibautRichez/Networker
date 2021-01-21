@@ -32,6 +32,7 @@ protocol NetworkEncodableUploader: NetworkConfigurable {
 }
 
 extension Networker: NetworkEncodableUploader {
+    @discardableResult
     func upload<T: Encodable>(path: String,
                    type: NetworkUploaderType,
                    model: T?,
@@ -39,7 +40,7 @@ extension Networker: NetworkEncodableUploader {
                    cachePolicy: NetworkerCachePolicy? = .partial,
                    completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
-            let data: Data? = try encoder.encode(model)
+            let data: Data = try encoder.encode(model)
             return self.upload(
                 path: path,
                 type: type,
@@ -53,6 +54,7 @@ extension Networker: NetworkEncodableUploader {
         }
     }
 
+    @discardableResult
     func upload<T: Encodable>(url: URL,
                               type: NetworkUploaderType,
                               model: T?,
@@ -60,7 +62,7 @@ extension Networker: NetworkEncodableUploader {
                               cachePolicy: NetworkerCachePolicy? = .partial,
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
-            let data: Data? = try encoder.encode(model)
+            let data: Data = try encoder.encode(model)
             return self.upload(
                 url: url,
                 type: type,
@@ -74,12 +76,13 @@ extension Networker: NetworkEncodableUploader {
         }
     }
 
+    @discardableResult
     func upload<T: Encodable>(urlRequest: URLRequest,
                               model: T?,
                               encoder: JSONEncoder,
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
-            let data: Data? = try encoder.encode(model)
+            let data = try encoder.encode(model)
             return self.upload(urlRequest: urlRequest, data: data, completion: completion)
         } catch {
             self.dispatch(completion: completion, with: .failure(.encoder(error)))
