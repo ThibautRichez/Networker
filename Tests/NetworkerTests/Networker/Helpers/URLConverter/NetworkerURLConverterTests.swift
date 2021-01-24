@@ -18,6 +18,9 @@ final class NetworkerURLConverterTests: QuickSpec {
             beforeEach {
                 urlConcatener = .init()
                 sut = .init(urlConcatener: urlConcatener)
+                URLSession.shared.getTasks { (_) in
+                    
+                }
             }
 
             itBehavesLike(NetworkerURLConverterAbsolutePathBehavior.self) { sut }

@@ -55,10 +55,13 @@ enum NetworkerRemoteError: Error {
             self = .connectionLost
         case NSURLErrorNotConnectedToInternet:
             self = .notConnectedToInternet
-        case NSURLErrorAppTransportSecurityRequiresSecureConnection:
-            self = .appTransportSecurity
         default:
-            self = .other(error)
+            if #available(OSX 10.11, *),
+               nsError.code == NSURLErrorAppTransportSecurityRequiresSecureConnection {
+                self = .appTransportSecurity
+            } else {
+                self = .other(error)
+            }
         }
     }
 }

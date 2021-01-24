@@ -28,23 +28,29 @@ protocol URLSessionProtocol {
 extension URLSession: URLSessionProtocol {
     func request(with request: URLRequest,
                  completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
-        return self.dataTask(with: request, completionHandler: completion) as URLSessionTaskProtocol
+        return self.dataTask(with: request, completionHandler: completion)
     }
 
     func upload(with request: URLRequest,
                 from bodyData: Data?,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
-        return self.uploadTask(with: request, from: bodyData, completionHandler: completion) as URLSessionTaskProtocol
+        return self.uploadTask(with: request, from: bodyData, completionHandler: completion)
     }
     
     func download(with request: URLRequest,
                   completion: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
-        return self.downloadTask(with: request, completionHandler: completion) as URLSessionTaskProtocol
+        return self.downloadTask(with: request, completionHandler: completion)
     }
 
     func getTasks(completion: @escaping ([URLSessionTaskProtocol]) -> Void) {
-        self.getAllTasks { (tasks) in
-            completion(tasks as [URLSessionTaskProtocol])
+        if #available(OSX 10.11, *) {
+            self.getAllTasks { (tasks) in
+                completion(tasks)
+            }
+        } else {
+            self.getTasksWithCompletionHandler { (dataTask, uploadTask, downloadTask) in
+                completion(dataTask + uploadTask + downloadTask)
+            }
         }
     }
 }

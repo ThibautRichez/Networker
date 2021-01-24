@@ -5,26 +5,24 @@ import PackageDescription
 
 let package = Package(
     name: "Networker",
+    platforms: [
+        .iOS(.v12),
+        .macOS(.v10_11),
+        .watchOS(.v4),
+        .tvOS(.v11)
+    ],
     products: [
-        .library(
-            name: "Networker",
-            targets: ["Networker"]
-        ),
+        .library(name: "Networker", targets: ["Networker"])
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", from: "3.0.0"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "9.0.0"),
     ],
     targets: [
-        .target(
-            name: "Networker",
-            dependencies: []
-        ),
-        .testTarget(
-            name: "NetworkerTests",
-            dependencies: [
+        .target(name: "Networker", dependencies: []),
+        .testTarget(name: "NetworkerTests", dependencies: [
                 "Networker", "Quick", "Nimble"
             ]
-        ),
+        )
     ]
 )
