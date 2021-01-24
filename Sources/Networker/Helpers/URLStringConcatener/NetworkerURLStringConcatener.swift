@@ -7,12 +7,14 @@
 
 import Foundation
 
-protocol URLStringConcatener {
+public protocol URLStringConcatener {
     func concat(_ value: String, with otherString: String) -> String
 }
 
-struct NetworkerURLStringConcatener: URLStringConcatener {
-    func concat(_ value: String, with otherString: String) -> String {
+public struct NetworkerURLStringConcatener: URLStringConcatener {
+    public init() {}
+
+    public func concat(_ value: String, with otherString: String) -> String {
         var result = value
         switch (value.hasSuffix("/"), otherString.hasPrefix("/")) {
         case (true, true):

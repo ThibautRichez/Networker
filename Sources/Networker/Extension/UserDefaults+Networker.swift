@@ -8,7 +8,7 @@
 import Foundation
 
 extension UserDefaults {
-    static func networker() -> UserDefaults {
+    public static func networker() -> UserDefaults {
         UserDefaults(suiteName: "networker.session.configuration") ?? .standard
     }
 }

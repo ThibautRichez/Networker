@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol NetworkEncodableUploader: NetworkConfigurable {
+public protocol NetworkEncodableUploader: NetworkConfigurable {
     @discardableResult
     func upload<T: Encodable>(path: String,
                               type: NetworkUploaderType,
@@ -33,7 +33,7 @@ protocol NetworkEncodableUploader: NetworkConfigurable {
 
 extension Networker: NetworkEncodableUploader {
     @discardableResult
-    func upload<T: Encodable>(path: String,
+    public func upload<T: Encodable>(path: String,
                    type: NetworkUploaderType,
                    model: T?,
                    encoder: JSONEncoder,
@@ -55,7 +55,7 @@ extension Networker: NetworkEncodableUploader {
     }
 
     @discardableResult
-    func upload<T: Encodable>(url: URL,
+    public func upload<T: Encodable>(url: URL,
                               type: NetworkUploaderType,
                               model: T?,
                               encoder: JSONEncoder,
@@ -77,7 +77,7 @@ extension Networker: NetworkEncodableUploader {
     }
 
     @discardableResult
-    func upload<T: Encodable>(urlRequest: URLRequest,
+    public func upload<T: Encodable>(urlRequest: URLRequest,
                               model: T?,
                               encoder: JSONEncoder,
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {

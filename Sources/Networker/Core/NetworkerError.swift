@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum NetworkerError: Error {
+public enum NetworkerError: Error {
     case path(NetworkerPathError)
     case remote(NetworkerRemoteError)
     case response(NetworkerResponseError)
@@ -18,7 +18,7 @@ enum NetworkerError: Error {
     case unknown(Error)
 }
 
-enum NetworkerPathError: Error {
+public enum NetworkerPathError: Error {
     /// Indicates that a request with a non-absolute path occured without
     /// a baseURL set either in the `NetworkerConfiguration` or
     /// `NetworkerSessionConfiguration`
@@ -36,7 +36,7 @@ enum NetworkerPathError: Error {
 }
 
 
-enum NetworkerRemoteError: Error {
+public enum NetworkerRemoteError: Error {
     case cancelled
     case connectionLost
     case notConnectedToInternet
@@ -66,13 +66,13 @@ enum NetworkerRemoteError: Error {
     }
 }
 
-enum NetworkerResponseError: Error {
+public enum NetworkerResponseError: Error {
     case empty
     case invalid(URLResponse)
     case statusCode(HTTPURLResponse)
     case invalidMimeType(got: String?, allowed: [String])
 }
 
-enum NetworkerDownloadError: Error {
+public enum NetworkerDownloadError: Error {
     case fileURLMissing
 }

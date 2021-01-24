@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol NetworkDecodableRequester: NetworkConfigurable {
+public protocol NetworkDecodableRequester: NetworkConfigurable {
     @discardableResult
     func request<T : Decodable>(decoder: JSONDecoder,
                                 atPath path: String,
@@ -28,7 +28,7 @@ protocol NetworkDecodableRequester: NetworkConfigurable {
 
 extension Networker: NetworkDecodableRequester {
     @discardableResult
-    func request<T: Decodable>(decoder: JSONDecoder,
+    public func request<T: Decodable>(decoder: JSONDecoder,
                                atPath path: String,
                                cachePolicy: NetworkerCachePolicy? = .partial,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
@@ -38,7 +38,7 @@ extension Networker: NetworkDecodableRequester {
     }
 
     @discardableResult
-    func request<T: Decodable>(decoder: JSONDecoder,
+    public func request<T: Decodable>(decoder: JSONDecoder,
                                url: URL,
                                cachePolicy: NetworkerCachePolicy? = .partial,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
@@ -49,7 +49,7 @@ extension Networker: NetworkDecodableRequester {
 
 
     @discardableResult
-    func request<T: Decodable>(decoder: JSONDecoder,
+    public func request<T: Decodable>(decoder: JSONDecoder,
                                urlRequest: URLRequest,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
         self.request(urlRequest: urlRequest) { result in

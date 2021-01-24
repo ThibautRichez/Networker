@@ -7,8 +7,16 @@
 
 import Foundation
 
-struct NetworkerConfiguration {
-    var baseURL: String?
-    var token: String?
-    var timeoutInterval: TimeInterval = 60
+public struct NetworkerConfiguration {
+    public var baseURL: String?
+    public var token: String?
+    public var timeoutInterval: TimeInterval
+
+    public init(baseURL: String? = nil,
+                token: String? = nil,
+                timeoutInterval: TimeInterval = 60) {
+        self.baseURL = baseURL
+        self.token = token
+        self.timeoutInterval = timeoutInterval
+    }
 }

@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct NetworkUploaderResult {
+public struct NetworkUploaderResult {
     var data: Data?
     var statusCode: Int
     var headerFields: [AnyHashable : Any]
 }
 
-enum NetworkUploaderType {
+public enum NetworkUploaderType {
     case post
     case put
 }
@@ -29,7 +29,7 @@ extension NetworkUploaderType {
     }
 }
 
-protocol NetworkUploader: NetworkConfigurable {
+public protocol NetworkUploader: NetworkConfigurable {
     @discardableResult
     func upload(path: String,
                 type: NetworkUploaderType,
@@ -52,7 +52,7 @@ protocol NetworkUploader: NetworkConfigurable {
 
 extension Networker: NetworkUploader {
     @discardableResult
-    func upload(path: String,
+    public func upload(path: String,
                 type: NetworkUploaderType,
                 data: Data?,
                 cachePolicy: NetworkerCachePolicy? = .partial,
@@ -73,7 +73,7 @@ extension Networker: NetworkUploader {
     }
 
     @discardableResult
-    func upload(url: URL,
+    public func upload(url: URL,
                 type: NetworkUploaderType,
                 data: Data?,
                 cachePolicy: NetworkerCachePolicy? = .partial,
@@ -88,7 +88,7 @@ extension Networker: NetworkUploader {
     }
 
     @discardableResult
-    func upload(urlRequest: URLRequest,
+    public func upload(urlRequest: URLRequest,
                 data: Data?,
                 completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(

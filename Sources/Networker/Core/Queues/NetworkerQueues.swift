@@ -7,27 +7,33 @@
 
 import Foundation
 
-protocol NetworkerQueuesProtocol {
+public protocol NetworkerQueuesProtocol {
     func asyncCallback(execute work: @escaping () -> Void)
     func addOperation(_ operation: Operation)
     func cancelAllOperations()
 }
 
-struct NetworkerQueues {
-    var operations: OperationQueue = .networker()
-    var callback: DispatchQueue = .main
+public struct NetworkerQueues {
+    public var operations: OperationQueue
+    public var callback: DispatchQueue
+
+    public init(operations: OperationQueue = .networker(),
+                callback: DispatchQueue = .main) {
+        self.operations = operations
+        self.callback = callback
+    }
 }
 
 extension NetworkerQueues: NetworkerQueuesProtocol {
-    func asyncCallback(execute work: @escaping () -> Void) {
+    public func asyncCallback(execute work: @escaping () -> Void) {
         self.callback.async(execute: work)
     }
 
-    func addOperation(_ operation: Operation) {
+    public func addOperation(_ operation: Operation) {
         self.operations.addOperation(operation)
     }
 
-    func cancelAllOperations() {
+    public func cancelAllOperations() {
         self.operations.cancelAllOperations()
     }
 }

@@ -1,12 +1,26 @@
 import Foundation
 
-struct Networker {
-    var session: URLSessionProtocol = URLSession.shared
-    var configuration: NetworkerConfiguration = .init()
-    var queues: NetworkerQueuesProtocol = NetworkerQueues()
-    var sessionReader: NetworkerSessionConfigurationReader? = NetworkerSessionConfigurationRepository()
-    var urlConverter: URLConverter = NetworkerURLConverter()
-    var acceptableMimeTypes: Set<MimeType> = [.json]
+public struct Networker {
+    var session: URLSessionProtocol
+    var configuration: NetworkerConfiguration
+    var queues: NetworkerQueuesProtocol
+    var sessionReader: NetworkerSessionConfigurationReader?
+    var urlConverter: URLConverter
+    var acceptableMimeTypes: Set<MimeType>
+
+    public init(session: URLSessionProtocol = URLSession.shared,
+                configuration: NetworkerConfiguration = .init(),
+                queues: NetworkerQueuesProtocol = NetworkerQueues(),
+                sessionReader: NetworkerSessionConfigurationReader? = NetworkerSessionConfigurationRepository(),
+                urlConverter: URLConverter = NetworkerURLConverter(),
+                acceptableMimeTypes: Set<MimeType> = [.json]) {
+        self.session = session
+        self.configuration = configuration
+        self.queues = queues
+        self.sessionReader = sessionReader
+        self.urlConverter = urlConverter
+        self.acceptableMimeTypes = acceptableMimeTypes
+    }
 }
 
 extension Networker {

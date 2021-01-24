@@ -7,20 +7,36 @@
 
 import Foundation
 
-struct NetworkerURLComponents {
-    var baseURL: String?
-    var token: String?
-    var path: String
+public struct NetworkerURLComponents {
+    public var baseURL: String?
+    public var token: String?
+    public var path: String
+
+    public init(baseURL: String? = nil,
+                token: String? = nil,
+                path: String) {
+        self.baseURL = baseURL
+        self.token = token
+        self.path = path
+    }
 }
 
-protocol URLConverter {
+public protocol URLConverter {
     func url(from components: NetworkerURLComponents) throws -> URL
 }
 
-struct NetworkerURLConverter: URLConverter {
-    var urlConcatener: URLStringConcatener = NetworkerURLStringConcatener()
+public struct NetworkerURLConverter {
+    var urlConcatener: URLStringConcatener
 
-    func url(from components: NetworkerURLComponents) throws -> URL {
+    public init(urlConcatener: URLStringConcatener = NetworkerURLStringConcatener()) {
+        self.urlConcatener = urlConcatener
+    }
+}
+
+// MARK: - URLConverter
+
+extension NetworkerURLConverter: URLConverter {
+    public func url(from components: NetworkerURLComponents) throws -> URL {
         if components.path.isAbsoluteURL {
             return try self.makeAbsoluteURL(from: components.path)
         }

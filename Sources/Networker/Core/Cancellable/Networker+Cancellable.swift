@@ -7,14 +7,14 @@
 
 import Foundation
 
-protocol NetworkCancellable {
+public protocol NetworkCancellable {
     func cancelTask(with identifier: Int, completion: (() -> Void)?)
     func cancelTasks(completion: (() -> Void)?)
     func cancelAllOperations()
 }
 
 extension Networker: NetworkCancellable {
-    func cancelTask(with identifier: Int, completion: (() -> Void)?) {
+    public func cancelTask(with identifier: Int, completion: (() -> Void)?) {
         self.session.getTasks { (tasks) in
             let task = tasks.first { $0.taskIdentifier == identifier }
             task?.cancel()
@@ -22,14 +22,14 @@ extension Networker: NetworkCancellable {
         }
     }
 
-    func cancelTasks(completion: (() -> Void)?) {
+    public func cancelTasks(completion: (() -> Void)?) {
         self.session.getTasks { (tasks) in
             tasks.forEach { $0.cancel() }
             completion?()
         }
     }
 
-    func cancelAllOperations() {
+    public func cancelAllOperations() {
         self.queues.cancelAllOperations()
     }
 }

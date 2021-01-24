@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct NetworkRequesterResult {
+public struct NetworkRequesterResult {
     var data: Data
     var statusCode: Int
     var headerFields: [AnyHashable : Any]
 }
 
-protocol NetworkRequester: NetworkConfigurable {
+public protocol NetworkRequester: NetworkConfigurable {
     @discardableResult
     func request(path: String,
                  cachePolicy: NetworkerCachePolicy?,
@@ -29,7 +29,7 @@ protocol NetworkRequester: NetworkConfigurable {
 
 extension Networker: NetworkRequester {
     @discardableResult
-    func request(path: String,
+    public func request(path: String,
                  cachePolicy: NetworkerCachePolicy? = .partial,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
@@ -46,7 +46,7 @@ extension Networker: NetworkRequester {
     }
 
     @discardableResult
-    func request(url: URL,
+    public func request(url: URL,
                  cachePolicy: NetworkerCachePolicy? = .partial,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
         let request = self.makeURLRequest(
@@ -56,7 +56,7 @@ extension Networker: NetworkRequester {
     }
 
     @discardableResult
-    func request(urlRequest: URLRequest,
+    public func request(urlRequest: URLRequest,
                  completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
         let operation = NetworkerOperation(
             request: urlRequest,

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum NetworkerCachePolicy {
+public enum NetworkerCachePolicy {
     /// Partial cache with default settings.
     case partial
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol URLSessionProtocol {
+public protocol URLSessionProtocol {
     @discardableResult
     func request(with request: URLRequest,
                  completion: @escaping (Data?, URLResponse?, Error?) -> Void
@@ -26,23 +26,23 @@ protocol URLSessionProtocol {
 }
 
 extension URLSession: URLSessionProtocol {
-    func request(with request: URLRequest,
+    public func request(with request: URLRequest,
                  completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
         return self.dataTask(with: request, completionHandler: completion)
     }
 
-    func upload(with request: URLRequest,
+    public func upload(with request: URLRequest,
                 from bodyData: Data?,
                 completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
         return self.uploadTask(with: request, from: bodyData, completionHandler: completion)
     }
     
-    func download(with request: URLRequest,
+    public func download(with request: URLRequest,
                   completion: @escaping (URL?, URLResponse?, Error?) -> Void) -> URLSessionTaskProtocol {
         return self.downloadTask(with: request, completionHandler: completion)
     }
 
-    func getTasks(completion: @escaping ([URLSessionTaskProtocol]) -> Void) {
+    public func getTasks(completion: @escaping ([URLSessionTaskProtocol]) -> Void) {
         if #available(OSX 10.11, *) {
             self.getAllTasks { (tasks) in
                 completion(tasks)

@@ -7,14 +7,14 @@
 
 import Foundation
 
-typealias NetworkCancellableRequester = NetworkRequester & NetworkCancellable
-typealias NetworkCancellableUploader = NetworkUploader & NetworkCancellable
-typealias NetworkCancellableDownloader = NetworkDownloader & NetworkCancellable
+public typealias NetworkCancellableRequester = NetworkRequester & NetworkCancellable
+public typealias NetworkCancellableUploader = NetworkUploader & NetworkCancellable
+public typealias NetworkCancellableDownloader = NetworkDownloader & NetworkCancellable
 
-typealias NetworkerProtocol = NetworkRequester & NetworkUploader & NetworkDownloader & NetworkCancellable
+public typealias NetworkerProtocol = NetworkRequester & NetworkUploader & NetworkDownloader & NetworkCancellable
 
 
-typealias NetworkDecodeCancellableRequester = NetworkDecodableRequester & NetworkCancellable
-typealias NetworkDecodeCancellableUploader = NetworkEncodableUploader & NetworkCancellable
+public typealias NetworkDecodeCancellableRequester = NetworkDecodableRequester & NetworkCancellable
+public typealias NetworkDecodeCancellableUploader = NetworkEncodableUploader & NetworkCancellable
 
-typealias NetworkerCodableProtocol = NetworkDecodableRequester & NetworkEncodableUploader & NetworkCancellable
+public typealias NetworkerCodableProtocol = NetworkDecodableRequester & NetworkEncodableUploader & NetworkCancellable

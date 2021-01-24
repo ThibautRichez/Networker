@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum MimeType {
+public enum MimeType {
     case json
     case text
     case html
@@ -17,7 +17,7 @@ enum MimeType {
 }
 
 extension MimeType: RawRepresentable {
-    init?(rawValue: String) {
+    public init?(rawValue: String) {
         if let value = RawRepresentableCase(rawValue: rawValue) {
             self = value.type
         } else {
@@ -25,7 +25,7 @@ extension MimeType: RawRepresentable {
         }
     }
 
-    var rawValue: String {
+    public var rawValue: String {
         switch self {
         case .json:
             return RawRepresentableCase.json.rawValue

@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol URLSessionTaskProtocol {
+public protocol URLSessionTaskProtocol {
     var taskIdentifier: Int { get }
 
     func resume()

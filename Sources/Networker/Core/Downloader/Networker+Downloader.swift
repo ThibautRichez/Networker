@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct NetworkDownloaderResult {
+public struct NetworkDownloaderResult {
     var statusCode: Int
     var headerFields: [AnyHashable : Any]
 }
 
-protocol NetworkDownloader: NetworkConfigurable {
+public protocol NetworkDownloader: NetworkConfigurable {
     @discardableResult
     func download(path: String,
                   requestType: URLRequestType,
@@ -35,7 +35,7 @@ protocol NetworkDownloader: NetworkConfigurable {
 
 extension Networker: NetworkDownloader {
     @discardableResult
-    func download(path: String,
+    public func download(path: String,
                   requestType: URLRequestType,
                   cachePolicy: NetworkerCachePolicy? = .partial,
                   fileHandler: ((URL) -> Void)?,
@@ -56,7 +56,7 @@ extension Networker: NetworkDownloader {
     }
 
     @discardableResult
-    func download(url: URL,
+    public func download(url: URL,
                   requestType: URLRequestType,
                   cachePolicy: NetworkerCachePolicy? = .partial,
                   fileHandler: ((URL) -> Void)?,
@@ -72,7 +72,7 @@ extension Networker: NetworkDownloader {
     }
 
     @discardableResult
-    func download(urlRequest: URLRequest,
+    public func download(urlRequest: URLRequest,
                   fileHandler: ((URL) -> Void)?,
                   completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
