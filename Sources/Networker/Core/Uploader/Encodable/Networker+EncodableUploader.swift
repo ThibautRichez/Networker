@@ -83,7 +83,11 @@ extension Networker: NetworkEncodableUploader {
                               completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let data = try encoder.encode(model)
-            return self.upload(urlRequest: urlRequest, data: data, completion: completion)
+            return self.upload(
+                urlRequest: urlRequest,
+                data: data,
+                completion: completion
+            )
         } catch {
             self.dispatch(NetworkerError.encoder(error), completion: completion)
             return nil

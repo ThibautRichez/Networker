@@ -429,7 +429,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         var expectedUploadResult: NetworkUploaderResult!
                         var expectedDownloadResult: NetworkDownloaderResult!
                         beforeEach {
-                            data = Data([1])
+                            data = "{ }".data(using: .utf8)
                             expectedRequestResult = .init(
                                 data: data,
                                 statusCode: validResponse.statusCode,

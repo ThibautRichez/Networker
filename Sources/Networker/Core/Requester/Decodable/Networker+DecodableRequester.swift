@@ -9,32 +9,26 @@ import Foundation
 
 protocol NetworkDecodableRequester: NetworkConfigurable {
     @discardableResult
-    func request<T : Decodable>(type: T.Type,
-                                decoder: JSONDecoder,
+    func request<T : Decodable>(decoder: JSONDecoder,
                                 atPath path: String,
                                 cachePolicy: NetworkerCachePolicy?,
                                 completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
-    func request<T: Decodable>(type: T.Type,
-                               decoder: JSONDecoder,
+    func request<T: Decodable>(decoder: JSONDecoder,
                                url: URL,
                                cachePolicy: NetworkerCachePolicy?,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 
     @discardableResult
-    func request<T: Decodable>(type: T.Type,
-                               decoder: JSONDecoder,
+    func request<T: Decodable>(decoder: JSONDecoder,
                                urlRequest: URLRequest,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 }
 
-
-
 extension Networker: NetworkDecodableRequester {
     @discardableResult
-    func request<T: Decodable>(type: T.Type,
-                               decoder: JSONDecoder,
+    func request<T: Decodable>(decoder: JSONDecoder,
                                atPath path: String,
                                cachePolicy: NetworkerCachePolicy? = .partial,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
@@ -44,8 +38,7 @@ extension Networker: NetworkDecodableRequester {
     }
 
     @discardableResult
-    func request<T: Decodable>(type: T.Type,
-                               decoder: JSONDecoder,
+    func request<T: Decodable>(decoder: JSONDecoder,
                                url: URL,
                                cachePolicy: NetworkerCachePolicy? = .partial,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
@@ -56,8 +49,7 @@ extension Networker: NetworkDecodableRequester {
 
 
     @discardableResult
-    func request<T: Decodable>(type: T.Type,
-                               decoder: JSONDecoder,
+    func request<T: Decodable>(decoder: JSONDecoder,
                                urlRequest: URLRequest,
                                completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
         self.request(urlRequest: urlRequest) { result in

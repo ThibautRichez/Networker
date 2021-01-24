@@ -85,7 +85,7 @@ final class NetworkerTests: QuickSpec {
 
                 itBehavesLike(NetworkerGivenURLConverterSuccessBehavior.self) {
                     .init(
-                        path: anyPath,
+                        path: converterURL,
                         expectedRequestURL: converterURL,
                         session: session,
                         queues: queues,
