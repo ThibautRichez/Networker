@@ -140,6 +140,7 @@ fileprivate final class DefaultBehavior: Behavior<DefaultBehaviorContext> {
             beforeEach {
                 let defaultContext = aContext()
                 let context = defaultContext.context
+
                 expectedError = context.expectedError
                 path = context.path
                 expectedRequestURL = context.expectedRequestURL

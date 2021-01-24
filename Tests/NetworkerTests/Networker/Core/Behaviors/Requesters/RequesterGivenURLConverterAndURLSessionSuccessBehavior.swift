@@ -10,10 +10,10 @@ import Quick
 import Nimble
 @testable import Networker
 
-typealias DecodeEquatable = Decodable & Equatable
+fileprivate typealias DecodeEquatable = Decodable & Equatable
 
-struct SuccessDecodable: DecodeEquatable {}
-struct ErrorDecodable: DecodeEquatable {
+fileprivate struct SuccessDecodable: DecodeEquatable {}
+fileprivate struct ErrorDecodable: DecodeEquatable {
     var title: String
     var subtitle: String
 }
