@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class NetworkerOperation<T>: AsyncOperation {
+final class NetworkerOperation: AsyncOperation {
     private(set) var task: URLSessionTaskProtocol!
 
     /// Creates an Async `Operation` to disptach networker tasks
@@ -17,7 +17,7 @@ final class NetworkerOperation<T>: AsyncOperation {
     ///   returns an `URLSessionTaskProtocol`. (cf `Networker` request and
     ///   download for more details)
     ///   - completion: A closure that contain the executor result.
-    init(request: URLRequest,
+    init<T>(request: URLRequest,
          executor: (URLRequest, (@escaping (T?, URLResponse?, Error?) -> Void)) -> URLSessionTaskProtocol,
          completion: @escaping (T?, URLResponse?, Error?) -> Void) {
         super.init()
@@ -34,7 +34,7 @@ final class NetworkerOperation<T>: AsyncOperation {
     ///   - executor: An method that takes an `URLRequest`, a `Data`, a `completion` and
     ///   returns an `URLSessionTaskProtocol`. (cf `Networker` upload for more details)
     ///   - completion: A closure that contain the executor result.
-    init(request: URLRequest,
+    init<T>(request: URLRequest,
          data: Data?,
          executor: (URLRequest, Data?, (@escaping (T?, URLResponse?, Error?) -> Void)) -> URLSessionTaskProtocol,
          completion: @escaping (T?, URLResponse?, Error?) -> Void) {
@@ -50,9 +50,9 @@ final class NetworkerOperation<T>: AsyncOperation {
         self.task.resume()
     }
 
-    // todo: add test (should cancel after adding a task in NetworkerCancellableTests).
     override func cancel() {
-        self.task.cancel()
         super.cancel()
+
+        self.task.cancel()
     }
 }
