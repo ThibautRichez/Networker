@@ -8,9 +8,9 @@
 import Foundation
 
 public struct NetworkUploaderResult {
-    var data: Data?
-    var statusCode: Int
-    var headerFields: [AnyHashable : Any]
+    public var data: Data?
+    public var statusCode: Int
+    public var headerFields: [AnyHashable : Any]
 }
 
 public enum NetworkUploaderType {

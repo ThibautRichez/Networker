@@ -8,8 +8,8 @@
 import Foundation
 
 public struct NetworkDownloaderResult {
-    var statusCode: Int
-    var headerFields: [AnyHashable : Any]
+    public var statusCode: Int
+    public var headerFields: [AnyHashable : Any]
 }
 
 public protocol NetworkDownloader: NetworkConfigurable {
