@@ -76,6 +76,12 @@ private extension Networker {
                 request.networkServiceType = type
             case .authorizations(let authorizations):
                 self.set(authorizations: authorizations, in: &request)
+            case .httpBody(let httpBody):
+                request.httpBody = httpBody
+            case .bodyStream(let bodyStream):
+                request.httpBodyStream = bodyStream
+            case .mainDocumentURL(let mainDocumentURL):
+                request.mainDocumentURL = mainDocumentURL
             }
         }
     }
@@ -89,6 +95,7 @@ private extension Networker {
     func set(authorizations: NetworkerAuthorizations, in request: inout URLRequest) {
         request.allowsCellularAccess = authorizations.contains(.cellularAccess)
         request.httpShouldHandleCookies = authorizations.contains(.cookies)
+        request.httpShouldUsePipelining = authorizations.contains(.pipelining)
 
         if #available(iOS 13.0, *) {
             request.allowsExpensiveNetworkAccess = authorizations.contains(.expensiveNetworkAccess)

@@ -12,6 +12,9 @@ public enum NetworkerOption {
     case headers([String: String])
     case serviceType(URLRequest.NetworkServiceType)
     case authorizations(NetworkerAuthorizations)
+    case httpBody(Data?)
+    case bodyStream(InputStream?)
+    case mainDocumentURL(URL?)
 }
 
 public struct NetworkerAuthorizations: OptionSet {
@@ -25,6 +28,7 @@ public struct NetworkerAuthorizations: OptionSet {
     static let expensiveNetworkAccess = NetworkerAuthorizations(rawValue: 1 << 1)
     static let constrainedNetworkAccess = NetworkerAuthorizations(rawValue: 1 << 2)
     static let cookies = NetworkerAuthorizations(rawValue: 1 << 3)
+    static let pipelining = NetworkerAuthorizations(rawValue: 1 << 4)
 
     static let all: NetworkerAuthorizations = [
         .cellularAccess,
