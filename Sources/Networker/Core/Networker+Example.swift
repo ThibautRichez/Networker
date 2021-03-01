@@ -36,3 +36,28 @@ import Foundation
 //        )
 //    }
 //}
+//
+//fileprivate struct ViewModel {
+//    var networker: Networker = .custom()
+//
+//    func fetch() {
+//        self.networker.request(
+//            path: "",
+//            options: [
+//                .cachePolicy(.reloadIgnoringLocalCache),
+//                .headers(["contentType": "json"]),
+//                .serviceType(.responsiveData),
+//                .authorizations([.cellularAccess, .cookies]),
+//                .httpBody(Data()),
+//                .bodyStream(InputStream(url: URL(string: "")!)),
+//                .mainDocumentURL(URL(string: "")!)
+//            ]) { (result) in
+//            switch result {
+//            case .success(let networkerResult):
+//                print(networkerResult)
+//            case .failure(let error):
+//                print(error)
+//            }
+//        }
+//    }
+//}

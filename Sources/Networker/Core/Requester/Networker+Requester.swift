@@ -68,8 +68,9 @@ extension Networker: NetworkRequester {
     }
     
     @discardableResult
-    public func request(urlRequest: URLRequest,
-                        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
+    public func request(
+        urlRequest: URLRequest,
+        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol {
         let operation = NetworkerOperation(
             request: urlRequest,
