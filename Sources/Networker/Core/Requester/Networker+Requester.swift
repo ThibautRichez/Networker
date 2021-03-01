@@ -15,28 +15,34 @@ public struct NetworkRequesterResult {
 
 public protocol NetworkRequester: NetworkConfigurable {
     @discardableResult
-    func request(path: String,
-                 cachePolicy: NetworkerCachePolicy?,
-                 completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+    func request(
+        path: String,
+        options: [NetworkerOption]?,
+        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+
     @discardableResult
-    func request(url: URL,
-                 cachePolicy: NetworkerCachePolicy?,
-                 completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol
+    func request(
+        url: URL,
+        options: [NetworkerOption]?,
+        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol
+
     @discardableResult
-    func request(urlRequest: URLRequest,
-                 completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol
+    func request(
+        urlRequest: URLRequest,
+        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 }
 
 extension Networker: NetworkRequester {
     @discardableResult
-    public func request(path: String,
-                 cachePolicy: NetworkerCachePolicy? = .partial,
-                 completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+    public func request(
+        path: String,
+        options: [NetworkerOption]? = nil,
+        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let requestURL = try self.makeURL(from: path)
             return self.request(
                 url: requestURL,
-                cachePolicy: cachePolicy,
+                options: options,
                 completion: completion
             )
         } catch {
@@ -46,11 +52,12 @@ extension Networker: NetworkRequester {
     }
 
     @discardableResult
-    public func request(url: URL,
-                 cachePolicy: NetworkerCachePolicy? = .partial,
-                 completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
+    public func request(
+        url: URL,
+        options: [NetworkerOption]? = nil,
+        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
         let request = self.makeURLRequest(
-            for: .get, cachePolicy: cachePolicy, with: url
+            for: .get, options: options, with: url
         )
         return self.request(urlRequest: request, completion: completion)
     }

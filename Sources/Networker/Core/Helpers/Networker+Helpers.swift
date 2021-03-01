@@ -8,10 +8,6 @@
 import Foundation
 
 extension Networker {
-    private var sessionConfiguration: NetworkerSessionConfiguration? {
-        self.sessionReader?.configuration
-    }
-
     func makeURL(from path: String) throws -> URL {
         let baseURL = self.configuration.baseURL ?? self.sessionConfiguration?.baseURL
         let token = self.configuration.token ?? self.sessionConfiguration?.token
@@ -25,15 +21,13 @@ extension Networker {
     }
 
     func makeURLRequest(for type: URLRequestType,
-                        cachePolicy: NetworkerCachePolicy? = .partial,
+                        options: [NetworkerOption]? = nil,
                         with url: URL) -> URLRequest {
-        var urlRequest = URLRequest(
-            url: url, timeoutInterval: self.configuration.timeoutInterval
-        )
+        let timeoutInterval = self.configuration.timeoutInterval
+        var urlRequest = URLRequest(url: url, timeoutInterval: timeoutInterval)
         urlRequest.httpMethod = type.rawValue
-        if let cachePolicy = cachePolicy {
-            urlRequest.cachePolicy = .init(networkerPolicy: cachePolicy)
-        }
+        self.set(headers: self.sessionConfiguration?.headers, in: &urlRequest)
+        self.handle(options: options, for: &urlRequest)
         return urlRequest
     }
 
@@ -62,8 +56,33 @@ extension Networker {
     }
 
     func handleRemoteError(_ error: Error?) throws {
-        if let error = error {
-            throw NetworkerError.remote(NetworkerRemoteError(error))
+        guard let error = error else { return }
+
+        throw NetworkerError.remote(NetworkerRemoteError(error))
+    }
+}
+
+private extension Networker {
+    private var sessionConfiguration: NetworkerSessionConfiguration? {
+        self.sessionReader?.configuration
+    }
+
+    // MARK: - Options
+
+    func handle(options: [NetworkerOption]?, for request: inout URLRequest) {
+        options?.forEach { option in
+            switch option {
+            case .cachePolicy(let policy):
+                request.cachePolicy = .init(networkerPolicy: policy)
+            case .headers(let headers):
+                self.set(headers: headers, in: &request)
+            }
+        }
+    }
+
+    func set(headers: [String: String]?, in request: inout URLRequest) {
+        headers?.forEach { key, value in
+            request.setValue(value, forHTTPHeaderField: key)
         }
     }
 }

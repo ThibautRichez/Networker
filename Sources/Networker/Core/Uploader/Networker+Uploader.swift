@@ -31,39 +31,43 @@ extension NetworkUploaderType {
 
 public protocol NetworkUploader: NetworkConfigurable {
     @discardableResult
-    func upload(path: String,
-                type: NetworkUploaderType,
-                data: Data?,
-                cachePolicy: NetworkerCachePolicy?,
-                completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+    func upload(
+        path: String,
+        type: NetworkUploaderType,
+        data: Data?,
+        options: [NetworkerOption]?,
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
-    func upload(url: URL,
-                type: NetworkUploaderType,
-                data: Data?,
-                cachePolicy: NetworkerCachePolicy?,
-                completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+    func upload(
+        url: URL,
+        type: NetworkUploaderType,
+        data: Data?,
+        options: [NetworkerOption]?,
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
-    func upload(urlRequest: URLRequest,
-                data: Data?,
-                completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+    func upload(
+        urlRequest: URLRequest,
+        data: Data?,
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 }
 
 extension Networker: NetworkUploader {
     @discardableResult
-    public func upload(path: String,
-                type: NetworkUploaderType,
-                data: Data?,
-                cachePolicy: NetworkerCachePolicy? = .partial,
-                completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+    public func upload(
+        path: String,
+        type: NetworkUploaderType,
+        data: Data?,
+        options: [NetworkerOption]? = nil,
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
             return self.upload(
                 url: uploadURL,
                 type: type,
                 data: data,
-                cachePolicy: cachePolicy,
+                options: options,
                 completion: completion
             )
         } catch {
@@ -73,24 +77,22 @@ extension Networker: NetworkUploader {
     }
 
     @discardableResult
-    public func upload(url: URL,
-                type: NetworkUploaderType,
-                data: Data?,
-                cachePolicy: NetworkerCachePolicy? = .partial,
-                completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+    public func upload(
+        url: URL,
+        type: NetworkUploaderType,
+        data: Data?,
+        options: [NetworkerOption]? = nil,
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         let requestType = type.requestType
-        let request = self.makeURLRequest(
-            for: requestType, cachePolicy: cachePolicy, with: url
-        )
-        return self.upload(
-            urlRequest: request, data: data, completion: completion
-        )
+        let request = self.makeURLRequest(for: requestType, options: options, with: url)
+        return self.upload(urlRequest: request, data: data, completion: completion)
     }
 
     @discardableResult
-    public func upload(urlRequest: URLRequest,
-                data: Data?,
-                completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+    public func upload(
+        urlRequest: URLRequest,
+        data: Data?,
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
             request: urlRequest,
             data: data,

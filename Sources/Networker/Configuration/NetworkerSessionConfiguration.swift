@@ -8,13 +8,24 @@
 import Foundation
 
 public struct NetworkerSessionConfiguration {
-    var token: String?
-    var baseURL: String?
+    public var token: String?
+    public var baseURL: String?
+    // TODO: need testing
+    public var headers: [String: String]?
+
+    public init(token: String? = nil,
+                baseURL: String? = nil,
+                headers: [String : String]? = nil) {
+        self.token = token
+        self.baseURL = baseURL
+        self.headers = headers
+    }
 }
 
 public enum NetworkerSessionConfigurationKey: String {
-    case token = "Networker.token"
-    case baseURL = "Netwoker.baseURL"
+    case token = "networker.session.token"
+    case baseURL = "netwoker.session.baseURL"
+    case headers = "netwoker.session.headers"
 }
 
 public protocol NetworkerSessionConfigurationWritter {
@@ -49,7 +60,8 @@ extension NetworkerSessionConfigurationRepository: NetworkerSessionConfiguration
     public var configuration: NetworkerSessionConfiguration {
         let token: String? = self.value(forKey: .token)
         let baseURL: String? = self.value(forKey: .baseURL)
-        return .init(token: token, baseURL: baseURL)
+        let headers: [String: String]? = self.value(forKey: .headers)
+        return .init(token: token, baseURL: baseURL, headers: headers)
     }
 
     // MARK: NetworkerSessionConfigurationValueReader

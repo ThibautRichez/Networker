@@ -14,38 +14,42 @@ public struct NetworkDownloaderResult {
 
 public protocol NetworkDownloader: NetworkConfigurable {
     @discardableResult
-    func download(path: String,
-                  requestType: URLRequestType,
-                  cachePolicy: NetworkerCachePolicy?,
-                  fileHandler: ((URL) -> Void)?,
-                  completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+    func download(
+        path: String,
+        requestType: URLRequestType,
+        options: [NetworkerOption]?,
+        fileHandler: ((URL) -> Void)?,
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
-    func download(url: URL,
-                  requestType: URLRequestType,
-                  cachePolicy: NetworkerCachePolicy?,
-                  fileHandler: ((URL) -> Void)?,
-                  completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+    func download(
+        url: URL,
+        requestType: URLRequestType,
+        options: [NetworkerOption]?,
+        fileHandler: ((URL) -> Void)?,
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
-    func download(urlRequest: URLRequest,
-                  fileHandler: ((URL) -> Void)?,
-                  completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+    func download(
+        urlRequest: URLRequest,
+        fileHandler: ((URL) -> Void)?,
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 }
 
 extension Networker: NetworkDownloader {
     @discardableResult
-    public func download(path: String,
-                  requestType: URLRequestType,
-                  cachePolicy: NetworkerCachePolicy? = .partial,
-                  fileHandler: ((URL) -> Void)?,
-                  completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+    public func download(
+        path: String,
+        requestType: URLRequestType,
+        options: [NetworkerOption]? = nil,
+        fileHandler: ((URL) -> Void)?,
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
             return self.download(
                 url: uploadURL,
                 requestType: requestType,
-                cachePolicy: cachePolicy,
+                options: options,
                 fileHandler: fileHandler,
                 completion: completion
             )
@@ -56,25 +60,21 @@ extension Networker: NetworkDownloader {
     }
 
     @discardableResult
-    public func download(url: URL,
-                  requestType: URLRequestType,
-                  cachePolicy: NetworkerCachePolicy? = .partial,
-                  fileHandler: ((URL) -> Void)?,
-                  completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        let request = self.makeURLRequest(
-            for: requestType, cachePolicy: cachePolicy, with: url
-        )
-        return self.download(
-            urlRequest: request,
-            fileHandler: fileHandler,
-            completion: completion
-        )
+    public func download(
+        url: URL,
+        requestType: URLRequestType,
+        options: [NetworkerOption]? = nil,
+        fileHandler: ((URL) -> Void)?,
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+        let request = self.makeURLRequest(for: requestType, options: options, with: url)
+        return self.download(urlRequest: request, fileHandler: fileHandler, completion: completion)
     }
 
     @discardableResult
-    public func download(urlRequest: URLRequest,
-                  fileHandler: ((URL) -> Void)?,
-                  completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+    public func download(
+        urlRequest: URLRequest,
+        fileHandler: ((URL) -> Void)?,
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
             request: urlRequest,
             executor: self.session.download(with:completion:)) { (fileURL, response, error) in
