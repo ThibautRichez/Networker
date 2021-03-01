@@ -12,11 +12,7 @@ extension Networker {
         let baseURL = self.configuration.baseURL ?? self.sessionConfiguration?.baseURL
         let token = self.configuration.token ?? self.sessionConfiguration?.token
 
-        let components = NetworkerURLComponents(
-            baseURL: baseURL,
-            token: token,
-            path: path
-        )
+        let components = NetworkerURLComponents(baseURL: baseURL, token: token, path: path)
         return try self.urlConverter.url(from: components)
     }
 
@@ -44,7 +40,7 @@ extension Networker {
             throw NetworkerError.response(.statusCode(httpResponse))
         }
 
-        let acceptableMimeTypes = self.acceptableMimeTypes.map { $0.rawValue }
+        let acceptableMimeTypes = self.acceptableMimeTypes.map(\.rawValue)
         guard let mimeType = httpResponse.mimeType,
               acceptableMimeTypes.contains(mimeType) else {
             throw NetworkerError.response(

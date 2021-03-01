@@ -45,23 +45,17 @@ public enum NetworkerRemoteError: Error {
 
     init(_ error: Error) {
         let nsError = error as NSError
-        if nsError.domain == NSURLErrorDomain, nsError.code == NSURLErrorCancelled {
+        switch (nsError.code, nsError.domain) {
+        case (NSURLErrorCancelled, NSURLErrorDomain):
             self = .cancelled
-            return
-        }
-
-        switch nsError.code {
-        case NSURLErrorNetworkConnectionLost:
+        case (NSURLErrorNetworkConnectionLost, _):
             self = .connectionLost
-        case NSURLErrorNotConnectedToInternet:
+        case (NSURLErrorNotConnectedToInternet, _):
             self = .notConnectedToInternet
+        case (NSURLErrorAppTransportSecurityRequiresSecureConnection, _):
+            self = .appTransportSecurity
         default:
-            if #available(OSX 10.11, *),
-               nsError.code == NSURLErrorAppTransportSecurityRequiresSecureConnection {
-                self = .appTransportSecurity
-            } else {
-                self = .other(error)
-            }
+            self = .other(error)
         }
     }
 }

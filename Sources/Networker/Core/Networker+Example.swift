@@ -28,16 +28,11 @@ import Foundation
 //        operationQueue.name = "networker.operations.utility.queue"
 //        operationQueue.maxConcurrentOperationCount = 1
 //        operationQueue.qualityOfService = .utility
-//        let queues = NetworkerQueues(
-//            operations: operationQueue,
-//            callback: .main
-//        )
+//        let queues = NetworkerQueues(operations: operationQueue, callback: .main)
 //
 //        return .init(
-//            session: session,
-//            configuration: configuration,
-//            queues: queues,
-//            acceptableMimeTypes: Set(arrayLiteral: .jpg, .json)
+//            session: session, configuration: configuration,
+//            queues: queues, acceptableMimeTypes: Set(arrayLiteral: .jpg, .json)
 //        )
 //    }
 //}

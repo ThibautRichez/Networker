@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NetworkerConfiguration.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/24/20.

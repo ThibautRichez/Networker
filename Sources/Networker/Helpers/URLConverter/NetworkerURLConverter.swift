@@ -12,9 +12,7 @@ public struct NetworkerURLComponents {
     public var token: String?
     public var path: String
 
-    public init(baseURL: String? = nil,
-                token: String? = nil,
-                path: String) {
+    public init(baseURL: String? = nil, token: String? = nil, path: String) {
         self.baseURL = baseURL
         self.token = token
         self.path = path

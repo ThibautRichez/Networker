@@ -10,6 +10,11 @@ import Foundation
 public struct NetworkDownloaderResult {
     public var statusCode: Int
     public var headerFields: [AnyHashable : Any]
+
+    public init(statusCode: Int, headerFields: [AnyHashable : Any]) {
+        self.statusCode = statusCode
+        self.headerFields = headerFields
+    }
 }
 
 public protocol NetworkDownloader: NetworkConfigurable {
@@ -19,7 +24,8 @@ public protocol NetworkDownloader: NetworkConfigurable {
         requestType: URLRequestType,
         options: [NetworkerOption]?,
         fileHandler: ((URL) -> Void)?,
-        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol?
 
     @discardableResult
     func download(
@@ -27,13 +33,15 @@ public protocol NetworkDownloader: NetworkConfigurable {
         requestType: URLRequestType,
         options: [NetworkerOption]?,
         fileHandler: ((URL) -> Void)?,
-        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol?
 
     @discardableResult
     func download(
         urlRequest: URLRequest,
         fileHandler: ((URL) -> Void)?,
-        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>
+        ) -> Void) -> URLSessionTaskProtocol?
 }
 
 extension Networker: NetworkDownloader {
@@ -43,15 +51,13 @@ extension Networker: NetworkDownloader {
         requestType: URLRequestType,
         options: [NetworkerOption]? = nil,
         fileHandler: ((URL) -> Void)?,
-        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
             return self.download(
-                url: uploadURL,
-                requestType: requestType,
-                options: options,
-                fileHandler: fileHandler,
-                completion: completion
+                url: uploadURL, requestType: requestType, options: options,
+                fileHandler: fileHandler, completion: completion
             )
         } catch {
             self.dispatch(error, completion: completion)
@@ -65,7 +71,8 @@ extension Networker: NetworkDownloader {
         requestType: URLRequestType,
         options: [NetworkerOption]? = nil,
         fileHandler: ((URL) -> Void)?,
-        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol? {
         let request = self.makeURLRequest(for: requestType, options: options, with: url)
         return self.download(urlRequest: request, fileHandler: fileHandler, completion: completion)
     }
@@ -74,7 +81,8 @@ extension Networker: NetworkDownloader {
     public func download(
         urlRequest: URLRequest,
         fileHandler: ((URL) -> Void)?,
-        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
             request: urlRequest,
             executor: self.session.download(with:completion:)) { (fileURL, response, error) in

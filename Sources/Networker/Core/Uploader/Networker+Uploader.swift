@@ -11,6 +11,12 @@ public struct NetworkUploaderResult {
     public var data: Data?
     public var statusCode: Int
     public var headerFields: [AnyHashable : Any]
+    
+    public init(data: Data? = nil, statusCode: Int, headerFields: [AnyHashable : Any]) {
+        self.data = data
+        self.statusCode = statusCode
+        self.headerFields = headerFields
+    }
 }
 
 public enum NetworkUploaderType {
@@ -36,21 +42,24 @@ public protocol NetworkUploader: NetworkConfigurable {
         type: NetworkUploaderType,
         data: Data?,
         options: [NetworkerOption]?,
-        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
-
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol?
+    
     @discardableResult
     func upload(
         url: URL,
         type: NetworkUploaderType,
         data: Data?,
         options: [NetworkerOption]?,
-        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
-
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol?
+    
     @discardableResult
     func upload(
         urlRequest: URLRequest,
         data: Data?,
-        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol?
 }
 
 extension Networker: NetworkUploader {
@@ -60,39 +69,39 @@ extension Networker: NetworkUploader {
         type: NetworkUploaderType,
         data: Data?,
         options: [NetworkerOption]? = nil,
-        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
             return self.upload(
-                url: uploadURL,
-                type: type,
-                data: data,
-                options: options,
-                completion: completion
+                url: uploadURL, type: type, data: data,
+                options: options, completion: completion
             )
         } catch {
             self.dispatch(error, completion: completion)
             return nil
         }
     }
-
+    
     @discardableResult
     public func upload(
         url: URL,
         type: NetworkUploaderType,
         data: Data?,
         options: [NetworkerOption]? = nil,
-        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol? {
         let requestType = type.requestType
         let request = self.makeURLRequest(for: requestType, options: options, with: url)
         return self.upload(urlRequest: request, data: data, completion: completion)
     }
-
+    
     @discardableResult
     public func upload(
         urlRequest: URLRequest,
         data: Data?,
-        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+        completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
             request: urlRequest,
             data: data,
@@ -106,7 +115,7 @@ extension Networker: NetworkUploader {
                 self.dispatch(error, completion: completion)
             }
         }
-
+        
         self.queues.addOperation(operation)
         return operation.task
     }
@@ -114,12 +123,8 @@ extension Networker: NetworkUploader {
 
 // MARK: - Helpers
 
-extension Networker {
-    private func getResult(with data: Data?, response: HTTPURLResponse) -> NetworkUploaderResult {
-        return .init(
-            data: data,
-            statusCode: response.statusCode,
-            headerFields: response.allHeaderFields
-        )
+private extension Networker {
+    func getResult(with data: Data?, response: HTTPURLResponse) -> NetworkUploaderResult {
+        return .init(data: data, statusCode: response.statusCode, headerFields: response.allHeaderFields)
     }
 }

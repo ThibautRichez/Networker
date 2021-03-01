@@ -1,32 +1,11 @@
 //
-//  NetworkerSessionConfiguration.swift
+//  NetworkerSessionConfigurationRepository.swift
 //  
 //
-//  Created by RICHEZ Thibaut on 10/24/20.
+//  Created by RICHEZ Thibaut on 3/1/21.
 //
 
 import Foundation
-
-public struct NetworkerSessionConfiguration {
-    public var token: String?
-    public var baseURL: String?
-    // TODO: need testing
-    public var headers: [String: String]?
-
-    public init(token: String? = nil,
-                baseURL: String? = nil,
-                headers: [String : String]? = nil) {
-        self.token = token
-        self.baseURL = baseURL
-        self.headers = headers
-    }
-}
-
-public enum NetworkerSessionConfigurationKey: String {
-    case token = "networker.session.token"
-    case baseURL = "netwoker.session.baseURL"
-    case headers = "netwoker.session.headers"
-}
 
 public protocol NetworkerSessionConfigurationWritter {
     func setValue(value: Any?, forKey key: NetworkerSessionConfigurationKey)
