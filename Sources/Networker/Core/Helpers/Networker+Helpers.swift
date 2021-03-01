@@ -72,6 +72,10 @@ private extension Networker {
                 request.cachePolicy = .init(networkerPolicy: policy)
             case .headers(let headers):
                 self.set(headers: headers, in: &request)
+            case .serviceType(let type):
+                request.networkServiceType = type
+            case .authorizations(let authorizations):
+                self.set(authorizations: authorizations, in: &request)
             }
         }
     }
@@ -79,6 +83,16 @@ private extension Networker {
     func set(headers: [String: String]?, in request: inout URLRequest) {
         headers?.forEach { key, value in
             request.setValue(value, forHTTPHeaderField: key)
+        }
+    }
+
+    func set(authorizations: NetworkerAuthorizations, in request: inout URLRequest) {
+        request.allowsCellularAccess = authorizations.contains(.cellularAccess)
+        request.httpShouldHandleCookies = authorizations.contains(.cookies)
+
+        if #available(iOS 13.0, *) {
+            request.allowsExpensiveNetworkAccess = authorizations.contains(.expensiveNetworkAccess)
+            request.allowsConstrainedNetworkAccess = authorizations.contains(.constrainedNetworkAccess)
         }
     }
 }
