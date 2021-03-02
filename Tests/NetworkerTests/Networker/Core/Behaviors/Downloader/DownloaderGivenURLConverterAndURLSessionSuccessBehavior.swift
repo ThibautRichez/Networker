@@ -81,7 +81,7 @@ final class DownloaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Do
                     let requestURL = try! sut.makeURL(from: path)
                     expect(requestURL).to(equal(URL(string: expectedRequestURL)))
                     expect(session.downloadArguments.first).to(
-                        equal(sut.makeURLRequest(with: method, with: requestURL))
+                        equal(sut.makeURLRequest(requestURL, method: method))
                     )
                     expect(fileHandler.handleFileCallCount).to(equal(1))
                     expect(fileHandler.handleFileArguments.count).to(equal(1))

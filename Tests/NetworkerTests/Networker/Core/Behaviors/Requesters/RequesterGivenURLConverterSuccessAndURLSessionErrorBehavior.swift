@@ -164,7 +164,7 @@ fileprivate final class DefaultBehavior: Behavior<DefaultBehaviorContext> {
                 let requestURL = try! sut.makeURL(from: path)
                 expect(requestURL).to(equal(URL(string: expectedRequestURL)))
                 expect(session.requestArguments.first).to(
-                    equal(sut.makeURLRequest(with: .get, with: requestURL))
+                    equal(sut.makeURLRequest(requestURL, method: .get))
                 )
 
                 expect(session.didCallUpload).to(beFalse())

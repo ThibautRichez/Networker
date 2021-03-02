@@ -14,7 +14,7 @@ public protocol NetworkEncodableUploader: NetworkConfigurable {
         to path: String,
         method: HTTPMethod,
         encoder: JSONEncoder,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
@@ -24,7 +24,7 @@ public protocol NetworkEncodableUploader: NetworkConfigurable {
         to url: URL,
         method: HTTPMethod,
         encoder: JSONEncoder,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
@@ -44,12 +44,12 @@ extension Networker: NetworkEncodableUploader {
         to path: String,
         method: HTTPMethod = .post,
         encoder: JSONEncoder,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let data: Data = try encoder.encode(object)
-            return self.upload(data, to: path, method: method, options: options, completion: completion)
+            return self.upload(data, to: path, method: method, requestModifiers: requestModifiers, completion: completion)
         } catch {
             self.dispatch(NetworkerError.encoder(error), completion: completion)
             return nil
@@ -62,12 +62,12 @@ extension Networker: NetworkEncodableUploader {
         to url: URL,
         method: HTTPMethod = .post,
         encoder: JSONEncoder,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let data: Data = try encoder.encode(object)
-            return self.upload(data, to: url, method: method, options: options, completion: completion)
+            return self.upload(data, to: url, method: method, requestModifiers: requestModifiers, completion: completion)
         } catch {
             self.dispatch(NetworkerError.encoder(error), completion: completion)
             return nil

@@ -22,7 +22,7 @@ public protocol NetworkDownloader: NetworkConfigurable {
     func download(
         _ path: String,
         method: HTTPMethod,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         fileHandler: ((URL) -> Void)?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
@@ -31,7 +31,7 @@ public protocol NetworkDownloader: NetworkConfigurable {
     func download(
         _ url: URL,
         method: HTTPMethod,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         fileHandler: ((URL) -> Void)?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
@@ -49,14 +49,14 @@ extension Networker: NetworkDownloader {
     public func download(
         _ path: String,
         method: HTTPMethod = .get,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         fileHandler: ((URL) -> Void)?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
             return self.download(
-                uploadURL, method: method, options: options,
+                uploadURL, method: method, requestModifiers: requestModifiers,
                 fileHandler: fileHandler, completion: completion
             )
         } catch {
@@ -69,11 +69,11 @@ extension Networker: NetworkDownloader {
     public func download(
         _ url: URL,
         method: HTTPMethod = .get,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         fileHandler: ((URL) -> Void)?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
-        let request = self.makeURLRequest(with: method, options: options, with: url)
+        let request = self.makeURLRequest(url, method: method, modifiers: requestModifiers)
         return self.download(request, fileHandler: fileHandler, completion: completion)
     }
 

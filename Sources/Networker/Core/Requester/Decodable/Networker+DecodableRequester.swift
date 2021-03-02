@@ -13,7 +13,7 @@ public protocol NetworkDecodableRequester: NetworkConfigurable {
         _ path: String,
         method: HTTPMethod,
         decoder: JSONDecoder,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
@@ -21,7 +21,7 @@ public protocol NetworkDecodableRequester: NetworkConfigurable {
         _ url: URL,
         method: HTTPMethod,
         decoder: JSONDecoder,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 
     @discardableResult
@@ -37,9 +37,9 @@ extension Networker: NetworkDecodableRequester {
         _ path: String,
         method: HTTPMethod = .get,
         decoder: JSONDecoder,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        self.request(path, method: method, options: options) { result in
+        self.request(path, method: method, requestModifiers: requestModifiers) { result in
             completion(self.map(result, using: decoder))
         }
     }
@@ -49,9 +49,9 @@ extension Networker: NetworkDecodableRequester {
         _ url: URL,
         method: HTTPMethod = .get,
         decoder: JSONDecoder,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        self.request(url, method: method, options: options) { result in
+        self.request(url, method: method, requestModifiers: requestModifiers) { result in
             completion(self.map(result, using: decoder))
         }
     }

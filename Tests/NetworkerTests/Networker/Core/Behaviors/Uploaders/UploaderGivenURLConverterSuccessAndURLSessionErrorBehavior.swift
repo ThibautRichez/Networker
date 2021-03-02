@@ -280,7 +280,7 @@ fileprivate class DefaultBehavior: Behavior<DefaultBehaviorContext> {
             let requestURL = try! sut.makeURL(from: path)
             expect(requestURL).to(equal(URL(string: expectedRequestURL)))
             expect(session.uploadArguments.first?.request.url?.absoluteString).to(
-                equal(sut.makeURLRequest(with: method, with: requestURL).url?.absoluteString)
+                equal(sut.makeURLRequest(requestURL, method: method).url?.absoluteString)
             )
 
             expect(session.didCallRequest).to(beFalse())

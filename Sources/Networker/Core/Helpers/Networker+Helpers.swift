@@ -16,14 +16,14 @@ extension Networker {
         return try self.urlConverter.url(from: components)
     }
 
-    func makeURLRequest(with method: HTTPMethod,
-                        options: [NetworkerOption]? = nil,
-                        with url: URL) -> URLRequest {
+    func makeURLRequest(_ url: URL,
+                        method: HTTPMethod,
+                        modifiers: [NetworkerRequestModifier]? = nil) -> URLRequest {
         let timeoutInterval = self.configuration.timeoutInterval
         var urlRequest = URLRequest(url: url, timeoutInterval: timeoutInterval)
         urlRequest.httpMethod = method.rawValue
         self.set(headers: self.sessionConfiguration?.headers, in: &urlRequest)
-        self.handle(options: options, for: &urlRequest)
+        self.handle(modifiers, for: &urlRequest)
         return urlRequest
     }
 
@@ -65,8 +65,8 @@ private extension Networker {
 
     // MARK: - Options
 
-    func handle(options: [NetworkerOption]?, for request: inout URLRequest) {
-        options?.forEach { option in
+    func handle(_ modifiers: [NetworkerRequestModifier]?, for request: inout URLRequest) {
+        modifiers?.forEach { option in
             switch option {
             case .cachePolicy(let policy):
                 request.cachePolicy = .init(networkerPolicy: policy)
@@ -92,7 +92,7 @@ private extension Networker {
         }
     }
 
-    func set(authorizations: NetworkerAuthorizations, in request: inout URLRequest) {
+    func set(authorizations: NetworkerRequestAuthorizations, in request: inout URLRequest) {
         request.allowsCellularAccess = authorizations.contains(.cellularAccess)
         request.httpShouldHandleCookies = authorizations.contains(.cookies)
         request.httpShouldUsePipelining = authorizations.contains(.pipelining)

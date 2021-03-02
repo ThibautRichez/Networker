@@ -24,7 +24,7 @@ public protocol NetworkRequester: NetworkConfigurable {
     func request(
         _ path: String,
         method: HTTPMethod,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
     
@@ -32,7 +32,7 @@ public protocol NetworkRequester: NetworkConfigurable {
     func request(
         _ url: URL,
         method: HTTPMethod,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol
     
@@ -48,14 +48,14 @@ extension Networker: NetworkRequester {
     public func request(
         _ path: String,
         method: HTTPMethod = .get,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let requestURL = try self.makeURL(from: path)
             return self.request(
                 requestURL, method: method,
-                options: options, completion: completion
+                requestModifiers: requestModifiers, completion: completion
             )
         } catch {
             self.dispatch(error, completion: completion)
@@ -67,10 +67,10 @@ extension Networker: NetworkRequester {
     public func request(
         _ url: URL,
         method: HTTPMethod = .get,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol {
-        let request = self.makeURLRequest(with: method, options: options, with: url)
+        let request = self.makeURLRequest(url, method: method, modifiers: requestModifiers)
         return self.request(request, completion: completion)
     }
     

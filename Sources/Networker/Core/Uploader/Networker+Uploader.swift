@@ -25,7 +25,7 @@ public protocol NetworkUploader: NetworkConfigurable {
         _ data: Data,
         to path: String,
         method: HTTPMethod,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
     
@@ -34,7 +34,7 @@ public protocol NetworkUploader: NetworkConfigurable {
         _ data: Data,
         to url: URL,
         method: HTTPMethod,
-        options: [NetworkerOption]?,
+        requestModifiers: [NetworkerRequestModifier]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
     
@@ -52,12 +52,12 @@ extension Networker: NetworkUploader {
         _ data: Data,
         to path: String,
         method: HTTPMethod = .post,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
-            return self.upload(data, to: uploadURL, method: method, options: options, completion: completion)
+            return self.upload(data, to: uploadURL, method: method, requestModifiers: requestModifiers, completion: completion)
         } catch {
             self.dispatch(error, completion: completion)
             return nil
@@ -69,10 +69,10 @@ extension Networker: NetworkUploader {
         _ data: Data,
         to url: URL,
         method: HTTPMethod = .post,
-        options: [NetworkerOption]? = nil,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
-        let request = self.makeURLRequest(with: method, options: options, with: url)
+        let request = self.makeURLRequest(url, method: method, modifiers: requestModifiers)
         return self.upload(data, with: request, completion: completion)
     }
     
