@@ -26,7 +26,7 @@ struct ErrorEncodable: Encodable {
 struct UploaderGivenURLConverterSuccessAndURLSessionErrorContext {
     var expectedError: NetworkerError
     var path: String
-    var type: NetworkUploaderType = .post
+    var method: HTTPMethod = .post
     var data: Data?
     var expectedRequestURL: String
     var expectedTaskResult: URLSessionTaskMock
@@ -40,7 +40,7 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
         describe("GIVEN a valid path and a context that produce an error") {
             var currentContext: UploaderGivenURLConverterSuccessAndURLSessionErrorContext!
             var path: String!
-            var type: NetworkUploaderType!
+            var method: HTTPMethod!
             var data: Data!
             var session: URLSessionMock!
             var queues: NetworkerQueuesMock!
@@ -48,7 +48,7 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
             beforeEach {
                 currentContext = aContext()
                 path = currentContext.path
-                type = currentContext.type
+                method = currentContext.method
                 data = currentContext.data
                 session = currentContext.session
                 queues = currentContext.queues
@@ -64,7 +64,7 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                         task = sut.upload(
                             data,
                             to: path,
-                            type: type,
+                            method: method,
                             completion: { (result) in
                                 error = result.error
                                 done()
@@ -90,7 +90,7 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                                 task = sut.upload(
                                     model,
                                     to: path,
-                                    type: type,
+                                    method: method,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -111,7 +111,7 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                                 task = sut.upload(
                                     model,
                                     to: URL(string: path)!,
-                                    type: type,
+                                    method: method,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -156,7 +156,7 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                                 task = sut.upload(
                                     model,
                                     to: path,
-                                    type: type,
+                                    method: method,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -183,7 +183,7 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                                 task = sut.upload(
                                     model,
                                     to: URL(string: path)!,
-                                    type: type,
+                                    method: method,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -243,7 +243,7 @@ fileprivate class DefaultBehavior: Behavior<DefaultBehaviorContext> {
     override class func spec(_ aContext: @escaping () -> DefaultBehaviorContext) {
         var expectedError: NetworkerError!
         var path: String!
-        var type: NetworkUploaderType!
+        var method: HTTPMethod!
         var expectedRequestURL: String!
         var expectedErrorExecutorReturn: URLSessionTaskMock!
         var session: URLSessionMock!
@@ -257,7 +257,7 @@ fileprivate class DefaultBehavior: Behavior<DefaultBehaviorContext> {
 
             expectedError = context.expectedError
             path = context.path
-            type = context.type
+            method = context.method
             expectedRequestURL = context.expectedRequestURL
             expectedErrorExecutorReturn = context.expectedTaskResult
             session = context.session
@@ -280,7 +280,7 @@ fileprivate class DefaultBehavior: Behavior<DefaultBehaviorContext> {
             let requestURL = try! sut.makeURL(from: path)
             expect(requestURL).to(equal(URL(string: expectedRequestURL)))
             expect(session.uploadArguments.first?.request.url?.absoluteString).to(
-                equal(sut.makeURLRequest(for: type.requestType, with: requestURL).url?.absoluteString)
+                equal(sut.makeURLRequest(with: method, with: requestURL).url?.absoluteString)
             )
 
             expect(session.didCallRequest).to(beFalse())

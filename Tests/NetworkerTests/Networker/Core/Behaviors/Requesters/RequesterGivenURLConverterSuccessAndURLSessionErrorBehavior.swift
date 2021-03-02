@@ -38,7 +38,7 @@ final class RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavio
 
                 beforeEach {
                     waitUntil { (done) in
-                        task = sut.request(path: path) { (result) in
+                        task = sut.request(path) { (result) in
                             error = result.error
                             done()
                         } as? URLSessionTaskMock
@@ -59,8 +59,8 @@ final class RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavio
                     beforeEach {
                         waitUntil { (done) in
                             task = sut.request(
+                                path,
                                 decoder: JSONDecoder(),
-                                atPath: path,
                                 completion: { (result: Result<AnyDecodable, NetworkerError>) in
                                     error = result.error
                                     done()
@@ -80,8 +80,8 @@ final class RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavio
                     beforeEach {
                         waitUntil { (done) in
                             task = sut.request(
+                                URL(string: path)!,
                                 decoder: JSONDecoder(),
-                                url: URL(string: path)!,
                                 completion: { (result: Result<AnyDecodable, NetworkerError>) in
                                     error = result.error
                                     done()
@@ -101,8 +101,8 @@ final class RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavio
                     beforeEach {
                         waitUntil { (done) in
                             task = sut.request(
+                                URLRequest(url: URL(string: path)!),
                                 decoder: JSONDecoder(),
-                                urlRequest: URLRequest(url: URL(string: path)!),
                                 completion: { (result: Result<AnyDecodable, NetworkerError>) in
                                     error = result.error
                                     done()
@@ -164,7 +164,7 @@ fileprivate final class DefaultBehavior: Behavior<DefaultBehaviorContext> {
                 let requestURL = try! sut.makeURL(from: path)
                 expect(requestURL).to(equal(URL(string: expectedRequestURL)))
                 expect(session.requestArguments.first).to(
-                    equal(sut.makeURLRequest(for: .get, with: requestURL))
+                    equal(sut.makeURLRequest(with: .get, with: requestURL))
                 )
 
                 expect(session.didCallUpload).to(beFalse())

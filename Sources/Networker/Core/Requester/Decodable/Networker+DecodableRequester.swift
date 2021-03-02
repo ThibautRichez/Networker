@@ -10,44 +10,48 @@ import Foundation
 public protocol NetworkDecodableRequester: NetworkConfigurable {
     @discardableResult
     func request<T : Decodable>(
+        _ path: String,
+        method: HTTPMethod,
         decoder: JSONDecoder,
-        atPath path: String,
         options: [NetworkerOption]?,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 
     @discardableResult
     func request<T: Decodable>(
+        _ url: URL,
+        method: HTTPMethod,
         decoder: JSONDecoder,
-        url: URL,
         options: [NetworkerOption]?,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 
     @discardableResult
     func request<T: Decodable>(
+        _ urlRequest: URLRequest,
         decoder: JSONDecoder,
-        urlRequest: URLRequest,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol
 }
 
 extension Networker: NetworkDecodableRequester {
     @discardableResult
     public func request<T: Decodable>(
+        _ path: String,
+        method: HTTPMethod = .get,
         decoder: JSONDecoder,
-        atPath path: String,
         options: [NetworkerOption]? = nil,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        self.request(path: path, options: options) { result in
+        self.request(path, method: method, options: options) { result in
             completion(self.map(result, using: decoder))
         }
     }
 
     @discardableResult
     public func request<T: Decodable>(
+        _ url: URL,
+        method: HTTPMethod = .get,
         decoder: JSONDecoder,
-        url: URL,
         options: [NetworkerOption]? = nil,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        self.request(url: url, options: options) { result in
+        self.request(url, method: method, options: options) { result in
             completion(self.map(result, using: decoder))
         }
     }
@@ -55,10 +59,10 @@ extension Networker: NetworkDecodableRequester {
 
     @discardableResult
     public func request<T: Decodable>(
+        _ urlRequest: URLRequest,
         decoder: JSONDecoder,
-        urlRequest: URLRequest,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        self.request(urlRequest: urlRequest) { result in
+        self.request(urlRequest) { result in
             completion(self.map(result, using: decoder))
         }
     }

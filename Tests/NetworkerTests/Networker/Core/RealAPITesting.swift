@@ -27,7 +27,7 @@ final class RealAPITesting: QuickSpec {
                 var error: NetworkerError?
                 beforeEach {
                     waitUntil(timeout: .seconds(5)) { (done) in
-                        sut.request(path: "getPage?pagename=home") { (result) in
+                        sut.request("getPage?pagename=home") { (result) in
                             requestResult = try? result.get()
                             error = result.error
                             done()

@@ -16,12 +16,12 @@ extension Networker {
         return try self.urlConverter.url(from: components)
     }
 
-    func makeURLRequest(for type: URLRequestType,
+    func makeURLRequest(with method: HTTPMethod,
                         options: [NetworkerOption]? = nil,
                         with url: URL) -> URLRequest {
         let timeoutInterval = self.configuration.timeoutInterval
         var urlRequest = URLRequest(url: url, timeoutInterval: timeoutInterval)
-        urlRequest.httpMethod = type.rawValue
+        urlRequest.httpMethod = method.rawValue
         self.set(headers: self.sessionConfiguration?.headers, in: &urlRequest)
         self.handle(options: options, for: &urlRequest)
         return urlRequest

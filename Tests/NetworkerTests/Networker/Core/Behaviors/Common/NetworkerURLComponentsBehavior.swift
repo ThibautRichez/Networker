@@ -168,17 +168,17 @@ private extension NetworkerURLComponentsBehavior {
         let group = DispatchGroup()
         
         group.enter()
-        sut.request(path: path) { (_) in
+        sut.request(path) { (_) in
             group.leave()
         }
 
         group.enter()
-        sut.upload(Data(), to: path, type: .post) { (_) in
+        sut.upload(Data(), to: path, method: .post) { (_) in
             group.leave()
         }
 
         group.enter()
-        sut.download(path: path, requestType: .get, fileHandler: nil) { (_) in
+        sut.download(path, method: .get, fileHandler: nil) { (_) in
             group.leave()
         }
 

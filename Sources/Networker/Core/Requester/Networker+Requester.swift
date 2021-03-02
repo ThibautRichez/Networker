@@ -22,21 +22,23 @@ public struct NetworkRequesterResult {
 public protocol NetworkRequester: NetworkConfigurable {
     @discardableResult
     func request(
-        path: String,
+        _ path: String,
+        method: HTTPMethod,
         options: [NetworkerOption]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
     
     @discardableResult
     func request(
-        url: URL,
+        _ url: URL,
+        method: HTTPMethod,
         options: [NetworkerOption]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol
     
     @discardableResult
     func request(
-        urlRequest: URLRequest,
+        _ urlRequest: URLRequest,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol
 }
@@ -44,13 +46,17 @@ public protocol NetworkRequester: NetworkConfigurable {
 extension Networker: NetworkRequester {
     @discardableResult
     public func request(
-        path: String,
+        _ path: String,
+        method: HTTPMethod = .get,
         options: [NetworkerOption]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let requestURL = try self.makeURL(from: path)
-            return self.request(url: requestURL, options: options, completion: completion)
+            return self.request(
+                requestURL, method: method,
+                options: options, completion: completion
+            )
         } catch {
             self.dispatch(error, completion: completion)
             return nil
@@ -59,17 +65,18 @@ extension Networker: NetworkRequester {
     
     @discardableResult
     public func request(
-        url: URL,
+        _ url: URL,
+        method: HTTPMethod = .get,
         options: [NetworkerOption]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol {
-        let request = self.makeURLRequest(for: .get, options: options, with: url)
-        return self.request(urlRequest: request, completion: completion)
+        let request = self.makeURLRequest(with: method, options: options, with: url)
+        return self.request(request, completion: completion)
     }
     
     @discardableResult
     public func request(
-        urlRequest: URLRequest,
+        _ urlRequest: URLRequest,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol {
         let operation = NetworkerOperation(

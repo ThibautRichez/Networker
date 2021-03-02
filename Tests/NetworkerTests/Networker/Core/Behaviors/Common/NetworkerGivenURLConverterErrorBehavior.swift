@@ -40,7 +40,7 @@ final class NetworkerGivenURLConverterErrorBehavior: Behavior<NetworkerGivenURLC
                 
                 beforeEach {
                     waitUntil { (done) in
-                        task = networker.request(path: path, completion: { (result) in
+                        task = networker.request(path, completion: { (result) in
                             error = result.error
                             done()
                         }) as? URLSessionTaskMock
@@ -72,7 +72,7 @@ final class NetworkerGivenURLConverterErrorBehavior: Behavior<NetworkerGivenURLC
                         task = networker.upload(
                             Data(),
                             to: path,
-                            type: .post,
+                            method: .post,
                             completion: { (result) in
                                 error = result.error
                                 done()
@@ -103,8 +103,8 @@ final class NetworkerGivenURLConverterErrorBehavior: Behavior<NetworkerGivenURLC
                 beforeEach {
                     waitUntil { (done) in
                         task = networker.download(
-                            path: path,
-                            requestType: .post,
+                            path,
+                            method: .post,
                             fileHandler: nil,
                             completion: { (result) in
                                 error = result.error

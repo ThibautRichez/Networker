@@ -15,7 +15,7 @@ struct DownloaderGivenURLConverterAndURLSessionSuccessContext {
     var expectedResult: NetworkDownloaderResult
     var path: String
     var expectedFileHandlerURL: URL
-    var requestType: URLRequestType = .get
+    var method: HTTPMethod = .get
     var expectedRequestURL: String
     var expectedTaskResult: URLSessionTaskMock
     var session: URLSessionMock
@@ -29,7 +29,7 @@ final class DownloaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Do
             var expectedResult: NetworkDownloaderResult!
             var path: String!
             var expectedFileHandlerURL: URL!
-            var requestType: URLRequestType!
+            var method: HTTPMethod!
             var fileHandler: DownloaderFileHandlerMock!
             var expectedRequestURL: String!
             var expectedErrorExecutorReturn: URLSessionTaskMock!
@@ -41,7 +41,7 @@ final class DownloaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Do
                 expectedResult = context.expectedResult
                 path = context.path
                 expectedFileHandlerURL = context.expectedFileHandlerURL
-                requestType = context.requestType
+                method = context.method
                 fileHandler = .init()
                 expectedRequestURL = context.expectedRequestURL
                 expectedErrorExecutorReturn = context.expectedTaskResult
@@ -57,8 +57,8 @@ final class DownloaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Do
                 beforeEach {
                     waitUntil { (done) in
                         task = sut.download(
-                            path: path,
-                            requestType: requestType,
+                            path,
+                            method: method,
                             fileHandler: fileHandler.handleFile(url:),
                             completion: { (sutResult) in
                                 result = try? sutResult.get()
@@ -81,7 +81,7 @@ final class DownloaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Do
                     let requestURL = try! sut.makeURL(from: path)
                     expect(requestURL).to(equal(URL(string: expectedRequestURL)))
                     expect(session.downloadArguments.first).to(
-                        equal(sut.makeURLRequest(for: requestType, with: requestURL))
+                        equal(sut.makeURLRequest(with: method, with: requestURL))
                     )
                     expect(fileHandler.handleFileCallCount).to(equal(1))
                     expect(fileHandler.handleFileArguments.count).to(equal(1))

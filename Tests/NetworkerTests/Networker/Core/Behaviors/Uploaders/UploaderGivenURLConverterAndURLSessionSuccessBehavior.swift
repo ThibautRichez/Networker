@@ -13,7 +13,7 @@ import Nimble
 struct UploaderGivenURLConverterAndURLSessionSuccessContext {
     var expectedResult: NetworkUploaderResult
     var path: String
-    var type: NetworkUploaderType = .post
+    var method: HTTPMethod = .post
     var data: Data?
     var expectedRequestURL: String
     var expectedTaskResult: URLSessionTaskMock
@@ -27,7 +27,7 @@ final class UploaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Uplo
         describe("GIVEN a valid path and a context that produce an error") {
             var currentContext: UploaderGivenURLConverterAndURLSessionSuccessContext!
             var path: String!
-            var type: NetworkUploaderType!
+            var method: HTTPMethod!
             var data: Data!
             var session: URLSessionMock!
             var queues: NetworkerQueuesMock!
@@ -35,7 +35,7 @@ final class UploaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Uplo
             beforeEach {
                 currentContext = aContext()
                 path = currentContext.path
-                type = currentContext.type
+                method = currentContext.method
                 data = currentContext.data
                 session = currentContext.session
                 queues = currentContext.queues
@@ -51,7 +51,7 @@ final class UploaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Uplo
                         task = sut.upload(
                             data,
                             to: path,
-                            type: type,
+                            method: method,
                             completion: { (sutResult) in
                                 result = try? sutResult.get()
                                 done()
@@ -77,7 +77,7 @@ final class UploaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Uplo
                                 task = sut.upload(
                                     model,
                                     to: path,
-                                    type: type,
+                                    method: method,
                                     encoder: JSONEncoder()) { (sutResult) in
                                     result = try? sutResult.get()
                                     done()
@@ -98,7 +98,7 @@ final class UploaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Uplo
                                 task = sut.upload(
                                     model,
                                     to: URL(string: path)!,
-                                    type: type,
+                                    method: method,
                                     encoder: JSONEncoder()) { (sutResult) in
                                     result = try? sutResult.get()
                                     done()
@@ -143,7 +143,7 @@ final class UploaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Uplo
                                 task = sut.upload(
                                     model,
                                     to: path,
-                                    type: type,
+                                    method: method,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -170,7 +170,7 @@ final class UploaderGivenURLConverterAndURLSessionSuccessBehavior: Behavior<Uplo
                                 task = sut.upload(
                                     model,
                                     to: URL(string: path)!,
-                                    type: type,
+                                    method: method,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -231,7 +231,7 @@ fileprivate final class DefaultBehavior: Behavior<DefaultContext> {
         describe("GIVEN a valid path and a context that produce an error") {
             var expectedResult: NetworkUploaderResult!
             var path: String!
-            var type: NetworkUploaderType!
+            var method: HTTPMethod!
             var expectedRequestURL: String!
             var expectedReturnTask: URLSessionTaskMock!
             var session: URLSessionMock!
@@ -245,7 +245,7 @@ fileprivate final class DefaultBehavior: Behavior<DefaultContext> {
                 
                 expectedResult = context.expectedResult
                 path = context.path
-                type = context.type
+                method = context.method
                 expectedRequestURL = context.expectedRequestURL
                 expectedReturnTask = context.expectedTaskResult
                 session = context.session
@@ -276,7 +276,7 @@ fileprivate final class DefaultBehavior: Behavior<DefaultContext> {
                 let requestURL = try! sut.makeURL(from: path)
                 expect(requestURL).to(equal(URL(string: expectedRequestURL)))
                 expect(session.uploadArguments.first?.request.url?.absoluteString).to(
-                    equal(sut.makeURLRequest(for: type.requestType, with: requestURL).url?.absoluteString)
+                    equal(sut.makeURLRequest(with: method, with: requestURL).url?.absoluteString)
                 )
                 
                 expect(session.didCallRequest).to(beFalse())

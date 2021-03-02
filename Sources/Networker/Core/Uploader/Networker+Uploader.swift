@@ -19,28 +19,12 @@ public struct NetworkUploaderResult {
     }
 }
 
-public enum NetworkUploaderType {
-    case post
-    case put
-}
-
-extension NetworkUploaderType {
-    var requestType: URLRequestType {
-        switch self {
-        case .post:
-            return .post
-        case .put:
-            return .put
-        }
-    }
-}
-
 public protocol NetworkUploader: NetworkConfigurable {
     @discardableResult
     func upload(
         _ data: Data,
         to path: String,
-        type: NetworkUploaderType,
+        method: HTTPMethod,
         options: [NetworkerOption]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
@@ -49,7 +33,7 @@ public protocol NetworkUploader: NetworkConfigurable {
     func upload(
         _ data: Data,
         to url: URL,
-        type: NetworkUploaderType,
+        method: HTTPMethod,
         options: [NetworkerOption]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
@@ -67,13 +51,13 @@ extension Networker: NetworkUploader {
     public func upload(
         _ data: Data,
         to path: String,
-        type: NetworkUploaderType,
+        method: HTTPMethod = .post,
         options: [NetworkerOption]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
-            return self.upload(data, to: uploadURL, type: type, options: options, completion: completion)
+            return self.upload(data, to: uploadURL, method: method, options: options, completion: completion)
         } catch {
             self.dispatch(error, completion: completion)
             return nil
@@ -84,12 +68,11 @@ extension Networker: NetworkUploader {
     public func upload(
         _ data: Data,
         to url: URL,
-        type: NetworkUploaderType,
+        method: HTTPMethod = .post,
         options: [NetworkerOption]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
-        let requestType = type.requestType
-        let request = self.makeURLRequest(for: requestType, options: options, with: url)
+        let request = self.makeURLRequest(with: method, options: options, with: url)
         return self.upload(data, with: request, completion: completion)
     }
     
