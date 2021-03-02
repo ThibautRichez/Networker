@@ -78,9 +78,7 @@ extension Networker: NetworkRequester {
             do {
                 try self.handleRemoteError(error)
                 let httpResponse = try self.getHTTPResponse(from: response)
-                let result = try self.getResult(
-                    with: data, response: httpResponse
-                )
+                let result = try self.getResult(with: data, response: httpResponse)
                 self.dispatch(result, completion: completion)
             } catch  {
                 self.dispatch(error, completion: completion)

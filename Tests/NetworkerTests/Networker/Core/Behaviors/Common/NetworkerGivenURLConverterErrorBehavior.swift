@@ -70,9 +70,10 @@ final class NetworkerGivenURLConverterErrorBehavior: Behavior<NetworkerGivenURLC
                 beforeEach {
                     waitUntil { (done) in
                         task = networker.upload(
-                            path: path,
+                            Data(),
+                            to: path,
                             type: .post,
-                            data: nil, completion: { (result) in
+                            completion: { (result) in
                                 error = result.error
                                 done()
                             }) as? URLSessionTaskMock

@@ -173,7 +173,7 @@ private extension NetworkerURLComponentsBehavior {
         }
 
         group.enter()
-        sut.upload(path: path, type: .post, data: nil) { (_) in
+        sut.upload(Data(), to: path, type: .post) { (_) in
             group.leave()
         }
 

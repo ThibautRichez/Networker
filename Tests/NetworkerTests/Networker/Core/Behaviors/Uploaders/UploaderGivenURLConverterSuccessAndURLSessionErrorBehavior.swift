@@ -62,9 +62,9 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                 beforeEach {
                     waitUntil { (done) in
                         task = sut.upload(
-                            path: path,
+                            data,
+                            to: path,
                             type: type,
-                            data: data,
                             completion: { (result) in
                                 error = result.error
                                 done()
@@ -88,9 +88,9 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                         beforeEach {
                             waitUntil { (done) in
                                 task = sut.upload(
-                                    path: path,
+                                    model,
+                                    to: path,
                                     type: type,
-                                    model: model,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -109,9 +109,9 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                         beforeEach {
                             waitUntil { (done) in
                                 task = sut.upload(
-                                    url: URL(string: path)!,
+                                    model,
+                                    to: URL(string: path)!,
                                     type: type,
-                                    model: model,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -130,8 +130,8 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                         beforeEach {
                             waitUntil { (done) in
                                 task = sut.upload(
-                                    urlRequest: URLRequest(url: URL(string: path)!),
-                                    model: model,
+                                    model,
+                                    with: URLRequest(url: URL(string: path)!),
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -154,9 +154,9 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                         beforeEach {
                             waitUntil { (done) in
                                 task = sut.upload(
-                                    path: path,
+                                    model,
+                                    to: path,
                                     type: type,
-                                    model: model,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -181,9 +181,9 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                         beforeEach {
                             waitUntil { (done) in
                                 task = sut.upload(
-                                    url: URL(string: path)!,
+                                    model,
+                                    to: URL(string: path)!,
                                     type: type,
-                                    model: model,
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -208,8 +208,8 @@ final class UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior: Behavior
                         beforeEach {
                             waitUntil { (done) in
                                 task = sut.upload(
-                                    urlRequest: URLRequest(url: URL(string: path)!),
-                                    model: model,
+                                    model,
+                                    with: URLRequest(url: URL(string: path)!),
                                     encoder: JSONEncoder()) { (result) in
                                     error = result.error
                                     done()
@@ -324,7 +324,7 @@ final class EncodableFailureBehavior: Behavior<EncodableFailureContext> {
             expect(error).to(matchError(expectedError))
 
             expect(task).to(beNil())
-
+            
             expect(session.didCallUpload).to(beFalse())
             expect(session.didCallRequest).to(beFalse())
             expect(session.didCallDownload).to(beFalse())
