@@ -82,6 +82,8 @@ private extension Networker {
                 request.httpBodyStream = bodyStream
             case .mainDocumentURL(let mainDocumentURL):
                 request.mainDocumentURL = mainDocumentURL
+            case .custom(let modifier):
+                modifier(&request)
             }
         }
     }

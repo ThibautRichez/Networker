@@ -15,6 +15,7 @@ public enum NetworkerRequestModifier {
     case httpBody(Data?)
     case bodyStream(InputStream?)
     case mainDocumentURL(URL?)
+    case custom((inout URLRequest) -> Void)
 }
 
 public struct NetworkerRequestAuthorizations: OptionSet {

@@ -42,15 +42,17 @@ import Foundation
 //
 //    func fetch() {
 //        self.networker.request(
-//            path: "",
-//            options: [
+//            "https://api.com",
+//            method: .get,
+//            requestModifiers: [
 //                .cachePolicy(.reloadIgnoringLocalCache),
-//                .headers(["contentType": "json"]),
+//                .headers(["content-type": "application/json"]),
 //                .serviceType(.responsiveData),
 //                .authorizations([.cellularAccess, .cookies]),
 //                .httpBody(Data()),
 //                .bodyStream(InputStream(url: URL(string: "")!)),
-//                .mainDocumentURL(URL(string: "")!)
+//                .mainDocumentURL(URL(string: "")!),
+//                .custom({ $0.timeoutInterval = 5 })
 //            ]) { (result) in
 //            switch result {
 //            case .success(let networkerResult):
