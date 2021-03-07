@@ -22,8 +22,9 @@ public protocol NetworkDownloader: NetworkConfigurable {
     func download(
         _ path: String,
         method: HTTPMethod,
-        requestModifiers: [NetworkerRequestModifier]?,
         fileHandler: ((URL) -> Void)?,
+        requestModifiers: [NetworkerRequestModifier]?,
+        validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
@@ -31,8 +32,9 @@ public protocol NetworkDownloader: NetworkConfigurable {
     func download(
         _ url: URL,
         method: HTTPMethod,
-        requestModifiers: [NetworkerRequestModifier]?,
         fileHandler: ((URL) -> Void)?,
+        requestModifiers: [NetworkerRequestModifier]?,
+        validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
@@ -40,6 +42,7 @@ public protocol NetworkDownloader: NetworkConfigurable {
     func download(
         _ urlRequest: URLRequest,
         fileHandler: ((URL) -> Void)?,
+        validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>
         ) -> Void) -> URLSessionTaskProtocol?
 }
@@ -49,15 +52,17 @@ extension Networker: NetworkDownloader {
     public func download(
         _ path: String,
         method: HTTPMethod = .get,
-        requestModifiers: [NetworkerRequestModifier]? = nil,
         fileHandler: ((URL) -> Void)?,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
+        validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
             return self.download(
-                uploadURL, method: method, requestModifiers: requestModifiers,
-                fileHandler: fileHandler, completion: completion
+                uploadURL, method: method, fileHandler: fileHandler,
+                requestModifiers: requestModifiers, validators: validators,
+                completion: completion
             )
         } catch {
             self.dispatch(error, completion: completion)
@@ -69,18 +74,20 @@ extension Networker: NetworkDownloader {
     public func download(
         _ url: URL,
         method: HTTPMethod = .get,
-        requestModifiers: [NetworkerRequestModifier]? = nil,
         fileHandler: ((URL) -> Void)?,
+        requestModifiers: [NetworkerRequestModifier]? = nil,
+        validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         let request = self.makeURLRequest(url, method: method, modifiers: requestModifiers)
-        return self.download(request, fileHandler: fileHandler, completion: completion)
+        return self.download(request, fileHandler: fileHandler, validators: validators, completion: completion)
     }
 
     @discardableResult
     public func download(
         _ urlRequest: URLRequest,
         fileHandler: ((URL) -> Void)?,
+        validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
@@ -88,7 +95,7 @@ extension Networker: NetworkDownloader {
             executor: self.session.download(with:completion:)) { (fileURL, response, error) in
             do {
                 try self.handleRemoteError(error)
-                let httpResponse = try self.getHTTPResponse(from: response)
+                let httpResponse = try self.getHTTPResponse(from: response, validators: validators)
                 try self.executeFilehandler(fileURL: fileURL, fileHandler: fileHandler)
                 let result = self.getResult(response: httpResponse)
                 self.dispatch(result, completion: completion)

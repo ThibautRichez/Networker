@@ -6,20 +6,17 @@ public struct Networker {
     var queues: NetworkerQueuesProtocol
     var sessionReader: NetworkerSessionConfigurationReader?
     var urlConverter: URLConverter
-    var acceptableMimeTypes: Set<MimeType>
 
     public init(session: URLSessionProtocol = URLSession.shared,
                 configuration: NetworkerConfiguration = .init(),
                 queues: NetworkerQueuesProtocol = NetworkerQueues(),
                 sessionReader: NetworkerSessionConfigurationReader? = NetworkerSessionConfigurationRepository(),
-                urlConverter: URLConverter = NetworkerURLConverter(),
-                acceptableMimeTypes: Set<MimeType> = [.json]) {
+                urlConverter: URLConverter = NetworkerURLConverter()) {
         self.session = session
         self.configuration = configuration
         self.queues = queues
         self.sessionReader = sessionReader
         self.urlConverter = urlConverter
-        self.acceptableMimeTypes = acceptableMimeTypes
     }
 }
 

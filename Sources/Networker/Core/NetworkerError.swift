@@ -62,9 +62,20 @@ public enum NetworkerRemoteError: Error {
 
 public enum NetworkerResponseError: Error {
     case empty
+    case emptyData
     case invalid(URLResponse)
+    case validator(NetworkerResponseValidatorError)
+}
+
+public enum NetworkerResponseValidatorError: Error {
     case statusCode(HTTPURLResponse)
-    case invalidMimeType(got: String?, allowed: [String])
+    case invalidMimeType(HTTPURLResponse)
+    case invalidHeaders(HTTPURLResponse)
+    case invalidExpectedContentLength(HTTPURLResponse)
+    case invalidSuggestedFilename(HTTPURLResponse)
+    case invalidTextEncodingName(HTTPURLResponse)
+    case invalidURL(HTTPURLResponse)
+    case custom(Error?, HTTPURLResponse)
 }
 
 public enum NetworkerDownloadError: Error {

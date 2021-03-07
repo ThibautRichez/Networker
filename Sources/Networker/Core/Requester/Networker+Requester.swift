@@ -25,6 +25,7 @@ public protocol NetworkRequester: NetworkConfigurable {
         _ path: String,
         method: HTTPMethod,
         requestModifiers: [NetworkerRequestModifier]?,
+        validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
     
@@ -33,12 +34,14 @@ public protocol NetworkRequester: NetworkConfigurable {
         _ url: URL,
         method: HTTPMethod,
         requestModifiers: [NetworkerRequestModifier]?,
+        validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol
     
     @discardableResult
     func request(
         _ urlRequest: URLRequest,
+        validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol
 }
@@ -49,13 +52,15 @@ extension Networker: NetworkRequester {
         _ path: String,
         method: HTTPMethod = .get,
         requestModifiers: [NetworkerRequestModifier]? = nil,
+        validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let requestURL = try self.makeURL(from: path)
             return self.request(
                 requestURL, method: method,
-                requestModifiers: requestModifiers, completion: completion
+                requestModifiers: requestModifiers, validators: validators,
+                completion: completion
             )
         } catch {
             self.dispatch(error, completion: completion)
@@ -68,15 +73,17 @@ extension Networker: NetworkRequester {
         _ url: URL,
         method: HTTPMethod = .get,
         requestModifiers: [NetworkerRequestModifier]? = nil,
+        validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol {
         let request = self.makeURLRequest(url, method: method, modifiers: requestModifiers)
-        return self.request(request, completion: completion)
+        return self.request(request, validators: validators, completion: completion)
     }
     
     @discardableResult
     public func request(
         _ urlRequest: URLRequest,
+        validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol {
         let operation = NetworkerOperation(
@@ -84,7 +91,7 @@ extension Networker: NetworkRequester {
             executor: self.session.request(with:completion:)) { (data, response, error) in
             do {
                 try self.handleRemoteError(error)
-                let httpResponse = try self.getHTTPResponse(from: response)
+                let httpResponse = try self.getHTTPResponse(from: response, validators: validators)
                 let result = try self.getResult(with: data, response: httpResponse)
                 self.dispatch(result, completion: completion)
             } catch  {
@@ -92,6 +99,7 @@ extension Networker: NetworkRequester {
             }
         }
         
+
         self.queues.addOperation(operation)
         return operation.task
     }
@@ -102,7 +110,7 @@ extension Networker: NetworkRequester {
 private extension Networker {
     func getResult(with data: Data?,
                    response: HTTPURLResponse) throws -> NetworkRequesterResult {
-        guard let data = data else { throw NetworkerError.response(.empty) }
+        guard let data = data else { throw NetworkerError.response(.emptyData) }
         
         return .init(data: data, statusCode: response.statusCode, headerFields: response.allHeaderFields)
     }

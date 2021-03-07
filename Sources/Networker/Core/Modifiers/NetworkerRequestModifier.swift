@@ -9,7 +9,7 @@ import Foundation
 
 public enum NetworkerRequestModifier {
     case cachePolicy(NetworkerCachePolicy)
-    case headers([String: String])
+    case headers([String: String], override: Bool = false)
     case serviceType(URLRequest.NetworkServiceType)
     case authorizations(NetworkerRequestAuthorizations)
     case httpBody(Data?)

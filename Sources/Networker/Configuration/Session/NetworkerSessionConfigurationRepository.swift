@@ -22,7 +22,9 @@ public protocol NetworkerSessionConfigurationValueReader {
 }
 
 public typealias NetworkerSessionConfigurationRepositoryProtocol = NetworkerSessionConfigurationReader & NetworkerSessionConfigurationValueReader & NetworkerSessionConfigurationWritter
-
+// investigate this - doesn't seems right.
+// how can we use this object outside of the package scope ???
+// shared instance ?
 public struct NetworkerSessionConfigurationRepository {
     var defaults: UserDefaults
 

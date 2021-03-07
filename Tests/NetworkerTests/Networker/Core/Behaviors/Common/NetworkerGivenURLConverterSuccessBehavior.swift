@@ -221,7 +221,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                             url: "https://www.any-url.com", statusCode: 400
                         )
                         expectedError = .response(
-                            .statusCode(invalidStatusReponse)
+                            .validator(.custom(StatusCodeDefaultValidatorError.client, invalidStatusReponse))
                         )
 
                         session.requestResultCompletion = { completion in
@@ -234,76 +234,6 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
 
                         session.downloadResultCompletion = { completion in
                             completion(nil, invalidStatusReponse, nil)
-                        }
-                    }
-
-                    itBehavesLike(RequesterGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
-                        .init(
-                            expectedError: expectedError,
-                            path: path,
-                            expectedRequestURL: expectedRequestURL,
-                            expectedTaskResult: sessionReturnTask,
-                            session: session,
-                            queues: queues,
-                            sut: sut
-                        )
-                    }
-
-                    itBehavesLike(UploaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
-                        .init(
-                            expectedError: expectedError,
-                            path: path,
-                            data: Data(),
-                            expectedRequestURL: expectedRequestURL,
-                            expectedTaskResult: sessionReturnTask,
-                            session: session,
-                            queues: queues,
-                            sut: sut
-                        )
-                    }
-
-                    itBehavesLike(DownloaderGivenURLConverterSuccessAndURLSessionErrorBehavior.self) {
-                        .init(
-                            expectedError: expectedError,
-                            path: path,
-                            expectedRequestURL: expectedRequestURL,
-                            expectedTaskResult: sessionReturnTask,
-                            session: session,
-                            queues: queues,
-                            sut: sut
-                        )
-                    }
-
-                }
-
-                describe("GIVEN a response with an invalid MimeType") {
-                    let invalidMimeType = "invalid-mime-type"
-                    var invalidMimeTypeReponse: HTTPURLResponse!
-                    var expectedError: NetworkerError!
-
-                    beforeEach {
-                        invalidMimeTypeReponse = HTTPURLResponseStub(
-                            url: "https://www.any-url.com",
-                            statusCode: 200,
-                            mimeType: invalidMimeType
-                        )
-                        expectedError = .response(
-                            .invalidMimeType(
-                                got: invalidMimeType,
-                                allowed: sut.acceptableMimeTypes.map { $0.rawValue }
-                            )
-                        )
-
-                        session.requestResultCompletion = { completion in
-                            completion(nil, invalidMimeTypeReponse, nil)
-                        }
-
-                        session.uploadResultCompletion = { completion in
-                            completion(nil, invalidMimeTypeReponse, nil)
-                        }
-
-                        session.downloadResultCompletion = { completion in
-                            completion(nil, invalidMimeTypeReponse, nil)
                         }
                     }
 
@@ -353,8 +283,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         validResponse = HTTPURLResponseStub(
                             url: "https://www.any-url.com",
                             statusCode: 200,
-                            allHeaderFields: ["Accept-Content":"application/json"],
-                            mimeType: sut.acceptableMimeTypes.first?.rawValue
+                            allHeaderFields: ["Accept-Content":"application/json"]
                         )
                     }
 
@@ -363,7 +292,7 @@ final class NetworkerGivenURLConverterSuccessBehavior: Behavior<NetworkerGivenUR
                         var expectedUploadResult: NetworkUploaderResult!
                         var expectedDownloadError: NetworkerError!
                         beforeEach {
-                            expectedRequestError = .response(.empty)
+                            expectedRequestError = .response(.emptyData)
                             session.requestResultCompletion = { completion in
                                 completion(nil, validResponse, nil)
                             }
