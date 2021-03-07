@@ -24,7 +24,7 @@ public protocol NetworkDownloader: NetworkConfigurable {
         method: HTTPMethod,
         fileHandler: ((URL) -> Void)?,
         requestModifiers: [NetworkerRequestModifier]?,
-        validators: [NetworkerResponseValidator]?,
+        responseValidators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
@@ -34,7 +34,7 @@ public protocol NetworkDownloader: NetworkConfigurable {
         method: HTTPMethod,
         fileHandler: ((URL) -> Void)?,
         requestModifiers: [NetworkerRequestModifier]?,
-        validators: [NetworkerResponseValidator]?,
+        responseValidators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
@@ -42,7 +42,7 @@ public protocol NetworkDownloader: NetworkConfigurable {
     func download(
         _ urlRequest: URLRequest,
         fileHandler: ((URL) -> Void)?,
-        validators: [NetworkerResponseValidator]?,
+        responseValidators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>
         ) -> Void) -> URLSessionTaskProtocol?
 }
@@ -54,14 +54,14 @@ extension Networker: NetworkDownloader {
         method: HTTPMethod = .get,
         fileHandler: ((URL) -> Void)?,
         requestModifiers: [NetworkerRequestModifier]? = nil,
-        validators: [NetworkerResponseValidator]? = nil,
+        responseValidators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
             return self.download(
                 uploadURL, method: method, fileHandler: fileHandler,
-                requestModifiers: requestModifiers, validators: validators,
+                requestModifiers: requestModifiers, responseValidators: responseValidators,
                 completion: completion
             )
         } catch {
@@ -76,18 +76,18 @@ extension Networker: NetworkDownloader {
         method: HTTPMethod = .get,
         fileHandler: ((URL) -> Void)?,
         requestModifiers: [NetworkerRequestModifier]? = nil,
-        validators: [NetworkerResponseValidator]? = nil,
+        responseValidators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         let request = self.makeURLRequest(url, method: method, modifiers: requestModifiers)
-        return self.download(request, fileHandler: fileHandler, validators: validators, completion: completion)
+        return self.download(request, fileHandler: fileHandler, responseValidators: responseValidators, completion: completion)
     }
 
     @discardableResult
     public func download(
         _ urlRequest: URLRequest,
         fileHandler: ((URL) -> Void)?,
-        validators: [NetworkerResponseValidator]? = nil,
+        responseValidators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
@@ -95,7 +95,7 @@ extension Networker: NetworkDownloader {
             executor: self.session.download(with:completion:)) { (fileURL, response, error) in
             do {
                 try self.handleRemoteError(error)
-                let httpResponse = try self.getHTTPResponse(from: response, validators: validators)
+                let httpResponse = try self.getHTTPResponse(from: response, validators: responseValidators)
                 try self.executeFilehandler(fileURL: fileURL, fileHandler: fileHandler)
                 let result = self.getResult(response: httpResponse)
                 self.dispatch(result, completion: completion)

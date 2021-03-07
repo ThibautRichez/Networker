@@ -26,7 +26,7 @@ public protocol NetworkUploader: NetworkConfigurable {
         to path: String,
         method: HTTPMethod,
         requestModifiers: [NetworkerRequestModifier]?,
-        validators: [NetworkerResponseValidator]?,
+        responseValidators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
     
@@ -36,7 +36,7 @@ public protocol NetworkUploader: NetworkConfigurable {
         to url: URL,
         method: HTTPMethod,
         requestModifiers: [NetworkerRequestModifier]?,
-        validators: [NetworkerResponseValidator]?,
+        responseValidators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
     
@@ -44,7 +44,7 @@ public protocol NetworkUploader: NetworkConfigurable {
     func upload(
         _ data: Data,
         with urlRequest: URLRequest,
-        validators: [NetworkerResponseValidator]?,
+        responseValidators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 }
@@ -56,12 +56,12 @@ extension Networker: NetworkUploader {
         to path: String,
         method: HTTPMethod = .post,
         requestModifiers: [NetworkerRequestModifier]? = nil,
-        validators: [NetworkerResponseValidator]? = nil,
+        responseValidators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let uploadURL = try self.makeURL(from: path)
-            return self.upload(data, to: uploadURL, method: method, requestModifiers: requestModifiers, validators: validators, completion: completion)
+            return self.upload(data, to: uploadURL, method: method, requestModifiers: requestModifiers, responseValidators: responseValidators, completion: completion)
         } catch {
             self.dispatch(error, completion: completion)
             return nil
@@ -74,18 +74,18 @@ extension Networker: NetworkUploader {
         to url: URL,
         method: HTTPMethod = .post,
         requestModifiers: [NetworkerRequestModifier]? = nil,
-        validators: [NetworkerResponseValidator]? = nil,
+        responseValidators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         let request = self.makeURLRequest(url, method: method, modifiers: requestModifiers)
-        return self.upload(data, with: request, validators: validators, completion: completion)
+        return self.upload(data, with: request, responseValidators: responseValidators, completion: completion)
     }
     
     @discardableResult
     public func upload(
         _ data: Data,
         with urlRequest: URLRequest,
-        validators: [NetworkerResponseValidator]? = nil,
+        responseValidators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
@@ -94,7 +94,7 @@ extension Networker: NetworkUploader {
             executor: self.session.upload(with:from:completion:)) { (data, response, error) in
             do {
                 try self.handleRemoteError(error)
-                let httpResponse = try self.getHTTPResponse(from: response, validators: validators)
+                let httpResponse = try self.getHTTPResponse(from: response, validators: responseValidators)
                 let result = self.getResult(with: data, response: httpResponse)
                 self.dispatch(result, completion: completion)
             } catch {
