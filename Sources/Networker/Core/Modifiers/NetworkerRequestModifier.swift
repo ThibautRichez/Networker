@@ -35,6 +35,7 @@ public struct NetworkerRequestAuthorizations: OptionSet {
         .cellularAccess,
         .expensiveNetworkAccess,
         .constrainedNetworkAccess,
-        .cookies
+        .cookies,
+        .pipelining
     ]
 }
