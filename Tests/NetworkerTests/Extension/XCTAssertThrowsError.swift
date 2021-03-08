@@ -1,0 +1,33 @@
+//
+//  XCTAssertThrowsError.swift
+//  
+//
+//  Created by RICHEZ Thibaut on 3/8/21.
+//
+
+import Foundation
+import XCTest
+
+func XCTAssertThrowsError<T, E: Error & Equatable>(
+    _ expression: @autoclosure () throws -> T,
+    error: E,
+    _ message: @autoclosure () -> String = "",
+    file: StaticString = #filePath,
+    line: UInt = #line) {
+    var thrownError: Error?
+
+    XCTAssertThrowsError(try expression(), file: file, line: line) {
+        thrownError = $0
+    }
+
+    XCTAssertTrue(
+        thrownError is E,
+        "Unexpected error type: \(type(of: thrownError))",
+        file: file, line: line
+    )
+
+    XCTAssertEqual(
+        thrownError as? E, error,
+        file: file, line: line
+    )
+}

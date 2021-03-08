@@ -42,6 +42,8 @@ private extension HTTPURLResponse {
             if !(try validator(element)) {
                 throw error
             }
+        } catch is NetworkerResponseValidatorError {
+            throw error
         } catch {
             throw NetworkerResponseValidatorError.custom(error, self)
         }

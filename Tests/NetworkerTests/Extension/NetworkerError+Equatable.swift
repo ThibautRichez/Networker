@@ -13,3 +13,9 @@ extension NetworkerError: Equatable {
         String(reflecting: lhs) == String(reflecting: rhs)
     }
 }
+
+extension NetworkerResponseValidatorError: Equatable {
+    public static func == (lhs: NetworkerResponseValidatorError, rhs: NetworkerResponseValidatorError) -> Bool {
+        String(reflecting: lhs) == String(reflecting: rhs)
+    }
+}
