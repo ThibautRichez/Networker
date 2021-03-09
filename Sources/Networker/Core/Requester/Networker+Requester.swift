@@ -98,7 +98,6 @@ extension Networker: NetworkRequester {
                 self.dispatch(error, completion: completion)
             }
         }
-        
 
         self.queues.addOperation(operation)
         return operation.task

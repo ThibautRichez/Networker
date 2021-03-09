@@ -48,7 +48,7 @@ private extension URLRequest {
         self.httpShouldHandleCookies = authorizations.contains(.cookies)
         self.httpShouldUsePipelining = authorizations.contains(.pipelining)
 
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, OSX 10.15, *) {
             self.allowsExpensiveNetworkAccess = authorizations.contains(.expensiveNetworkAccess)
             self.allowsConstrainedNetworkAccess = authorizations.contains(.constrainedNetworkAccess)
         }
