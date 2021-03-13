@@ -16,6 +16,8 @@ import Foundation
 //    static func custom() -> Self {
 //        let sessionConfiguration = URLSessionConfiguration.default
 //        sessionConfiguration.requestCachePolicy = .useProtocolCachePolicy
+//        // https://developer.apple.com/documentation/foundation/urlsessionconfiguration/1411532-httpadditionalheaders
+//        sessionConfiguration.httpAdditionalHeaders = ["User-Agent": "..."]
 //        let session = URLSession(configuration: sessionConfiguration)
 //
 //        let configuration = NetworkerConfiguration(
@@ -32,7 +34,7 @@ import Foundation
 //
 //        return .init(
 //            session: session, configuration: configuration,
-//            queues: queues, acceptableMimeTypes: Set(arrayLiteral: .jpg, .json)
+//            queues: queues
 //        )
 //    }
 //}

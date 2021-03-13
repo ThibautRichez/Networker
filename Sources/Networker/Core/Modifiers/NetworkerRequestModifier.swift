@@ -8,6 +8,7 @@
 import Foundation
 
 public enum NetworkerRequestModifier {
+    case timeoutInterval(TimeInterval)
     case cachePolicy(NetworkerCachePolicy)
     case headers([String: String], override: Bool = false)
     case serviceType(URLRequest.NetworkServiceType)

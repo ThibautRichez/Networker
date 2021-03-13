@@ -11,6 +11,8 @@ extension URLRequest {
     mutating func apply(modifiers: [NetworkerRequestModifier]) {
         modifiers.forEach { option in
             switch option {
+            case .timeoutInterval(let timeoutInterval):
+                self.timeoutInterval = timeoutInterval
             case .cachePolicy(let policy):
                 self.cachePolicy = .init(networkerPolicy: policy)
             case .headers(let headers, let shouldOverride):
