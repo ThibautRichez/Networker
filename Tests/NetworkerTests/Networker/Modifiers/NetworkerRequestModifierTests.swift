@@ -8,7 +8,7 @@
 import Foundation
 import XCTest
 @testable import Networker
-
+// TODO: add timeInterval
 final class NetworkerRequestModifierTests: XCTestCase {
     private var request: URLRequest!
 
@@ -24,7 +24,7 @@ final class NetworkerRequestModifierTests: XCTestCase {
 
     func test_GivenPartialCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
         // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.partial)
+        let modifier: NetworkerRequestModifier = .cachePolicy(.useProtocolCachePolicy)
         // WHEN
         self.request.apply(modifiers: [modifier])
         // THEN
@@ -33,7 +33,7 @@ final class NetworkerRequestModifierTests: XCTestCase {
 
     func test_GivenReloadIgnoringLocalCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
         // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.reloadIgnoringLocalCache)
+        let modifier: NetworkerRequestModifier = .cachePolicy(.reloadIgnoringLocalCacheData)
         // WHEN
         self.request.apply(modifiers: [modifier])
         // THEN
@@ -42,7 +42,7 @@ final class NetworkerRequestModifierTests: XCTestCase {
 
     func test_GivenReloadIgnoringLocalAndRemoteCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
         // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.reloadIgnoringLocalAndRemoteCache)
+        let modifier: NetworkerRequestModifier = .cachePolicy(.reloadIgnoringLocalAndRemoteCacheData)
         // WHEN
         self.request.apply(modifiers: [modifier])
         // THEN
@@ -51,7 +51,7 @@ final class NetworkerRequestModifierTests: XCTestCase {
 
     func test_GivenReloadRevalidatingCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
         // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.reloadRevalidatingCache)
+        let modifier: NetworkerRequestModifier = .cachePolicy(.reloadRevalidatingCacheData)
         // WHEN
         self.request.apply(modifiers: [modifier])
         // THEN
@@ -60,7 +60,7 @@ final class NetworkerRequestModifierTests: XCTestCase {
 
     func test_GivenReturnCacheElseLoadCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
         // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.returnCacheElseLoad)
+        let modifier: NetworkerRequestModifier = .cachePolicy(.returnCacheDataElseLoad)
         // WHEN
         self.request.apply(modifiers: [modifier])
         // THEN
@@ -69,7 +69,7 @@ final class NetworkerRequestModifierTests: XCTestCase {
 
     func test_GivenReturnCacheDontLoadCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
         // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.returnCacheDontLoad)
+        let modifier: NetworkerRequestModifier = .cachePolicy(.returnCacheDataDontLoad)
         // WHEN
         self.request.apply(modifiers: [modifier])
         // THEN
