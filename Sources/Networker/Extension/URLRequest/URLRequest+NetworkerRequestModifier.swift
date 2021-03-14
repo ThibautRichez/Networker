@@ -8,13 +8,15 @@
 import Foundation
 
 extension URLRequest {
-    mutating func apply(modifiers: [NetworkerRequestModifier]) {
-        modifiers.forEach { option in
+    /// Applies the modifications describes in `NetworkerRequestModifier` to
+    /// the request.
+    mutating func apply(modifiers: [NetworkerRequestModifier]?) {
+        modifiers?.forEach { option in
             switch option {
             case .timeoutInterval(let timeoutInterval):
                 self.timeoutInterval = timeoutInterval
             case .cachePolicy(let policy):
-                self.cachePolicy = .init(networkerPolicy: policy)
+                self.cachePolicy = policy
             case .headers(let headers, let shouldOverride):
                 self.add(headers: headers, override: shouldOverride)
             case .serviceType(let type):
@@ -50,7 +52,7 @@ private extension URLRequest {
         self.httpShouldHandleCookies = authorizations.contains(.cookies)
         self.httpShouldUsePipelining = authorizations.contains(.pipelining)
 
-        if #available(iOS 13.0, OSX 10.15, *) {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             self.allowsExpensiveNetworkAccess = authorizations.contains(.expensiveNetworkAccess)
             self.allowsConstrainedNetworkAccess = authorizations.contains(.constrainedNetworkAccess)
         }

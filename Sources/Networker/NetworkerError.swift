@@ -8,7 +8,7 @@
 import Foundation
 
 public enum NetworkerError: Error {
-    case path(NetworkerPathError)
+    case invalidURL(URLConvertible)
     case remote(NetworkerRemoteError)
     case response(NetworkerResponseError)
     case noData
@@ -18,42 +18,24 @@ public enum NetworkerError: Error {
     case unknown(Error)
 }
 
-public enum NetworkerPathError: Error {
-    /// Indicates that a request with a non-absolute path occured without
-    /// a baseURL set either in the `NetworkerConfiguration` or
-    /// `NetworkerSessionConfiguration`
-    case baseURLMissing
-
-    /// Indicates that the provided baseURL string representation is invalid.
-    /// (fail to create an `URL` type)
-    case invalidBaseURL(String)
-
-    /// Indicates that a request with an invalid absolute path occured.
-    case invalidAbsolutePath(String)
-
-    /// Indicates that a request with an invalid relative path occured.
-    case invalidRelativePath(String)
-}
-
-
 public enum NetworkerRemoteError: Error {
-    case cancelled
-    case connectionLost
-    case notConnectedToInternet
-    case appTransportSecurity
+    case cancelled(Error)
+    case connectionLost(Error)
+    case notConnectedToInternet(Error)
+    case appTransportSecurity(Error)
     case other(Error)
 
     init(_ error: Error) {
         let nsError = error as NSError
         switch (nsError.code, nsError.domain) {
         case (NSURLErrorCancelled, NSURLErrorDomain):
-            self = .cancelled
+            self = .cancelled(error)
         case (NSURLErrorNetworkConnectionLost, _):
-            self = .connectionLost
+            self = .connectionLost(error)
         case (NSURLErrorNotConnectedToInternet, _):
-            self = .notConnectedToInternet
+            self = .notConnectedToInternet(error)
         case (NSURLErrorAppTransportSecurityRequiresSecureConnection, _):
-            self = .appTransportSecurity
+            self = .appTransportSecurity(error)
         default:
             self = .other(error)
         }
@@ -62,7 +44,7 @@ public enum NetworkerRemoteError: Error {
 
 public enum NetworkerResponseError: Error {
     case empty
-    case emptyData
+    case emptyData(HTTPURLResponse)
     case invalid(URLResponse)
     case validator(NetworkerResponseValidatorError)
 }

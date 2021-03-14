@@ -51,8 +51,7 @@ final class NetworkerOperation: AsyncOperation {
     }
 
     override func cancel() {
-        super.cancel()
-
         self.task.cancel()
+        super.cancel()
     }
 }

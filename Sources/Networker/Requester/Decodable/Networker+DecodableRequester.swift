@@ -7,10 +7,10 @@
 
 import Foundation
 
-public protocol NetworkDecodableRequester: NetworkConfigurable {
+public protocol NetworkDecodableRequester {
     @discardableResult
-    func request<T : Decodable>(
-        _ path: String,
+    func request<T: Decodable>(
+        _ urlConvertible: URLConvertible,
         method: HTTPMethod,
         decoder: JSONDecoder,
         requestModifiers: [NetworkerRequestModifier]?,
@@ -19,56 +19,33 @@ public protocol NetworkDecodableRequester: NetworkConfigurable {
 
     @discardableResult
     func request<T: Decodable>(
-        _ url: URL,
-        method: HTTPMethod,
-        decoder: JSONDecoder,
-        requestModifiers: [NetworkerRequestModifier]?,
-        responseValidators: [NetworkerResponseValidator]?,
-        completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol
-
-    @discardableResult
-    func request<T: Decodable>(
-        _ urlRequest: URLRequest,
+        _ requestConvertible: URLRequestConvertible,
         decoder: JSONDecoder,
         responseValidators: [NetworkerResponseValidator]?,
-        completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol
+        completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
 }
 
 extension Networker: NetworkDecodableRequester {
     @discardableResult
     public func request<T: Decodable>(
-        _ path: String,
+        _ urlConvertible: URLConvertible,
         method: HTTPMethod = .get,
         decoder: JSONDecoder,
         requestModifiers: [NetworkerRequestModifier]? = nil,
         responseValidators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
-        self.request(path, method: method, requestModifiers: requestModifiers, responseValidators: responseValidators) { result in
+        self.request(urlConvertible, method: method, requestModifiers: requestModifiers, responseValidators: responseValidators) { result in
             completion(self.map(result, using: decoder))
         }
     }
 
     @discardableResult
     public func request<T: Decodable>(
-        _ url: URL,
-        method: HTTPMethod = .get,
-        decoder: JSONDecoder,
-        requestModifiers: [NetworkerRequestModifier]? = nil,
-        responseValidators: [NetworkerResponseValidator]? = nil,
-        completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        self.request(url, method: method, requestModifiers: requestModifiers, responseValidators: responseValidators) { result in
-            completion(self.map(result, using: decoder))
-        }
-    }
-
-
-    @discardableResult
-    public func request<T: Decodable>(
-        _ urlRequest: URLRequest,
+        _ requestConvertible: URLRequestConvertible,
         decoder: JSONDecoder,
         responseValidators: [NetworkerResponseValidator]? = nil,
-        completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol {
-        self.request(urlRequest, responseValidators: responseValidators) { result in
+        completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol? {
+        self.request(requestConvertible, responseValidators: responseValidators) { result in
             completion(self.map(result, using: decoder))
         }
     }

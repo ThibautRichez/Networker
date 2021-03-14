@@ -2,21 +2,15 @@ import Foundation
 
 public struct Networker {
     var session: URLSessionProtocol
-    var configuration: NetworkerConfiguration
-    var queues: NetworkerQueuesProtocol
-    var sessionReader: NetworkerSessionConfigurationReader?
-    var urlConverter: URLConverter
+    var configuration: NetworkerConfiguration?
+    var queues: NetworkerQueues
 
     public init(session: URLSessionProtocol = URLSession.shared,
-                configuration: NetworkerConfiguration = .init(),
-                queues: NetworkerQueuesProtocol = NetworkerQueues(),
-                sessionReader: NetworkerSessionConfigurationReader? = NetworkerSessionConfigurationRepository(),
-                urlConverter: URLConverter = NetworkerURLConverter()) {
+                configuration: NetworkerConfiguration? = nil,
+                queues: NetworkerQueues = .init()) {
         self.session = session
         self.configuration = configuration
         self.queues = queues
-        self.sessionReader = sessionReader
-        self.urlConverter = urlConverter
     }
 }
 
@@ -37,7 +31,9 @@ extension Networker {
     }
 
     private func dispatch<T>(_ result: Result<T, NetworkerError>, completion: @escaping (Result<T, NetworkerError>) -> Void) {
-        self.queues.asyncCallback {
+        if let callbackQueue = self.queues.callback {
+            callbackQueue.async { completion(result) }
+        } else {
             completion(result)
         }
     }

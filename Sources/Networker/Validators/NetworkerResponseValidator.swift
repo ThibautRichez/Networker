@@ -7,6 +7,9 @@
 
 import Foundation
 
+/// Defines the validators that can be used in order
+/// to checks that a specific `HTTPURLResponse` respect
+/// a certain number of prerequisite
 public enum NetworkerResponseValidator {
     case statusCode((Int) throws -> Bool)
     case mimeTypes((String?) throws -> Bool)
@@ -18,21 +21,8 @@ public enum NetworkerResponseValidator {
     case custom((HTTPURLResponse) throws -> Bool)
 }
 
-extension Optional where Wrapped == [NetworkerResponseValidator] {
-    /// Appends a default `statusCode` validator if the current array
-    /// does not already contains one.
-    /// cf `NetworkerResponseValidator.defaultStatusCodeValidator`
-    func appendingDefaultValidators() -> [NetworkerResponseValidator] {
-        var validators = self ?? []
-        if !validators.containsValidStatusCodes {
-            validators.insert(.defaultStatusCodeValidator, at: 0)
-        }
-        return validators
-    }
-}
-
-private extension Array where Element == NetworkerResponseValidator {
-    var containsValidStatusCodes: Bool {
+extension Array where Element == NetworkerResponseValidator {
+    var containsStatusCode: Bool {
         self.contains { validator in
             if case .statusCode(_) = validator {
                 return true
@@ -44,33 +34,36 @@ private extension Array where Element == NetworkerResponseValidator {
 
 enum StatusCodeDefaultValidatorError: Error {
     /// The request has been received and the process is continuing.
-    case informational
+    case informational(Int)
     /// Further action must be taken in order to complete the request.
-    case redirection
+    case redirection(Int)
     /// The request contains incorrect syntax or cannot be fulfilled.
-    case client
+    case client(Int)
     /// The server failed to fulfill an apparently valid request.
-    case server
+    case server(Int)
 
-    case unexpected
+    case unexpected(Int)
 }
 
-private extension NetworkerResponseValidator {
+extension NetworkerResponseValidator {
+    /// The status code validator to use if `NetworkerConfiguration` and per
+    /// request based validators doesn't contained a custom one.
+    /// cf. `Networker.getHTTPResponse(from:validators:)` for more details.
     static var defaultStatusCodeValidator: Self {
         .statusCode({ statusCode in
             switch statusCode {
             case 100...199:
-                throw StatusCodeDefaultValidatorError.informational
+                throw StatusCodeDefaultValidatorError.informational(statusCode)
             case 200...299:
                 return true
             case 300...399:
-                throw StatusCodeDefaultValidatorError.redirection
+                throw StatusCodeDefaultValidatorError.redirection(statusCode)
             case 400...499:
-                throw StatusCodeDefaultValidatorError.client
+                throw StatusCodeDefaultValidatorError.client(statusCode)
             case 500...599:
-                throw StatusCodeDefaultValidatorError.server
+                throw StatusCodeDefaultValidatorError.server(statusCode)
             default:
-                throw StatusCodeDefaultValidatorError.unexpected
+                throw StatusCodeDefaultValidatorError.unexpected(statusCode)
             }
         })
     }

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+// TODO: find better way
 public typealias NetworkCancellableRequester = NetworkRequester & NetworkCancellable
 public typealias NetworkCancellableUploader = NetworkUploader & NetworkCancellable
 public typealias NetworkCancellableDownloader = NetworkDownloader & NetworkCancellable

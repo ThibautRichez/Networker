@@ -8,10 +8,12 @@
 import Foundation
 
 extension OperationQueue {
+    /// Default queue used by `Networker` instances.
+    /// (cf. `NetworkerQueues` to specify your own)
     public static func networker() -> OperationQueue {
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .userInitiated
+        queue.qualityOfService = .default
         return queue
     }
 }

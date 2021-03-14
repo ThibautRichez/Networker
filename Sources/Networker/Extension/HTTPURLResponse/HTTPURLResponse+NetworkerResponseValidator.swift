@@ -8,8 +8,11 @@
 import Foundation
 
 extension HTTPURLResponse {
-    func validate(using validators: [NetworkerResponseValidator]) throws {
-        try validators.forEach(self.validate(using:))
+    /// Checks that the response respect a certain number of prerequisite defined
+    /// in `NetworkerResponseValidator`. Otherwise a `NetworkerResponseValidatorError`
+    /// is thrown
+    func validate(using validators: [NetworkerResponseValidator]?) throws {
+        try validators?.forEach(self.validate(using:))
     }
 }
 
