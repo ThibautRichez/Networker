@@ -14,9 +14,8 @@ public protocol URLConvertible {
 
 extension String: URLConvertible {
     public func asURL(relativeTo baseURL: URLConvertible? = nil) throws -> URL {
-        if let baseURLComponents = URLComponents(url: try baseURL?.asURL(relativeTo: nil)),
-           let components = URLComponents(url: try self.asURL(relativeTo: nil))  {
-            return try components.asURL(relativeTo: baseURLComponents)
+        if let baseURL = baseURL, let components = URLComponents(url: try self.asURL()) {
+            return try components.asURL(relativeTo: baseURL)
         } else if let url = URL(string: self) {
             return url
         } else {
@@ -27,9 +26,8 @@ extension String: URLConvertible {
 
 extension URL: URLConvertible {
     public func asURL(relativeTo baseURL: URLConvertible? = nil) throws -> URL {
-        if let baseURLComponents = URLComponents(url: try baseURL?.asURL(relativeTo: nil)),
-           let components = URLComponents(url: self) {
-            return try components.asURL(relativeTo: baseURLComponents)
+        if let baseURL = baseURL, let components = URLComponents(url: self) {
+            return try components.asURL(relativeTo: baseURL)
         } else {
             return self
         }
