@@ -1,15 +1,15 @@
 //
-//  NetworkerResponseValidatorTests.swift
+//  HTTPURLResponse+NetworkerResponseValidatorTests.swift
 //  
 //
-//  Created by RICHEZ Thibaut on 3/8/21.
+//  Created by RICHEZ Thibaut on 3/15/21.
 //
 
 import Foundation
 import XCTest
 @testable import Networker
 
-final class NetworkerResponseValidatorTests: XCTestCase {
+final class HTTPURLResponseValidatorTests: XCTestCase {
     private var response: HTTPURLResponse!
 
     private enum Error: Swift.Error {

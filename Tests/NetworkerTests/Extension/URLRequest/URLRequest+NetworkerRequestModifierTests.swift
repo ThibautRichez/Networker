@@ -1,15 +1,16 @@
 //
-//  NetworkerRequestModifierTests.swift
+//  URLRequest+NetworkerRequestModifierTests.swift
 //  
 //
-//  Created by RICHEZ Thibaut on 3/8/21.
+//  Created by RICHEZ Thibaut on 3/15/21.
 //
 
 import Foundation
 import XCTest
 @testable import Networker
+
 // TODO: add timeInterval
-final class NetworkerRequestModifierTests: XCTestCase {
+final class URLRequestModifierTests: XCTestCase {
     private var request: URLRequest!
 
     override func setUp() {
@@ -20,60 +21,37 @@ final class NetworkerRequestModifierTests: XCTestCase {
         self.request = nil
     }
 
+    // MARK: - Timeout Interval
+
+    func test_GivenTimeoutIntervalModifier_WhenAppliedToRequest_ThenRequestTimeoutIntervalShouldMatch() {
+        // GIVEN
+        let timeoutInterval: TimeInterval = 12
+        let modifier: NetworkerRequestModifier = .timeoutInterval(timeoutInterval)
+        // WHEN
+        self.request.apply(modifiers: [modifier])
+        // THEN
+        XCTAssertEqual(self.request.timeoutInterval, timeoutInterval)
+    }
+
     // MARK: - Cache Policy
 
-    func test_GivenPartialCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
-        // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.useProtocolCachePolicy)
-        // WHEN
-        self.request.apply(modifiers: [modifier])
-        // THEN
-        XCTAssertEqual(self.request.cachePolicy, .useProtocolCachePolicy)
-    }
+    func test_GivenAnyCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
+        [
+            URLRequest.CachePolicy.useProtocolCachePolicy,
+            .reloadIgnoringLocalCacheData,
+            .reloadIgnoringLocalAndRemoteCacheData,
+            .reloadRevalidatingCacheData,
+            .returnCacheDataElseLoad,
+            .returnCacheDataDontLoad
 
-    func test_GivenReloadIgnoringLocalCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
-        // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.reloadIgnoringLocalCacheData)
-        // WHEN
-        self.request.apply(modifiers: [modifier])
-        // THEN
-        XCTAssertEqual(self.request.cachePolicy, .reloadIgnoringLocalCacheData)
-    }
-
-    func test_GivenReloadIgnoringLocalAndRemoteCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
-        // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.reloadIgnoringLocalAndRemoteCacheData)
-        // WHEN
-        self.request.apply(modifiers: [modifier])
-        // THEN
-        XCTAssertEqual(self.request.cachePolicy, .reloadIgnoringLocalAndRemoteCacheData)
-    }
-
-    func test_GivenReloadRevalidatingCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
-        // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.reloadRevalidatingCacheData)
-        // WHEN
-        self.request.apply(modifiers: [modifier])
-        // THEN
-        XCTAssertEqual(self.request.cachePolicy, .reloadRevalidatingCacheData)
-    }
-
-    func test_GivenReturnCacheElseLoadCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
-        // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.returnCacheDataElseLoad)
-        // WHEN
-        self.request.apply(modifiers: [modifier])
-        // THEN
-        XCTAssertEqual(self.request.cachePolicy, .returnCacheDataElseLoad)
-    }
-
-    func test_GivenReturnCacheDontLoadCachePolicyModifier_WhenAppliedToRequest_ThenRequestCachePolicyShouldMatch() {
-        // GIVEN
-        let modifier: NetworkerRequestModifier = .cachePolicy(.returnCacheDataDontLoad)
-        // WHEN
-        self.request.apply(modifiers: [modifier])
-        // THEN
-        XCTAssertEqual(self.request.cachePolicy, .returnCacheDataDontLoad)
+        ].forEach { cachePolicy in
+            // GIVEN
+            let modifier: NetworkerRequestModifier = .cachePolicy(cachePolicy)
+            // WHEN
+            self.request.apply(modifiers: [modifier])
+            // THEN
+            XCTAssertEqual(self.request.cachePolicy, cachePolicy)
+        }
     }
 
     // MARK: - Headers
