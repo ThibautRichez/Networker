@@ -23,18 +23,18 @@ public protocol NetworkUploader {
     @discardableResult
     func upload(
         _ data: Data,
-        to urlConvertible: URLConvertible,
+        to url: URLConvertible,
         method: HTTPMethod,
-        requestModifiers: [NetworkerRequestModifier]?,
-        responseValidators: [NetworkerResponseValidator]?,
+        requestModifiers modifiers: [NetworkerRequestModifier]?,
+        responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
     @discardableResult
     func upload(
         _ data: Data,
-        with requestConvertible: URLRequestConvertible,
-        responseValidators: [NetworkerResponseValidator]?,
+        with request: URLRequestConvertible,
+        responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 }
@@ -43,16 +43,15 @@ extension Networker: NetworkUploader {
     @discardableResult
     public func upload(
         _ data: Data,
-        to urlConvertible: URLConvertible,
+        to url: URLConvertible,
         method: HTTPMethod = .post,
-        requestModifiers: [NetworkerRequestModifier]? = nil,
-        responseValidators: [NetworkerResponseValidator]? = nil,
+        requestModifiers modifiers: [NetworkerRequestModifier]? = nil,
+        responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
-            let url = try urlConvertible.asURL(relativeTo: self.configuration?.baseURL)
-            let request = self.makeURLRequest(url, method: method, modifiers: requestModifiers)
-            return self.upload(data, with: request, responseValidators: responseValidators, completion: completion)
+            let request = try self.makeURLRequest(url, method: method, modifiers: modifiers)
+            return self.upload(data, urlRequest: request, validators: validators, completion: completion)
         } catch {
             self.dispatch(error, completion: completion)
             return nil
@@ -62,13 +61,13 @@ extension Networker: NetworkUploader {
     @discardableResult
     public func upload(
         _ data: Data,
-        with requestConvertible: URLRequestConvertible,
-        responseValidators: [NetworkerResponseValidator]? = nil,
+        with request: URLRequestConvertible,
+        responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
-            let request = try requestConvertible.asURLRequest()
-            return self.upload(data, with: request, completion: completion)
+            let request = try request.asURLRequest()
+            return self.upload(data, urlRequest: request, validators: validators, completion: completion)
         } catch {
             self.dispatch(error, completion: completion)
             return nil
@@ -81,17 +80,16 @@ extension Networker: NetworkUploader {
 private extension Networker {
     func upload(
         _ data: Data,
-        with request: URLRequest,
-        responseValidators: [NetworkerResponseValidator]? = nil,
+        urlRequest: URLRequest,
+        validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
-            request: request,
+            request: urlRequest,
             data: data,
             executor: self.session.upload(with:from:completion:)) { (data, response, error) in
             do {
-                try self.handleRemoteError(error)
-                let httpResponse = try self.getHTTPResponse(from: response, validators: responseValidators)
+                let httpResponse = try self.getHTTPResponse(error: error, urlResponse: response, validators: validators)
                 let result = self.getResult(with: data, response: httpResponse)
                 self.dispatch(result, completion: completion)
             } catch {

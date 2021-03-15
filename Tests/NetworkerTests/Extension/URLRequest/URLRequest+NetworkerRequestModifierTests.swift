@@ -115,7 +115,7 @@ final class URLRequestModifierTests: XCTestCase {
         XCTAssertTrue(self.request.allowsCellularAccess)
         XCTAssertTrue(self.request.httpShouldHandleCookies)
         XCTAssertTrue(self.request.httpShouldUsePipelining)
-        if #available(iOS 13.0, *) {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             XCTAssertTrue(self.request.allowsExpensiveNetworkAccess)
             XCTAssertTrue(self.request.allowsConstrainedNetworkAccess)
         }
@@ -130,7 +130,7 @@ final class URLRequestModifierTests: XCTestCase {
         XCTAssertTrue(self.request.allowsCellularAccess)
         XCTAssertFalse(self.request.httpShouldHandleCookies)
         XCTAssertFalse(self.request.httpShouldUsePipelining)
-        if #available(iOS 13.0, *) {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             XCTAssertFalse(self.request.allowsExpensiveNetworkAccess)
             XCTAssertFalse(self.request.allowsConstrainedNetworkAccess)
         }
@@ -145,7 +145,7 @@ final class URLRequestModifierTests: XCTestCase {
         XCTAssertFalse(self.request.allowsCellularAccess)
         XCTAssertFalse(self.request.httpShouldHandleCookies)
         XCTAssertFalse(self.request.httpShouldUsePipelining)
-        if #available(iOS 13.0, *) {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             XCTAssertTrue(self.request.allowsExpensiveNetworkAccess)
             XCTAssertFalse(self.request.allowsConstrainedNetworkAccess)
         }
@@ -160,7 +160,7 @@ final class URLRequestModifierTests: XCTestCase {
         XCTAssertFalse(self.request.allowsCellularAccess)
         XCTAssertFalse(self.request.httpShouldHandleCookies)
         XCTAssertFalse(self.request.httpShouldUsePipelining)
-        if #available(iOS 13.0, *) {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             XCTAssertFalse(self.request.allowsExpensiveNetworkAccess)
             XCTAssertTrue(self.request.allowsConstrainedNetworkAccess)
         }
@@ -175,7 +175,7 @@ final class URLRequestModifierTests: XCTestCase {
         XCTAssertFalse(self.request.allowsCellularAccess)
         XCTAssertTrue(self.request.httpShouldHandleCookies)
         XCTAssertFalse(self.request.httpShouldUsePipelining)
-        if #available(iOS 13.0, *) {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             XCTAssertFalse(self.request.allowsExpensiveNetworkAccess)
             XCTAssertFalse(self.request.allowsConstrainedNetworkAccess)
         }
@@ -190,7 +190,7 @@ final class URLRequestModifierTests: XCTestCase {
         XCTAssertFalse(self.request.allowsCellularAccess)
         XCTAssertFalse(self.request.httpShouldHandleCookies)
         XCTAssertTrue(self.request.httpShouldUsePipelining)
-        if #available(iOS 13.0, *) {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             XCTAssertFalse(self.request.allowsExpensiveNetworkAccess)
             XCTAssertFalse(self.request.allowsConstrainedNetworkAccess)
         }

@@ -8,7 +8,7 @@
 import Foundation
 
 extension URLRequest {
-    /// Applies the modifications describes in `NetworkerRequestModifier` to
+    /// Applies the modifications defined in `NetworkerRequestModifier` to
     /// the request.
     mutating func apply(modifiers: [NetworkerRequestModifier]?) {
         modifiers?.forEach { option in

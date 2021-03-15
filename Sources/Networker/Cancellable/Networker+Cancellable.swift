@@ -9,13 +9,14 @@ import Foundation
 
 public protocol NetworkCancellable {
     /// Cancels the underlying `URLSessionProtocol` task associated
-    /// to the given identifier.
+    /// with the given identifier.
     func cancelTask(with identifier: Int, completion: (() -> Void)?)
 
     /// Cancels all underlying `URLSessionProtocol` tasks.
     func cancelTasks(completion: (() -> Void)?)
 
-    /// Cancels all ongoing operations in the `OperationQueue`
+    /// Cancels all ongoing operations in the `OperationQueue`.
+    /// (cf. `OperationQueue.cancelAllOperations` documentation)
     func cancelAllOperations()
 }
 

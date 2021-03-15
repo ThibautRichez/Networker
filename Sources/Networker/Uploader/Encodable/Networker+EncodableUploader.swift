@@ -11,20 +11,20 @@ public protocol NetworkEncodableUploader {
     @discardableResult
     func upload<T: Encodable>(
         _ object: T,
-        to urlConvertible: URLConvertible,
+        to url: URLConvertible,
         method: HTTPMethod,
         encoder: JSONEncoder,
-        requestModifiers: [NetworkerRequestModifier]?,
-        responseValidators: [NetworkerResponseValidator]?,
+        requestModifiers modifiers: [NetworkerRequestModifier]?,
+        responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
     @discardableResult
     func upload<T: Encodable>(
         _ object: T,
-        with requestConvertible: URLRequestConvertible,
+        with request: URLRequestConvertible,
         encoder: JSONEncoder,
-        responseValidators: [NetworkerResponseValidator]?,
+        responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 }
@@ -33,16 +33,16 @@ extension Networker: NetworkEncodableUploader {
     @discardableResult
     public func upload<T: Encodable>(
         _ object: T,
-        to urlConvertible: URLConvertible,
+        to url: URLConvertible,
         method: HTTPMethod = .post,
         encoder: JSONEncoder,
-        requestModifiers: [NetworkerRequestModifier]? = nil,
-        responseValidators: [NetworkerResponseValidator]? = nil,
+        requestModifiers modifiers: [NetworkerRequestModifier]? = nil,
+        responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let data: Data = try encoder.encode(object)
-            return self.upload(data, to: urlConvertible, method: method, requestModifiers: requestModifiers, responseValidators: responseValidators, completion: completion)
+            return self.upload(data, to: url, method: method, requestModifiers: modifiers, responseValidators: validators, completion: completion)
         } catch {
             self.dispatch(NetworkerError.encoder(error), completion: completion)
             return nil
@@ -52,14 +52,14 @@ extension Networker: NetworkEncodableUploader {
     @discardableResult
     public func upload<T: Encodable>(
         _ object: T,
-        with requestConvertible: URLRequestConvertible,
+        with request: URLRequestConvertible,
         encoder: JSONEncoder,
-        responseValidators: [NetworkerResponseValidator]? = nil,
+        responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let data = try encoder.encode(object)
-            return self.upload(data, with: requestConvertible, responseValidators: responseValidators, completion: completion)
+            return self.upload(data, with: request, responseValidators: validators, completion: completion)
         } catch {
             self.dispatch(NetworkerError.encoder(error), completion: completion)
             return nil

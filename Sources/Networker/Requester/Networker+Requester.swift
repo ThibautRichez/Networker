@@ -22,17 +22,17 @@ public struct NetworkRequesterResult {
 public protocol NetworkRequester {
     @discardableResult
     func request(
-        _ urlConvertible: URLConvertible,
+        _ url: URLConvertible,
         method: HTTPMethod,
-        requestModifiers: [NetworkerRequestModifier]?,
-        responseValidators: [NetworkerResponseValidator]?,
+        requestModifiers modifiers: [NetworkerRequestModifier]?,
+        responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
     @discardableResult
     func request(
-        _ requestConvertible: URLRequestConvertible,
-        responseValidators: [NetworkerResponseValidator]?,
+        _ request: URLRequestConvertible,
+        responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 }
@@ -40,31 +40,30 @@ public protocol NetworkRequester {
 extension Networker: NetworkRequester {
     @discardableResult
     public func request(
-        _ urlConvertible: URLConvertible,
+        _ url: URLConvertible,
         method: HTTPMethod = .get,
-        requestModifiers: [NetworkerRequestModifier]? = nil,
-        responseValidators: [NetworkerResponseValidator]? = nil,
+        requestModifiers modifiers: [NetworkerRequestModifier]? = nil,
+        responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
-            let url = try urlConvertible.asURL(relativeTo: self.configuration?.baseURL)
-            let request = self.makeURLRequest(url, method: method, modifiers: requestModifiers)
-            return self.request(request, responseValidators: responseValidators, completion: completion)
+            let request = try self.makeURLRequest(url, method: method, modifiers: modifiers)
+            return self.request(urlRequest: request, validators: validators, completion: completion)
         } catch {
             self.dispatch(error, completion: completion)
             return nil
         }
     }
-        
+
     @discardableResult
     public func request(
-        _ requestConvertible: URLRequestConvertible,
-        responseValidators: [NetworkerResponseValidator]? = nil,
+        _ request: URLRequestConvertible,
+        responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
-            let request = try requestConvertible.asURLRequest()
-            return self.request(request, responseValidators: responseValidators, completion: completion)
+            let request = try request.asURLRequest()
+            return self.request(urlRequest: request, validators: validators, completion: completion)
         } catch {
             self.dispatch(error, completion: completion)
             return nil
@@ -76,29 +75,30 @@ extension Networker: NetworkRequester {
 
 private extension Networker {
     func request(
-        _ request: URLRequest,
-        responseValidators: [NetworkerResponseValidator]? = nil,
+        urlRequest: URLRequest,
+        validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol {
         let operation = NetworkerOperation(
-            request: request,
+            request: urlRequest,
             executor: self.session.request(with:completion:)) { (data, response, error) in
             do {
-                try self.handleRemoteError(error)
-                let httpResponse = try self.getHTTPResponse(from: response, validators: responseValidators)
+                let httpResponse = try self.getHTTPResponse(error: error, urlResponse: response, validators: validators)
                 let result = try self.getResult(with: data, response: httpResponse)
                 self.dispatch(result, completion: completion)
             } catch  {
                 self.dispatch(error, completion: completion)
             }
         }
+
         self.queues.operation.addOperation(operation)
         return operation.task
     }
 
-    func getResult(with data: Data?,
-                   response: HTTPURLResponse) throws -> NetworkRequesterResult {
-        guard let data = data else { throw NetworkerError.response(.emptyData(response)) }
+    func getResult(with data: Data?, response: HTTPURLResponse) throws -> NetworkRequesterResult {
+        guard let data = data else {
+            throw NetworkerError.response(.emptyData(response))
+        }
         
         return .init(data: data, statusCode: response.statusCode, headerFields: response.allHeaderFields)
     }

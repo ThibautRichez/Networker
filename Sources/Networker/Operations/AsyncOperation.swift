@@ -12,8 +12,8 @@ class AsyncOperation: Operation {
     /// (`Operation` subclass requirements).
     ///
     /// - Note: A concurrent queue with barrier flag is used to make access
-    /// to certain resources or values thread-safe. We can synchronize the write
-    /// access while keeping the benefit of reading concurrently.
+    /// to certain resources thread-safe. We can synchronize the write access
+    /// while keeping the benefit of reading concurrently.
     private let lockQueue = DispatchQueue(label: "com.networker.asyncoperation", attributes: .concurrent)
 
     private var _isExecuting: Bool = false
@@ -23,9 +23,7 @@ class AsyncOperation: Operation {
     /// (`Operation` subclass requirements).
     override private(set) var isExecuting: Bool {
         get {
-            return self.lockQueue.sync { () -> Bool in
-                return self._isExecuting
-            }
+            self.lockQueue.sync { self._isExecuting }
         }
         set {
             self.willChangeValue(forKey: #keyPath(AsyncOperation.isExecuting))
@@ -43,9 +41,7 @@ class AsyncOperation: Operation {
     /// (`Operation` subclass requirements).
     override private(set) var isFinished: Bool {
         get {
-            return self.lockQueue.sync { () -> Bool in
-                return self._isFinished
-            }
+            self.lockQueue.sync { self._isFinished }
         }
         set {
             self.willChangeValue(forKey: #keyPath(AsyncOperation.isFinished))

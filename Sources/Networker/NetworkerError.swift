@@ -45,6 +45,7 @@ public enum NetworkerRemoteError: Error {
 public enum NetworkerResponseError: Error {
     case empty
     case emptyData(HTTPURLResponse)
+    // Expect HTTPURLResponse -> http/https requests
     case invalid(URLResponse)
     case validator(NetworkerResponseValidatorError)
 }
