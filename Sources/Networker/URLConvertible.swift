@@ -9,14 +9,14 @@ import Foundation
 
 // TODO: Add DOC
 public protocol URLConvertible {
-    func asURL(relativeTo relativeURL: URLConvertible?) throws -> URL
+    func asURL(relativeTo baseURL: URLConvertible?) throws -> URL
 }
 
 extension String: URLConvertible {
-    public func asURL(relativeTo relativeURL: URLConvertible? = nil) throws -> URL {
-        if let relativeComponents = URLComponents(url: try relativeURL?.asURL(relativeTo: nil)),
-           let components = URLComponents(url: URL(string: self))  {
-            return try components.asURL(relativeTo: relativeComponents)
+    public func asURL(relativeTo baseURL: URLConvertible? = nil) throws -> URL {
+        if let baseURLComponents = URLComponents(url: try baseURL?.asURL(relativeTo: nil)),
+           let components = URLComponents(url: try self.asURL(relativeTo: nil))  {
+            return try components.asURL(relativeTo: baseURLComponents)
         } else if let url = URL(string: self) {
             return url
         } else {
@@ -26,10 +26,10 @@ extension String: URLConvertible {
 }
 
 extension URL: URLConvertible {
-    public func asURL(relativeTo relativeURL: URLConvertible? = nil) throws -> URL {
-        if let relativeComponents = URLComponents(url: try relativeURL?.asURL(relativeTo: nil)),
+    public func asURL(relativeTo baseURL: URLConvertible? = nil) throws -> URL {
+        if let baseURLComponents = URLComponents(url: try baseURL?.asURL(relativeTo: nil)),
            let components = URLComponents(url: self) {
-            return try components.asURL(relativeTo: relativeComponents)
+            return try components.asURL(relativeTo: baseURLComponents)
         } else {
             return self
         }
@@ -37,15 +37,15 @@ extension URL: URLConvertible {
 }
 
 extension URLComponents: URLConvertible {
-    init?(url: URL?, resolvingAgainstBaseURL resolve: Bool = false) {
+    init?(url: URL?) {
         guard let url = url else { return nil }
 
-        self.init(url: url, resolvingAgainstBaseURL: resolve)
+        self.init(url: url, resolvingAgainstBaseURL: false)
     }
 
-    public func asURL(relativeTo relativeURL: URLConvertible? = nil) throws -> URL {
-        if let relativeURL = try relativeURL?.asURL(relativeTo: nil),
-           let url = self.url(relativeTo: relativeURL) {
+    public func asURL(relativeTo baseURL: URLConvertible? = nil) throws -> URL {
+        if let baseURL = try baseURL?.asURL(relativeTo: nil),
+           let url = self.url(relativeTo: baseURL) {
             return url
         } else if let url = self.url {
             return url
