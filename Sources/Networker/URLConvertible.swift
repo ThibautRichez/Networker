@@ -14,41 +14,36 @@ public protocol URLConvertible {
 
 extension String: URLConvertible {
     public func asURL(relativeTo baseURL: URLConvertible? = nil) throws -> URL {
-        if let baseURL = baseURL, let components = URLComponents(url: try self.asURL()) {
+        if let baseURL = baseURL,
+           let components = URLComponents(url: try self.asURL(), resolvingAgainstBaseURL: true) {
             return try components.asURL(relativeTo: baseURL)
         } else if let url = URL(string: self) {
             return url
-        } else {
-            throw NetworkerError.invalidURL(self)
         }
+
+        throw NetworkerError.invalidURL(self)
     }
 }
 
 extension URL: URLConvertible {
     public func asURL(relativeTo baseURL: URLConvertible? = nil) throws -> URL {
-        if let baseURL = baseURL, let components = URLComponents(url: self) {
+        if let baseURL = baseURL, let components = URLComponents(url: self, resolvingAgainstBaseURL: true) {
             return try components.asURL(relativeTo: baseURL)
-        } else {
-            return self
         }
+
+        return self
     }
 }
 
 extension URLComponents: URLConvertible {
-    init?(url: URL?) {
-        guard let url = url else { return nil }
-
-        self.init(url: url, resolvingAgainstBaseURL: false)
-    }
-
     public func asURL(relativeTo baseURL: URLConvertible? = nil) throws -> URL {
         if let baseURL = try baseURL?.asURL(relativeTo: nil),
            let url = self.url(relativeTo: baseURL) {
             return url
         } else if let url = self.url {
             return url
-        } else {
-            throw NetworkerError.invalidURL(self)
         }
+
+        throw NetworkerError.invalidURL(self)
     }
 }
