@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import XCTest
 import Quick
 import Nimble
 @testable import Networker
@@ -190,6 +191,29 @@ fileprivate final class DefaultBehavior: Behavior<DefaultContext> {
                 expect(sut.isExecuting).to(beFalse())
                 expect(sut.isFinished).to(beTrue())
                 expect(sut.isAsynchronous).to(beTrue())
+            }
+        }
+    }
+}
+
+// TODO: add THEN test
+final class ThenTests: XCTestCase {
+    func test_Then() {
+        let sut = Networker()
+        sut.request("https://google.com") { result in
+            print("TESTS: DONE")
+        }?
+        .retry(.count(3))
+        .then {
+            print("TESTS: Start 1st comp")
+            sut.request( "https://google.com") { result in
+                print("TESTS: 1st THEN: DONE")
+            }
+        }
+        .then {
+            print("TESTS: Start 2nd comp")
+            sut.request( "https://google.com") { result in
+                print("TESTS: 2nd THEN: DONE")
             }
         }
     }

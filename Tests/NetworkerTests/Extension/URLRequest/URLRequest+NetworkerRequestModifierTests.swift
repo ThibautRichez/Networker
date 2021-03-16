@@ -14,10 +14,12 @@ final class URLRequestModifierTests: XCTestCase {
     private var request: URLRequest!
 
     override func setUp() {
+        super.setUp()
         self.request = URLRequest(url: URL(string: "https://test.com")!)
     }
 
     override func tearDown() {
+        super.tearDown()
         self.request = nil
     }
 

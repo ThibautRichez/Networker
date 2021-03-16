@@ -9,11 +9,16 @@ import Foundation
 import XCTest
 @testable import Networker
 
-private enum ErrorStub: Error {
+enum ErrorStub: Error {
     case invalid
 }
 
-struct URLConvertibleStub: URLConvertible {
+final class URLConvertibleMock: URLConvertible {
+    var asURLCallCount = 0
+    var asURLArguments = [URLConvertible?]()
+    var didCallAsURL: Bool {
+        self.asURLCallCount > 0
+    }
     var result: ((URLConvertible?) throws -> URL)
 
     init(result: (@escaping (URLConvertible?) throws -> URL)) {
@@ -21,7 +26,9 @@ struct URLConvertibleStub: URLConvertible {
     }
 
     func asURL(relativeTo baseURL: URLConvertible?) throws -> URL {
-        try self.result(baseURL)
+        self.asURLCallCount += 1
+        self.asURLArguments.append(baseURL)
+        return try self.result(baseURL)
     }
 }
 
@@ -41,7 +48,7 @@ final class URLConvertibleTests: XCTestCase {
 
     func test_GivenInvalidURLRepresentationsWithInvalidBaseURL_WhenConvertedToURLs_ThenShouldThrowInvalidURLError() throws {
         let invalidBaseURLError = ErrorStub.invalid
-        let invalidBaseURL = URLConvertibleStub(result: { _ in throw invalidBaseURLError })
+        let invalidBaseURL = URLConvertibleMock(result: { _ in throw invalidBaseURLError })
         let expectedError = { NetworkerError.invalidURL($0) }
         try self.invalidURLRepresentations.forEach {
             XCTAssertThrowsError(try $0.asURL(relativeTo: invalidBaseURL), error: expectedError($0))
@@ -49,7 +56,7 @@ final class URLConvertibleTests: XCTestCase {
     }
 
     func test_GivenInvalidURLRepresentationsWithValidBaseURL_WhenConvertedToURLs_ThenShouldThrowInvalidURLError() throws {
-        let validBaseURL = URLConvertibleStub(result: { _ in
+        let validBaseURL = URLConvertibleMock(result: { _ in
             return URL(string: "https://api.com")!
         })
         let expectedError = { NetworkerError.invalidURL($0) }
@@ -77,7 +84,7 @@ final class URLConvertibleTests: XCTestCase {
 
     func test_GivenValidURLRepresentationsURLsAndComponentsWithInvalidBaseURL_WhenConvertedToURLs_ThenShouldThrowBaseURLError() throws {
         let invalidBaseURLError = ErrorStub.invalid
-        let invalidBaseURL = URLConvertibleStub(result: { _ in throw invalidBaseURLError })
+        let invalidBaseURL = URLConvertibleMock(result: { _ in throw invalidBaseURLError })
         try self.validURLRepresentations.forEach { urlRepresentation in
             let url = URL(string: urlRepresentation)!
             let components = URLComponents(string: urlRepresentation)!
@@ -90,7 +97,7 @@ final class URLConvertibleTests: XCTestCase {
 
     func test_GivenValidURLRepresentationsURLsAndComponentsWithValidBaseURL_WhenConvertedToURLs_ThenShouldReturnURLRelativeToBaseURL() throws {
         let validBaseURLRepresentation = "https://api.company.com/"
-        let validBaseURL = URLConvertibleStub(result: { _ in
+        let validBaseURL = URLConvertibleMock(result: { _ in
             return URL(string: validBaseURLRepresentation)!
         })
 

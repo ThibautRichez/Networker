@@ -17,10 +17,14 @@ final class HTTPURLResponseValidatorTests: XCTestCase {
     }
 
     override func setUp() {
+        super.setUp()
+
         self.response = HTTPURLResponse()
     }
 
     override func tearDown() {
+        super.tearDown()
+
         self.response = nil
     }
 

@@ -15,14 +15,14 @@ public protocol NetworkDecodableRequester {
         decoder: JSONDecoder,
         requestModifiers modifiers: [NetworkerRequestModifier]?,
         responseValidators validators: [NetworkerResponseValidator]?,
-        completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+        completion: @escaping (Result<T, NetworkerError>) -> Void) -> NetworkerOperationProtocol?
 
     @discardableResult
     func request<T: Decodable>(
         _ requestConvertible: URLRequestConvertible,
         decoder: JSONDecoder,
         responseValidators validators: [NetworkerResponseValidator]?,
-        completion: @escaping (Result<T, NetworkerError>) -> Void) -> URLSessionTaskProtocol?
+        completion: @escaping (Result<T, NetworkerError>) -> Void) -> NetworkerOperationProtocol?
 }
 
 extension Networker: NetworkDecodableRequester {
@@ -34,7 +34,7 @@ extension Networker: NetworkDecodableRequester {
         requestModifiers modifiers: [NetworkerRequestModifier]? = nil,
         responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<T, NetworkerError>) -> Void
-    ) -> URLSessionTaskProtocol? {
+    ) -> NetworkerOperationProtocol? {
         self.request(urlConvertible, method: method, requestModifiers: modifiers, responseValidators: validators) { result in
             completion(self.map(result, using: decoder))
         }
@@ -46,7 +46,7 @@ extension Networker: NetworkDecodableRequester {
         decoder: JSONDecoder,
         responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<T, NetworkerError>) -> Void
-    ) -> URLSessionTaskProtocol? {
+    ) -> NetworkerOperationProtocol? {
         self.request(requestConvertible, responseValidators: validators) { result in
             completion(self.map(result, using: decoder))
         }

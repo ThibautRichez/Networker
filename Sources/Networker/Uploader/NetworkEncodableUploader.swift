@@ -17,7 +17,7 @@ public protocol NetworkEncodableUploader {
         requestModifiers modifiers: [NetworkerRequestModifier]?,
         responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
-    ) -> URLSessionTaskProtocol?
+    ) -> NetworkerOperationProtocol?
 
     @discardableResult
     func upload<T: Encodable>(
@@ -26,7 +26,7 @@ public protocol NetworkEncodableUploader {
         encoder: JSONEncoder,
         responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
-    ) -> URLSessionTaskProtocol?
+    ) -> NetworkerOperationProtocol?
 }
 
 extension Networker: NetworkEncodableUploader {
@@ -39,7 +39,7 @@ extension Networker: NetworkEncodableUploader {
         requestModifiers modifiers: [NetworkerRequestModifier]? = nil,
         responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
-    ) -> URLSessionTaskProtocol? {
+    ) -> NetworkerOperationProtocol? {
         do {
             let data: Data = try encoder.encode(object)
             return self.upload(data, to: url, method: method, requestModifiers: modifiers, responseValidators: validators, completion: completion)
@@ -56,7 +56,7 @@ extension Networker: NetworkEncodableUploader {
         encoder: JSONEncoder,
         responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkUploaderResult, NetworkerError>) -> Void
-    ) -> URLSessionTaskProtocol? {
+    ) -> NetworkerOperationProtocol? {
         do {
             let data = try encoder.encode(object)
             return self.upload(data, with: request, responseValidators: validators, completion: completion)
