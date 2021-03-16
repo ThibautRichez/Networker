@@ -1,5 +1,5 @@
 //
-//  Networker+Requester.swift
+//  NetworkDownloader.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/25/20.
@@ -7,48 +7,49 @@
 
 import Foundation
 
-public struct NetworkRequesterResult {
-    public var data: Data
+public struct NetworkDownloaderResult {
     public var statusCode: Int
     public var headerFields: [AnyHashable : Any]
-    
-    public init(data: Data, statusCode: Int, headerFields: [AnyHashable : Any]) {
-        self.data = data
+
+    public init(statusCode: Int, headerFields: [AnyHashable : Any]) {
         self.statusCode = statusCode
         self.headerFields = headerFields
     }
 }
 
-public protocol NetworkRequester {
+public protocol NetworkDownloader {
     @discardableResult
-    func request(
+    func download(
         _ url: URLConvertible,
         method: HTTPMethod,
+        fileHandler: ((URL) -> Void)?,
         requestModifiers modifiers: [NetworkerRequestModifier]?,
         responseValidators validators: [NetworkerResponseValidator]?,
-        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol?
 
     @discardableResult
-    func request(
+    func download(
         _ request: URLRequestConvertible,
+        fileHandler: ((URL) -> Void)?,
         responseValidators validators: [NetworkerResponseValidator]?,
-        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
-    ) -> URLSessionTaskProtocol?
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>
+        ) -> Void) -> URLSessionTaskProtocol?
 }
 
-extension Networker: NetworkRequester {
+extension Networker: NetworkDownloader {
     @discardableResult
-    public func request(
+    public func download(
         _ url: URLConvertible,
         method: HTTPMethod = .get,
+        fileHandler: ((URL) -> Void)?,
         requestModifiers modifiers: [NetworkerRequestModifier]? = nil,
         responseValidators validators: [NetworkerResponseValidator]? = nil,
-        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let request = try self.makeURLRequest(url, method: method, modifiers: modifiers)
-            return self.request(urlRequest: request, validators: validators, completion: completion)
+            return self.download(urlRequest: request, fileHandler: fileHandler, validators: validators, completion: completion)
         } catch {
             self.dispatch(error, completion: completion)
             return nil
@@ -56,14 +57,15 @@ extension Networker: NetworkRequester {
     }
 
     @discardableResult
-    public func request(
+    public func download(
         _ request: URLRequestConvertible,
+        fileHandler: ((URL) -> Void)?,
         responseValidators validators: [NetworkerResponseValidator]? = nil,
-        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
     ) -> URLSessionTaskProtocol? {
         do {
             let request = try request.asURLRequest()
-            return self.request(urlRequest: request, validators: validators, completion: completion)
+            return self.download(urlRequest: request, fileHandler: fileHandler, validators: validators, completion: completion)
         } catch {
             self.dispatch(error, completion: completion)
             return nil
@@ -71,22 +73,22 @@ extension Networker: NetworkRequester {
     }
 }
 
-// MARK: - Helpers
-
 private extension Networker {
-    func request(
+    func download(
         urlRequest: URLRequest,
+        fileHandler: ((URL) -> Void)?,
         validators: [NetworkerResponseValidator]? = nil,
-        completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
-    ) -> URLSessionTaskProtocol {
+        completion: @escaping (Result<NetworkDownloaderResult, NetworkerError>) -> Void
+    ) -> URLSessionTaskProtocol? {
         let operation = NetworkerOperation(
             request: urlRequest,
-            executor: self.session.request(with:completion:)) { (data, response, error) in
+            executor: self.session.download(with:completion:)) { (fileURL, response, error) in
             do {
                 let httpResponse = try self.getHTTPResponse(error: error, urlResponse: response, validators: validators)
-                let result = try self.getResult(with: data, response: httpResponse)
+                try self.executeFilehandler(fileURL: fileURL, fileHandler: fileHandler)
+                let result = self.getResult(response: httpResponse)
                 self.dispatch(result, completion: completion)
-            } catch  {
+            } catch {
                 self.dispatch(error, completion: completion)
             }
         }
@@ -95,11 +97,18 @@ private extension Networker {
         return operation.task
     }
 
-    func getResult(with data: Data?, response: HTTPURLResponse) throws -> NetworkRequesterResult {
-        guard let data = data else {
-            throw NetworkerError.response(.emptyData(response))
+    func executeFilehandler(fileURL: URL?, fileHandler: ((URL) -> Void)?) throws {
+        guard let url = fileURL else {
+            throw NetworkerError.download(.fileURLMissing)
         }
-        
-        return .init(data: data, statusCode: response.statusCode, headerFields: response.allHeaderFields)
+
+        fileHandler?(url)
+    }
+
+    func getResult(response: HTTPURLResponse) -> NetworkDownloaderResult {
+        return .init(
+            statusCode: response.statusCode,
+            headerFields: response.allHeaderFields
+        )
     }
 }

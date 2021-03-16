@@ -1,5 +1,5 @@
 //
-//  Networker+DecodableRequester.swift
+//  NetworkDecodableRequester.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/25/20.

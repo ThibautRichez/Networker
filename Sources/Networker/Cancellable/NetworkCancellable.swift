@@ -1,5 +1,5 @@
 //
-//  Networker+Cancellable.swift
+//  NetworkCancellable.swift
 //  
 //
 //  Created by RICHEZ Thibaut on 10/25/20.
