@@ -79,7 +79,7 @@ final class URLSessionMock: URLSessionProtocol {
     }
 }
 
-// Handles calling the session completions when `resume` if called
+// Handles calling the session completions when `resume` is called
 // to mock default behavior.
 final class URLSessionTaskMock: URLSessionTaskProtocol {
     let taskIdentifier: Int

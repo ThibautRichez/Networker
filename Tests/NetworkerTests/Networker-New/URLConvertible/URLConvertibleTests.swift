@@ -9,29 +9,6 @@ import Foundation
 import XCTest
 @testable import Networker
 
-enum ErrorStub: Error {
-    case invalid
-}
-
-final class URLConvertibleMock: URLConvertible {
-    var asURLCallCount = 0
-    var asURLArguments = [URLConvertible?]()
-    var didCallAsURL: Bool {
-        self.asURLCallCount > 0
-    }
-    var result: ((URLConvertible?) throws -> URL)
-
-    init(result: (@escaping (URLConvertible?) throws -> URL)) {
-        self.result = result
-    }
-
-    func asURL(relativeTo baseURL: URLConvertible?) throws -> URL {
-        self.asURLCallCount += 1
-        self.asURLArguments.append(baseURL)
-        return try self.result(baseURL)
-    }
-}
-
 final class URLConvertibleTests: XCTestCase {
     // MARK: - Invalid URL
 
