@@ -27,14 +27,14 @@ public protocol NetworkRequester {
         requestModifiers modifiers: [NetworkerRequestModifier]?,
         responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
-    ) -> NetworkerOperationProtocol?
+    ) -> URLSessionTaskProtocol?
 
     @discardableResult
     func request(
         _ request: URLRequestConvertible,
         responseValidators validators: [NetworkerResponseValidator]?,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
-    ) -> NetworkerOperationProtocol?
+    ) -> URLSessionTaskProtocol?
 }
 
 extension Networker: NetworkRequester {
@@ -45,7 +45,7 @@ extension Networker: NetworkRequester {
         requestModifiers modifiers: [NetworkerRequestModifier]? = nil,
         responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
-    ) -> NetworkerOperationProtocol? {
+    ) -> URLSessionTaskProtocol? {
         do {
             let request = try self.makeURLRequest(url, method: method, modifiers: modifiers)
             return self.request(urlRequest: request, validators: validators, completion: completion)
@@ -60,7 +60,7 @@ extension Networker: NetworkRequester {
         _ request: URLRequestConvertible,
         responseValidators validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
-    ) -> NetworkerOperationProtocol? {
+    ) -> URLSessionTaskProtocol? {
         do {
             let request = try request.asURLRequest()
             return self.request(urlRequest: request, validators: validators, completion: completion)
@@ -78,7 +78,7 @@ private extension Networker {
         urlRequest: URLRequest,
         validators: [NetworkerResponseValidator]? = nil,
         completion: @escaping (Result<NetworkRequesterResult, NetworkerError>) -> Void
-    ) -> NetworkerOperationProtocol {
+    ) -> URLSessionTaskProtocol {
         let operation = NetworkerOperation(
             request: urlRequest,
             executor: self.session.request(with:completion:)) { (data, response, error) in
@@ -92,7 +92,7 @@ private extension Networker {
         }
 
         self.queues.operation.addOperation(operation)
-        return operation
+        return operation.task
     }
 
     func getResult(with data: Data?, response: HTTPURLResponse) throws -> NetworkRequesterResult {

@@ -7,25 +7,8 @@
 
 import Foundation
 
-public enum NetworkerRetryPolicy {
-    case after(delay: TimeInterval) // how to create delay without retaining current Operation? scheduler?
-    case count(Int)
-}
-
-public protocol NetworkerOperationProtocol {
-    var taskIdentifier: Int { get }
-
-    func cancel()
-    @discardableResult
-    func then(completion: @escaping () -> Void) -> NetworkerOperationProtocol
-    @discardableResult
-    func retry(_ policy: NetworkerRetryPolicy) -> NetworkerOperationProtocol
-}
-
 final class NetworkerOperation: AsyncOperation {
     private(set) var task: URLSessionTaskProtocol!
-
-    private var thenCompletions = [() -> Void]()
 
     /// Creates an Async `Operation` to disptach networker tasks
     /// - Parameters:
@@ -41,7 +24,6 @@ final class NetworkerOperation: AsyncOperation {
 
         self.task = executor(request, { [weak self] (object, response, error) in
             completion(object, response, error)
-            self?.executeThenCompletions()
             self?.finish()
         })
     }
@@ -60,7 +42,6 @@ final class NetworkerOperation: AsyncOperation {
 
         self.task = executor(request, data, { [weak self] (object, response, error) in
             completion(object, response, error)
-            self?.executeThenCompletions()
             self?.finish()
         })
     }
@@ -72,28 +53,5 @@ final class NetworkerOperation: AsyncOperation {
     override func cancel() {
         self.task.cancel()
         super.cancel()
-    }
-
-    private func executeThenCompletions() {
-        self.thenCompletions.forEach { $0() }
-        self.thenCompletions.removeAll()
-    }
-}
-
-// MARK: - NetworkerOperationProtocol
-
-extension NetworkerOperation: NetworkerOperationProtocol {
-    public var taskIdentifier: Int { self.task.taskIdentifier }
-
-    @discardableResult
-    public func then(completion: @escaping () -> Void) -> NetworkerOperationProtocol {
-        self.thenCompletions.append(completion)
-        return self
-    }
-
-    @discardableResult
-    public func retry(_ policy: NetworkerRetryPolicy) -> NetworkerOperationProtocol {
-        // lets work
-        return self
     }
 }
