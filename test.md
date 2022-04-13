@@ -2,7 +2,7 @@
 
 | Name | Default | Others |
 |---------------------------------|-----------|--------|
-| advertisement_infeed_source_font | #888888 | |
+| advertisement_infeed_source_font | `#888888` | |
 | advertisement_infeed_subtitle_font | #A2A2A2 | |
 | advertisement_wide_infeed_sponsored_font | #FFFFFF | |
 | appearance_footer_text | #A2A2A2 | |
